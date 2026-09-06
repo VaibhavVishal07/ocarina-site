@@ -47,7 +47,7 @@
     /* The window's own ground, which the four panels float on, and the board's
        two lamp states. Derived in the app from the panel colour; derived here
        the same way so the two cannot drift. */
-    --oc-ground:#070A10; --oc-lit:#3D96C2; --oc-unlit:#0A0E14;
+    --oc-ground:#070A10; --oc-lit:#64B2D8; --oc-unlit:#0A0E14;
   }
   @media (max-width:760px) { :root { --gutter:22px; --sect:64px; } }
   @media (max-width:420px) { :root { --gutter:18px; } }
@@ -235,10 +235,12 @@
               background:var(--wground); transition:background-color .5s ease; }
   .card { background:var(--wbot); border:1px solid var(--wline); border-radius:12px;
           transition:background-color .5s ease,border-color .5s ease; }
-  /* Stacked cards mirror their gradients, so the light falls across the pair
-     once instead of restarting at every card. */
+  /* One gradient cut in two, so the light falls across the whole column once.
+     Mirroring the lower card was tried and is wrong in the other direction:
+     the junction matched, but the column then got brighter on the way down,
+     which is not what a light source does. */
   .card.up   { background:linear-gradient(var(--wtop),var(--wbot)); }
-  .card.down { background:linear-gradient(var(--wbot),var(--wtop)); }
+  .card.down { background:linear-gradient(var(--wbot),var(--wground)); }
 
   .side { width:230px; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; }
   .side .tabs { flex:1; min-height:0; display:flex; flex-direction:column; padding:11px 9px; gap:2px; overflow:hidden; }
@@ -335,6 +337,7 @@
      left. The meter is lamps on a dot-matrix board, the same alphabet as the
      wordmark — a departure board is a thing for counting down. */
   .tokencard { flex:none; padding:8px 11px; font-family:"Geist",sans-serif; }
+  .tokencard .lamps i.on { background:var(--wlit); box-shadow:0 0 3px var(--wlit); }
   .tokencard .tl1 { display:flex; align-items:baseline; gap:6px; font-size:10.5px; color:var(--wdim); }
   .tokencard .tl1 b { margin-left:auto; font-size:12.5px; font-weight:600; color:var(--wfg); }
   .tokencard .tl2 { display:flex; align-items:center; gap:8px; margin-top:5px; }
