@@ -7,36 +7,31 @@
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Ocarina">
 <meta property="og:description" content="A macOS terminal for people whose first terminal is this one.">
-<meta property="og:image" content="assets/board.jpg">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🎵</text></svg>">
-<style>
-  html { background: #0A0D12; }
-  body { margin: 0; }
-  img { max-width: 100%; }
-</style>
+<style>html{background:#07090C}body{margin:0}</style>
 <title>Ocarina — your first terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 
 <style>
-  /* Deliberately one visual world: every theme this app ships is dark, and a
-     light landing page would misrepresent the product. Nothing inherits from
-     the host — the ground and every colour are painted here. */
+  /* One visual world on purpose: every theme this terminal ships is dark, so
+     the page is too. Nothing is inherited from the host — the ground and every
+     colour are set here. */
   :root {
-    --ground:   #0A0D12;
-    --panel:    #12171E;
-    --raise:    #161C25;
-    --rule:     rgba(198, 222, 245, 0.10);
-    --rule-lit: rgba(56, 194, 255, 0.28);
-    --lit:      #38C2FF;
-    --dim:      #216B95;
-    --amber:    #FFB838;
-    --text:     #F2F5F8;
-    --muted:    #A8B2BE;
-    --faint:    #77818D;
-    --measure:  62ch;
+    --ground:  #07090C;
+    --panel:   #0D1218;
+    --raise:   #121821;
+    --line:    rgba(198, 222, 245, 0.09);
+    --line-2:  rgba(198, 222, 245, 0.16);
+    --cyan:    #38C2FF;
+    --cyan-dim:#1B5C7C;
+    --amber:   #FFB838;
+    --ink:     #F4F7FA;
+    --ghost:   #67737F;   /* the second clause of a headline */
+    --muted:   #8C98A5;
+    --faint:   #5C6773;
   }
 
   * { box-sizing: border-box; }
@@ -44,225 +39,275 @@
   body {
     margin: 0;
     background: var(--ground);
-    color: var(--text);
+    color: var(--ink);
     font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 17px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
 
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
-  .col  { max-width: var(--measure); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
 
-  /* ---------- shared type ---------- */
+  section { padding: 128px 0; }
+  @media (max-width: 720px) { section { padding: 84px 0; } }
 
-  .eyebrow {
-    display: flex;
+  /* ---------- the repeating header unit ---------- */
+
+  .pill {
+    display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     font-family: "Geist Mono", ui-monospace, Menlo, monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--lit);
-    margin: 0 0 22px;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    background: var(--raise);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 15px;
+    margin: 0 0 30px;
   }
-  .eyebrow::before {
+  .pill::before {
     content: "";
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--lit);
-    box-shadow: 0 0 8px rgba(56, 194, 255, 0.9);
-    flex: none;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 7px rgba(56, 194, 255, 0.85);
   }
 
-  h1 {
-    font-size: clamp(44px, 7.2vw, 78px);
-    font-weight: 600;
-    letter-spacing: -0.035em;
-    line-height: 1.03;
-    margin: 0 0 22px;
-    text-wrap: balance;
-  }
+  .head { display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 40px; align-items: end; }
+  @media (max-width: 860px) { .head { grid-template-columns: 1fr; gap: 20px; align-items: start; } }
 
   h2 {
-    font-size: clamp(26px, 3.4vw, 34px);
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.15;
-    margin: 0 0 18px;
+    font-size: clamp(31px, 4.3vw, 50px);
+    font-weight: 500;
+    letter-spacing: -0.032em;
+    line-height: 1.08;
+    margin: 0;
     text-wrap: balance;
   }
+  /* The second clause drops back. It is the same size and weight — only the
+     colour changes — so the sentence still reads as one sentence. */
+  h2 .rest { color: var(--ghost); }
 
-  h3 {
-    font-size: 19px;
-    font-weight: 600;
-    letter-spacing: -0.012em;
-    margin: 0 0 8px;
-  }
-
-  p { margin: 0 0 18px; color: var(--muted); }
-  p.lead { font-size: 20px; line-height: 1.55; color: var(--muted); }
-  p:last-child { margin-bottom: 0; }
-  strong { color: var(--text); font-weight: 500; }
-
-  kbd {
-    font-family: "Geist Mono", monospace;
-    font-size: 0.82em;
-    color: var(--text);
-    background: var(--raise);
-    border: 1px solid var(--rule);
-    border-radius: 5px;
-    padding: 1px 6px;
-    white-space: nowrap;
-  }
-
-  code {
-    font-family: "Geist Mono", monospace;
-    font-size: 0.86em;
-    color: var(--lit);
-  }
-
-  section { padding: 82px 0; border-top: 1px solid var(--rule); }
-  section:first-of-type { border-top: 0; }
+  .aside { color: var(--muted); font-size: 15px; line-height: 1.55; margin: 0; max-width: 34ch; }
 
   /* ---------- hero ---------- */
 
-  header.hero { padding: 104px 0 78px; text-align: center; }
-  header.hero .eyebrow { justify-content: center; }
-  header.hero .col { margin: 0 auto; }
-
-  .rule-quote {
-    margin: 46px auto 0;
-    max-width: 54ch;
-    padding: 20px 26px;
-    border-left: 2px solid var(--lit);
-    background: linear-gradient(90deg, rgba(56, 194, 255, 0.07), transparent 70%);
-    text-align: left;
-  }
-  .rule-quote p {
-    margin: 0;
-    color: var(--text);
-    font-size: 18px;
+  header.hero { padding: 116px 0 0; }
+  header.hero h1 {
+    font-size: clamp(42px, 6.4vw, 76px);
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    margin: 0;
+    max-width: 17ch;
+    text-wrap: balance;
+  }
+  header.hero h1 .rest { color: var(--ghost); }
+  .hero-foot { display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 40px; align-items: end; margin-top: 26px; }
+  @media (max-width: 860px) { .hero-foot { grid-template-columns: 1fr; } }
+
+  .keys { display: flex; flex-wrap: wrap; gap: 8px; }
+  kbd {
+    font-family: "Geist Mono", monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    background: var(--raise);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 5px 10px;
   }
 
-  /* ---------- figures ---------- */
+  /* ---------- the app, rebuilt ---------- */
 
-  figure { margin: 0; }
-
-  .shot {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.04) inset,
-      0 30px 70px -30px rgba(0, 0, 0, 0.9);
-  }
-  .shot img { display: block; width: 100%; height: auto; }
-
-  /* The one overt retro flourish, and only on the hero: the board is a
-     lit-dot display, so it gets the scanlines a display would have. */
-  .shot.scan::after {
+  .stage { position: relative; margin-top: 62px; }
+  .stage::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: 8% 12% 14%;
+    background: radial-gradient(60% 60% at 50% 45%, rgba(56, 194, 255, 0.20), transparent 72%);
+    filter: blur(52px);
     pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.22) 0 1px,
-      transparent 1px 3px
-    );
-    opacity: 0.5;
   }
-  .shot.glow { box-shadow: 0 30px 90px -34px rgba(56, 194, 255, 0.35); }
 
-  figcaption {
+  .app {
+    position: relative;
+    border: 1px solid var(--line-2);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--panel);
+    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.95);
+    display: grid;
+    grid-template-columns: 172px 1fr;
+    min-height: 430px;
+    font-family: "Geist", sans-serif;
+  }
+  @media (max-width: 720px) { .app { grid-template-columns: 118px 1fr; min-height: 320px; } }
+
+  .titlebar {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 8px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tl { width: 11px; height: 11px; border-radius: 50%; }
+  .tl.r { background: #FF5F57; } .tl.y { background: #FEBC2E; } .tl.g { background: #28C840; }
+  .titlebar span { margin-left: 10px; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+
+  .side {
+    border-right: 1px solid var(--line);
+    padding: 14px 10px;
+    display: flex; flex-direction: column; gap: 4px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%);
+  }
+  .row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 9px; border-radius: 8px;
+    font-size: 12px; color: var(--muted);
+  }
+  .row.on { background: rgba(198, 222, 245, 0.07); color: var(--ink); border: 1px solid var(--line); }
+  .row .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); flex: none; }
+  .row .sc { margin-left: auto; font-family: "Geist Mono", monospace; font-size: 10px; color: var(--faint); }
+  .side .spacer { flex: 1; }
+  .side .sep { height: 1px; background: var(--line); margin: 6px 4px; }
+  .sw { margin-left: auto; width: 24px; height: 13px; border-radius: 999px; background: var(--cyan-dim); position: relative; }
+  .sw::after { content:""; position:absolute; top:2px; right:2px; width:9px; height:9px; border-radius:50%; background:#EAF6FF; }
+
+  .board {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; padding: 44px 24px;
+  }
+  .board::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.20) 0 1px, transparent 1px 3px);
+    opacity: 0.55;
+  }
+  .mx { display: block; width: 100%; height: auto; }
+  .mx .on  { fill: var(--cyan); }
+  .mx .off { fill: rgba(198, 222, 245, 0.055); }
+  .mx-lg { max-width: 330px; }
+  .mx-sm { max-width: 290px; margin-top: 2px; }
+  .mx-lg .on { filter: drop-shadow(0 0 3px rgba(56, 194, 255, 0.7)); }
+  .mx-sm .on { fill: var(--cyan-dim); }
+
+  .cta {
+    margin-top: 12px;
+    border: 1px solid var(--cyan-dim);
+    border-radius: 4px;
+    padding: 11px 22px;
+    display: flex; align-items: center; gap: 20px;
     font-family: "Geist Mono", monospace;
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--faint);
-    margin-top: 14px;
-    max-width: 58ch;
+    font-size: 12px; letter-spacing: 0.16em;
+    color: var(--cyan);
   }
-  .hero-figure { margin-top: 52px; }
-  .hero-figure figcaption { margin-left: auto; margin-right: auto; text-align: center; }
-
-  /* ---------- feature blocks ---------- */
-
-  .feature { display: grid; gap: 34px; }
-  .feature + .feature { margin-top: 72px; }
-  .feature .body { max-width: var(--measure); }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 18px;
-    align-items: center;
+  .cta .k { color: var(--cyan-dim); }
+  .hints {
     font-family: "Geist Mono", monospace;
-    font-size: 12px;
-    color: var(--faint);
-    margin-top: 14px;
+    font-size: 10.5px; letter-spacing: 0.15em; color: var(--cyan-dim);
+    display: grid; grid-template-columns: auto auto; gap: 4px 26px; margin-top: 6px;
   }
+  @media (max-width: 720px) { .hints, .mx-sm { display: none; } }
 
-  /* ---------- the four questions ---------- */
-
-  .qa { display: grid; gap: 2px; }
-  .qa-item { padding: 26px 0; border-top: 1px solid var(--rule); }
-  .qa-item:first-child { border-top: 0; padding-top: 0; }
-  .qa-item h3 { color: var(--lit); font-size: 15px; letter-spacing: 0.01em; margin-bottom: 12px; }
-
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
-  .split > div { padding: 24px 26px; }
-  .split > div + div { border-left: 1px solid var(--rule); }
-  .split h4 {
+  .tab {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    writing-mode: vertical-rl;
     font-family: "Geist Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin: 0 0 14px;
-    color: var(--faint);
-  }
-  .split.ours h4 { color: var(--lit); }
-  .split ul { margin: 0; padding-left: 18px; }
-  .split li { color: var(--muted); margin-bottom: 9px; font-size: 15.5px; }
-  .split li:last-child { margin-bottom: 0; }
-  @media (max-width: 700px) {
-    .split { grid-template-columns: 1fr; }
-    .split > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+    font-size: 9px; letter-spacing: 0.18em; color: var(--faint);
+    background: var(--raise);
+    border: 1px solid var(--line); border-right: 0;
+    border-radius: 8px 0 0 8px;
+    padding: 16px 5px;
   }
 
-  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  @media (max-width: 700px) { .pair { grid-template-columns: 1fr; } }
+  .caption {
+    font-family: "Geist Mono", monospace;
+    font-size: 11.5px; color: var(--faint);
+    margin: 16px 0 0; text-align: center;
+  }
 
-  .points { display: grid; gap: 26px; margin-top: 34px; }
-  @media (min-width: 760px) { .points { grid-template-columns: 1fr 1fr; gap: 34px 44px; } }
-  .points h3 { font-size: 16.5px; }
-  .points p { font-size: 15.5px; margin: 0; }
+  /* ---------- cards ---------- */
+
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 54px; }
+  @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.022), transparent 55%);
+    overflow: hidden;
+  }
+  .art { border-bottom: 1px solid var(--line); background: #090C11; }
+  .art svg { display: block; width: 100%; height: auto; }
+  .card .txt { padding: 20px 22px 24px; }
+  .card h3 { font-size: 16px; font-weight: 500; letter-spacing: -0.012em; margin: 0 0 7px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+
+  /* isometric line art, in the theme's own colours */
+  .iso-line  { fill: none; stroke: rgba(198,222,245,0.30); stroke-width: 1.1; stroke-linejoin: round; }
+  .iso-face  { fill: rgba(198,222,245,0.035); }
+  .iso-lit   { fill: none; stroke: var(--cyan); stroke-width: 1.1; stroke-linejoin: round; }
+  .iso-glow  { fill: rgba(56,194,255,0.09); }
+  .iso-hair  { stroke: rgba(198,222,245,0.08); stroke-width: 1; }
+  .iso-mark  { fill: rgba(198,222,245,0.22); }
+
+  /* ---------- prose ---------- */
+
+  .prose { max-width: 60ch; }
+  .prose p { color: var(--muted); font-size: 18px; line-height: 1.62; margin: 0 0 22px; }
+  .prose p:last-child { margin: 0; }
+  .prose strong { color: var(--ink); font-weight: 400; }
+
+  /* ---------- comparison ---------- */
+
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 54px; }
+  @media (max-width: 760px) { .vs { grid-template-columns: 1fr; } }
+  .vs > div { border: 1px solid var(--line); border-radius: 14px; padding: 26px 26px 28px; }
+  .vs .mine { background: linear-gradient(180deg, rgba(56,194,255,0.05), transparent 60%); border-color: rgba(56,194,255,0.20); }
+  .vs h4 {
+    font-family: "Geist Mono", monospace; font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--faint); margin: 0 0 18px;
+  }
+  .vs .mine h4 { color: var(--cyan); }
+  .vs ul { margin: 0; padding: 0; list-style: none; }
+  .vs li { color: var(--muted); font-size: 15px; padding: 9px 0 9px 20px; position: relative; border-top: 1px solid var(--line); }
+  .vs li:first-child { border-top: 0; padding-top: 0; }
+  .vs li::before { content: "—"; position: absolute; left: 0; color: var(--faint); }
+  .vs .mine li::before { content: "+"; color: var(--cyan); }
+
+  /* ---------- point grid ---------- */
+
+  .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px 44px; margin-top: 56px; }
+  @media (max-width: 900px) { .points { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) { .points { grid-template-columns: 1fr; } }
+  .points h3 { font-size: 15.5px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .points p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.58; }
+  .points .n {
+    font-family: "Geist Mono", monospace; font-size: 10.5px; color: var(--cyan);
+    display: block; margin-bottom: 12px; letter-spacing: 0.1em;
+  }
+
+  /* ---------- who ---------- */
+
+  .who { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 54px; }
+  @media (max-width: 900px) { .who { grid-template-columns: 1fr; } }
+  .who > div { border: 1px solid var(--line); border-radius: 14px; padding: 26px; }
+  .who h3 { font-size: 16px; font-weight: 500; margin: 0 0 9px; }
+  .who p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.58; }
+  .who .no { border-style: dashed; }
+  .who .no h3 { color: var(--ghost); }
 
   /* ---------- footer ---------- */
 
   footer {
-    border-top: 1px solid var(--rule);
-    padding: 44px 0 64px;
-    font-family: "Geist Mono", monospace;
-    font-size: 12.5px;
-    color: var(--faint);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 26px;
-    align-items: baseline;
+    border-top: 1px solid var(--line);
+    padding: 34px 0 70px;
+    display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: baseline;
+    font-family: "Geist Mono", monospace; font-size: 12px; color: var(--faint);
   }
-  footer a { color: var(--lit); text-decoration: none; border-bottom: 1px solid var(--rule-lit); }
-  footer a:hover { border-bottom-color: var(--lit); }
-  a:focus-visible { outline: 2px solid var(--lit); outline-offset: 3px; border-radius: 2px; }
-
-  .prompt { color: var(--dim); }
+  footer a { color: var(--cyan); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px; }
 </style>
 
 </head>
@@ -270,230 +315,230 @@
 <div class="wrap">
 
   <header class="hero">
-    <div class="col">
-      <p class="eyebrow">A terminal for macOS</p>
-      <h1>Your first terminal</h1>
-      <p class="lead">
-        Every other terminal assumes you already know the answer. Ocarina is
-        built for the moment before that — for people who came from a web
-        interface, opened Terminal once, and closed it again.
-      </p>
-      <div class="rule-quote">
-        <p>The terminal should never require you to already know the answer.</p>
+    <p class="pill">A terminal for macOS</p>
+    <h1>Your first terminal.<br><span class="rest">Not a smaller version of someone else's.</span></h1>
+    <div class="hero-foot">
+      <div class="keys">
+        <kbd>⌘K quick actions</kbd><kbd>⌘J tasks</kbd><kbd>14 themes</kbd><kbd>macOS 14+</kbd>
       </div>
+      <p class="aside">
+        Every other terminal assumes you already know the answer. Ocarina is
+        built for the moment before that.
+      </p>
     </div>
 
-    <figure class="hero-figure">
-      <div class="shot scan glow">
-        <img src="assets/board.jpg" alt="Ocarina with no tabs open, showing a dot-matrix departure board reading OCARINA — SONG OF A NEW TERMINAL, with New Terminal and keyboard shortcuts below it." width="1240">
+    <div class="stage">
+      <div class="app">
+        <div class="titlebar">
+          <i class="tl r"></i><i class="tl y"></i><i class="tl g"></i><span>Ocarina</span>
+        </div>
+        <nav class="side">
+          <div class="row on"><i class="dot"></i>Build the site</div>
+          <div class="row"><i class="dot" style="background:#4CC773"></i>Fix the parser</div>
+          <div class="row"><i class="dot" style="background:#F25959"></i>Deploy</div>
+          <div class="spacer"></div>
+          <div class="row">Tasks<span class="sc">⌘J</span></div>
+          <div class="row">Theme<span class="sc">Ocarina</span></div>
+          <div class="sep"></div>
+          <div class="row">Keep Awake<i class="sw"></i></div>
+        </nav>
+        <div class="board">
+          <svg class="mx mx-lg" viewBox="0 0 514 74" aria-hidden="true"><circle class="off" cx="4.0" cy="4.0" r="4.00"/><circle class="on" cx="15.0" cy="4.0" r="4.00"/><circle class="on" cx="26.0" cy="4.0" r="4.00"/><circle class="on" cx="37.0" cy="4.0" r="4.00"/><circle class="off" cx="48.0" cy="4.0" r="4.00"/><circle class="on" cx="4.0" cy="15.0" r="4.00"/><circle class="off" cx="15.0" cy="15.0" r="4.00"/><circle class="off" cx="26.0" cy="15.0" r="4.00"/><circle class="off" cx="37.0" cy="15.0" r="4.00"/><circle class="on" cx="48.0" cy="15.0" r="4.00"/><circle class="on" cx="4.0" cy="26.0" r="4.00"/><circle class="off" cx="15.0" cy="26.0" r="4.00"/><circle class="off" cx="26.0" cy="26.0" r="4.00"/><circle class="off" cx="37.0" cy="26.0" r="4.00"/><circle class="on" cx="48.0" cy="26.0" r="4.00"/><circle class="on" cx="4.0" cy="37.0" r="4.00"/><circle class="off" cx="15.0" cy="37.0" r="4.00"/><circle class="off" cx="26.0" cy="37.0" r="4.00"/><circle class="off" cx="37.0" cy="37.0" r="4.00"/><circle class="on" cx="48.0" cy="37.0" r="4.00"/><circle class="on" cx="4.0" cy="48.0" r="4.00"/><circle class="off" cx="15.0" cy="48.0" r="4.00"/><circle class="off" cx="26.0" cy="48.0" r="4.00"/><circle class="off" cx="37.0" cy="48.0" r="4.00"/><circle class="on" cx="48.0" cy="48.0" r="4.00"/><circle class="on" cx="4.0" cy="59.0" r="4.00"/><circle class="off" cx="15.0" cy="59.0" r="4.00"/><circle class="off" cx="26.0" cy="59.0" r="4.00"/><circle class="off" cx="37.0" cy="59.0" r="4.00"/><circle class="on" cx="48.0" cy="59.0" r="4.00"/><circle class="off" cx="4.0" cy="70.0" r="4.00"/><circle class="on" cx="15.0" cy="70.0" r="4.00"/><circle class="on" cx="26.0" cy="70.0" r="4.00"/><circle class="on" cx="37.0" cy="70.0" r="4.00"/><circle class="off" cx="48.0" cy="70.0" r="4.00"/><circle class="off" cx="81.0" cy="4.0" r="4.00"/><circle class="on" cx="92.0" cy="4.0" r="4.00"/><circle class="on" cx="103.0" cy="4.0" r="4.00"/><circle class="on" cx="114.0" cy="4.0" r="4.00"/><circle class="off" cx="125.0" cy="4.0" r="4.00"/><circle class="on" cx="81.0" cy="15.0" r="4.00"/><circle class="off" cx="92.0" cy="15.0" r="4.00"/><circle class="off" cx="103.0" cy="15.0" r="4.00"/><circle class="off" cx="114.0" cy="15.0" r="4.00"/><circle class="on" cx="125.0" cy="15.0" r="4.00"/><circle class="on" cx="81.0" cy="26.0" r="4.00"/><circle class="off" cx="92.0" cy="26.0" r="4.00"/><circle class="off" cx="103.0" cy="26.0" r="4.00"/><circle class="off" cx="114.0" cy="26.0" r="4.00"/><circle class="off" cx="125.0" cy="26.0" r="4.00"/><circle class="on" cx="81.0" cy="37.0" r="4.00"/><circle class="off" cx="92.0" cy="37.0" r="4.00"/><circle class="off" cx="103.0" cy="37.0" r="4.00"/><circle class="off" cx="114.0" cy="37.0" r="4.00"/><circle class="off" cx="125.0" cy="37.0" r="4.00"/><circle class="on" cx="81.0" cy="48.0" r="4.00"/><circle class="off" cx="92.0" cy="48.0" r="4.00"/><circle class="off" cx="103.0" cy="48.0" r="4.00"/><circle class="off" cx="114.0" cy="48.0" r="4.00"/><circle class="off" cx="125.0" cy="48.0" r="4.00"/><circle class="on" cx="81.0" cy="59.0" r="4.00"/><circle class="off" cx="92.0" cy="59.0" r="4.00"/><circle class="off" cx="103.0" cy="59.0" r="4.00"/><circle class="off" cx="114.0" cy="59.0" r="4.00"/><circle class="on" cx="125.0" cy="59.0" r="4.00"/><circle class="off" cx="81.0" cy="70.0" r="4.00"/><circle class="on" cx="92.0" cy="70.0" r="4.00"/><circle class="on" cx="103.0" cy="70.0" r="4.00"/><circle class="on" cx="114.0" cy="70.0" r="4.00"/><circle class="off" cx="125.0" cy="70.0" r="4.00"/><circle class="off" cx="158.0" cy="4.0" r="4.00"/><circle class="on" cx="169.0" cy="4.0" r="4.00"/><circle class="on" cx="180.0" cy="4.0" r="4.00"/><circle class="on" cx="191.0" cy="4.0" r="4.00"/><circle class="off" cx="202.0" cy="4.0" r="4.00"/><circle class="on" cx="158.0" cy="15.0" r="4.00"/><circle class="off" cx="169.0" cy="15.0" r="4.00"/><circle class="off" cx="180.0" cy="15.0" r="4.00"/><circle class="off" cx="191.0" cy="15.0" r="4.00"/><circle class="on" cx="202.0" cy="15.0" r="4.00"/><circle class="on" cx="158.0" cy="26.0" r="4.00"/><circle class="off" cx="169.0" cy="26.0" r="4.00"/><circle class="off" cx="180.0" cy="26.0" r="4.00"/><circle class="off" cx="191.0" cy="26.0" r="4.00"/><circle class="on" cx="202.0" cy="26.0" r="4.00"/><circle class="on" cx="158.0" cy="37.0" r="4.00"/><circle class="on" cx="169.0" cy="37.0" r="4.00"/><circle class="on" cx="180.0" cy="37.0" r="4.00"/><circle class="on" cx="191.0" cy="37.0" r="4.00"/><circle class="on" cx="202.0" cy="37.0" r="4.00"/><circle class="on" cx="158.0" cy="48.0" r="4.00"/><circle class="off" cx="169.0" cy="48.0" r="4.00"/><circle class="off" cx="180.0" cy="48.0" r="4.00"/><circle class="off" cx="191.0" cy="48.0" r="4.00"/><circle class="on" cx="202.0" cy="48.0" r="4.00"/><circle class="on" cx="158.0" cy="59.0" r="4.00"/><circle class="off" cx="169.0" cy="59.0" r="4.00"/><circle class="off" cx="180.0" cy="59.0" r="4.00"/><circle class="off" cx="191.0" cy="59.0" r="4.00"/><circle class="on" cx="202.0" cy="59.0" r="4.00"/><circle class="on" cx="158.0" cy="70.0" r="4.00"/><circle class="off" cx="169.0" cy="70.0" r="4.00"/><circle class="off" cx="180.0" cy="70.0" r="4.00"/><circle class="off" cx="191.0" cy="70.0" r="4.00"/><circle class="on" cx="202.0" cy="70.0" r="4.00"/><circle class="on" cx="235.0" cy="4.0" r="4.00"/><circle class="on" cx="246.0" cy="4.0" r="4.00"/><circle class="on" cx="257.0" cy="4.0" r="4.00"/><circle class="on" cx="268.0" cy="4.0" r="4.00"/><circle class="off" cx="279.0" cy="4.0" r="4.00"/><circle class="on" cx="235.0" cy="15.0" r="4.00"/><circle class="off" cx="246.0" cy="15.0" r="4.00"/><circle class="off" cx="257.0" cy="15.0" r="4.00"/><circle class="off" cx="268.0" cy="15.0" r="4.00"/><circle class="on" cx="279.0" cy="15.0" r="4.00"/><circle class="on" cx="235.0" cy="26.0" r="4.00"/><circle class="off" cx="246.0" cy="26.0" r="4.00"/><circle class="off" cx="257.0" cy="26.0" r="4.00"/><circle class="off" cx="268.0" cy="26.0" r="4.00"/><circle class="on" cx="279.0" cy="26.0" r="4.00"/><circle class="on" cx="235.0" cy="37.0" r="4.00"/><circle class="on" cx="246.0" cy="37.0" r="4.00"/><circle class="on" cx="257.0" cy="37.0" r="4.00"/><circle class="on" cx="268.0" cy="37.0" r="4.00"/><circle class="off" cx="279.0" cy="37.0" r="4.00"/><circle class="on" cx="235.0" cy="48.0" r="4.00"/><circle class="off" cx="246.0" cy="48.0" r="4.00"/><circle class="on" cx="257.0" cy="48.0" r="4.00"/><circle class="off" cx="268.0" cy="48.0" r="4.00"/><circle class="off" cx="279.0" cy="48.0" r="4.00"/><circle class="on" cx="235.0" cy="59.0" r="4.00"/><circle class="off" cx="246.0" cy="59.0" r="4.00"/><circle class="off" cx="257.0" cy="59.0" r="4.00"/><circle class="on" cx="268.0" cy="59.0" r="4.00"/><circle class="off" cx="279.0" cy="59.0" r="4.00"/><circle class="on" cx="235.0" cy="70.0" r="4.00"/><circle class="off" cx="246.0" cy="70.0" r="4.00"/><circle class="off" cx="257.0" cy="70.0" r="4.00"/><circle class="off" cx="268.0" cy="70.0" r="4.00"/><circle class="on" cx="279.0" cy="70.0" r="4.00"/><circle class="on" cx="312.0" cy="4.0" r="4.00"/><circle class="on" cx="323.0" cy="4.0" r="4.00"/><circle class="on" cx="334.0" cy="4.0" r="4.00"/><circle class="on" cx="345.0" cy="4.0" r="4.00"/><circle class="on" cx="356.0" cy="4.0" r="4.00"/><circle class="off" cx="312.0" cy="15.0" r="4.00"/><circle class="off" cx="323.0" cy="15.0" r="4.00"/><circle class="on" cx="334.0" cy="15.0" r="4.00"/><circle class="off" cx="345.0" cy="15.0" r="4.00"/><circle class="off" cx="356.0" cy="15.0" r="4.00"/><circle class="off" cx="312.0" cy="26.0" r="4.00"/><circle class="off" cx="323.0" cy="26.0" r="4.00"/><circle class="on" cx="334.0" cy="26.0" r="4.00"/><circle class="off" cx="345.0" cy="26.0" r="4.00"/><circle class="off" cx="356.0" cy="26.0" r="4.00"/><circle class="off" cx="312.0" cy="37.0" r="4.00"/><circle class="off" cx="323.0" cy="37.0" r="4.00"/><circle class="on" cx="334.0" cy="37.0" r="4.00"/><circle class="off" cx="345.0" cy="37.0" r="4.00"/><circle class="off" cx="356.0" cy="37.0" r="4.00"/><circle class="off" cx="312.0" cy="48.0" r="4.00"/><circle class="off" cx="323.0" cy="48.0" r="4.00"/><circle class="on" cx="334.0" cy="48.0" r="4.00"/><circle class="off" cx="345.0" cy="48.0" r="4.00"/><circle class="off" cx="356.0" cy="48.0" r="4.00"/><circle class="off" cx="312.0" cy="59.0" r="4.00"/><circle class="off" cx="323.0" cy="59.0" r="4.00"/><circle class="on" cx="334.0" cy="59.0" r="4.00"/><circle class="off" cx="345.0" cy="59.0" r="4.00"/><circle class="off" cx="356.0" cy="59.0" r="4.00"/><circle class="on" cx="312.0" cy="70.0" r="4.00"/><circle class="on" cx="323.0" cy="70.0" r="4.00"/><circle class="on" cx="334.0" cy="70.0" r="4.00"/><circle class="on" cx="345.0" cy="70.0" r="4.00"/><circle class="on" cx="356.0" cy="70.0" r="4.00"/><circle class="on" cx="389.0" cy="4.0" r="4.00"/><circle class="off" cx="400.0" cy="4.0" r="4.00"/><circle class="off" cx="411.0" cy="4.0" r="4.00"/><circle class="off" cx="422.0" cy="4.0" r="4.00"/><circle class="on" cx="433.0" cy="4.0" r="4.00"/><circle class="on" cx="389.0" cy="15.0" r="4.00"/><circle class="on" cx="400.0" cy="15.0" r="4.00"/><circle class="off" cx="411.0" cy="15.0" r="4.00"/><circle class="off" cx="422.0" cy="15.0" r="4.00"/><circle class="on" cx="433.0" cy="15.0" r="4.00"/><circle class="on" cx="389.0" cy="26.0" r="4.00"/><circle class="off" cx="400.0" cy="26.0" r="4.00"/><circle class="on" cx="411.0" cy="26.0" r="4.00"/><circle class="off" cx="422.0" cy="26.0" r="4.00"/><circle class="on" cx="433.0" cy="26.0" r="4.00"/><circle class="on" cx="389.0" cy="37.0" r="4.00"/><circle class="off" cx="400.0" cy="37.0" r="4.00"/><circle class="off" cx="411.0" cy="37.0" r="4.00"/><circle class="on" cx="422.0" cy="37.0" r="4.00"/><circle class="on" cx="433.0" cy="37.0" r="4.00"/><circle class="on" cx="389.0" cy="48.0" r="4.00"/><circle class="off" cx="400.0" cy="48.0" r="4.00"/><circle class="off" cx="411.0" cy="48.0" r="4.00"/><circle class="off" cx="422.0" cy="48.0" r="4.00"/><circle class="on" cx="433.0" cy="48.0" r="4.00"/><circle class="on" cx="389.0" cy="59.0" r="4.00"/><circle class="off" cx="400.0" cy="59.0" r="4.00"/><circle class="off" cx="411.0" cy="59.0" r="4.00"/><circle class="off" cx="422.0" cy="59.0" r="4.00"/><circle class="on" cx="433.0" cy="59.0" r="4.00"/><circle class="on" cx="389.0" cy="70.0" r="4.00"/><circle class="off" cx="400.0" cy="70.0" r="4.00"/><circle class="off" cx="411.0" cy="70.0" r="4.00"/><circle class="off" cx="422.0" cy="70.0" r="4.00"/><circle class="on" cx="433.0" cy="70.0" r="4.00"/><circle class="off" cx="466.0" cy="4.0" r="4.00"/><circle class="on" cx="477.0" cy="4.0" r="4.00"/><circle class="on" cx="488.0" cy="4.0" r="4.00"/><circle class="on" cx="499.0" cy="4.0" r="4.00"/><circle class="off" cx="510.0" cy="4.0" r="4.00"/><circle class="on" cx="466.0" cy="15.0" r="4.00"/><circle class="off" cx="477.0" cy="15.0" r="4.00"/><circle class="off" cx="488.0" cy="15.0" r="4.00"/><circle class="off" cx="499.0" cy="15.0" r="4.00"/><circle class="on" cx="510.0" cy="15.0" r="4.00"/><circle class="on" cx="466.0" cy="26.0" r="4.00"/><circle class="off" cx="477.0" cy="26.0" r="4.00"/><circle class="off" cx="488.0" cy="26.0" r="4.00"/><circle class="off" cx="499.0" cy="26.0" r="4.00"/><circle class="on" cx="510.0" cy="26.0" r="4.00"/><circle class="on" cx="466.0" cy="37.0" r="4.00"/><circle class="on" cx="477.0" cy="37.0" r="4.00"/><circle class="on" cx="488.0" cy="37.0" r="4.00"/><circle class="on" cx="499.0" cy="37.0" r="4.00"/><circle class="on" cx="510.0" cy="37.0" r="4.00"/><circle class="on" cx="466.0" cy="48.0" r="4.00"/><circle class="off" cx="477.0" cy="48.0" r="4.00"/><circle class="off" cx="488.0" cy="48.0" r="4.00"/><circle class="off" cx="499.0" cy="48.0" r="4.00"/><circle class="on" cx="510.0" cy="48.0" r="4.00"/><circle class="on" cx="466.0" cy="59.0" r="4.00"/><circle class="off" cx="477.0" cy="59.0" r="4.00"/><circle class="off" cx="488.0" cy="59.0" r="4.00"/><circle class="off" cx="499.0" cy="59.0" r="4.00"/><circle class="on" cx="510.0" cy="59.0" r="4.00"/><circle class="on" cx="466.0" cy="70.0" r="4.00"/><circle class="off" cx="477.0" cy="70.0" r="4.00"/><circle class="off" cx="488.0" cy="70.0" r="4.00"/><circle class="off" cx="499.0" cy="70.0" r="4.00"/><circle class="on" cx="510.0" cy="70.0" r="4.00"/></svg>
+          <svg class="mx mx-sm" viewBox="0 0 698 31" aria-hidden="true"><circle class="off" cx="1.6" cy="1.6" r="1.60"/><circle class="on" cx="6.2" cy="1.6" r="1.60"/><circle class="on" cx="10.8" cy="1.6" r="1.60"/><circle class="on" cx="15.4" cy="1.6" r="1.60"/><circle class="on" cx="20.0" cy="1.6" r="1.60"/><circle class="on" cx="1.6" cy="6.2" r="1.60"/><circle class="off" cx="6.2" cy="6.2" r="1.60"/><circle class="off" cx="10.8" cy="6.2" r="1.60"/><circle class="off" cx="15.4" cy="6.2" r="1.60"/><circle class="off" cx="20.0" cy="6.2" r="1.60"/><circle class="on" cx="1.6" cy="10.8" r="1.60"/><circle class="off" cx="6.2" cy="10.8" r="1.60"/><circle class="off" cx="10.8" cy="10.8" r="1.60"/><circle class="off" cx="15.4" cy="10.8" r="1.60"/><circle class="off" cx="20.0" cy="10.8" r="1.60"/><circle class="off" cx="1.6" cy="15.4" r="1.60"/><circle class="on" cx="6.2" cy="15.4" r="1.60"/><circle class="on" cx="10.8" cy="15.4" r="1.60"/><circle class="on" cx="15.4" cy="15.4" r="1.60"/><circle class="off" cx="20.0" cy="15.4" r="1.60"/><circle class="off" cx="1.6" cy="20.0" r="1.60"/><circle class="off" cx="6.2" cy="20.0" r="1.60"/><circle class="off" cx="10.8" cy="20.0" r="1.60"/><circle class="off" cx="15.4" cy="20.0" r="1.60"/><circle class="on" cx="20.0" cy="20.0" r="1.60"/><circle class="off" cx="1.6" cy="24.6" r="1.60"/><circle class="off" cx="6.2" cy="24.6" r="1.60"/><circle class="off" cx="10.8" cy="24.6" r="1.60"/><circle class="off" cx="15.4" cy="24.6" r="1.60"/><circle class="on" cx="20.0" cy="24.6" r="1.60"/><circle class="on" cx="1.6" cy="29.2" r="1.60"/><circle class="on" cx="6.2" cy="29.2" r="1.60"/><circle class="on" cx="10.8" cy="29.2" r="1.60"/><circle class="on" cx="15.4" cy="29.2" r="1.60"/><circle class="off" cx="20.0" cy="29.2" r="1.60"/><circle class="off" cx="33.8" cy="1.6" r="1.60"/><circle class="on" cx="38.4" cy="1.6" r="1.60"/><circle class="on" cx="43.0" cy="1.6" r="1.60"/><circle class="on" cx="47.6" cy="1.6" r="1.60"/><circle class="off" cx="52.2" cy="1.6" r="1.60"/><circle class="on" cx="33.8" cy="6.2" r="1.60"/><circle class="off" cx="38.4" cy="6.2" r="1.60"/><circle class="off" cx="43.0" cy="6.2" r="1.60"/><circle class="off" cx="47.6" cy="6.2" r="1.60"/><circle class="on" cx="52.2" cy="6.2" r="1.60"/><circle class="on" cx="33.8" cy="10.8" r="1.60"/><circle class="off" cx="38.4" cy="10.8" r="1.60"/><circle class="off" cx="43.0" cy="10.8" r="1.60"/><circle class="off" cx="47.6" cy="10.8" r="1.60"/><circle class="on" cx="52.2" cy="10.8" r="1.60"/><circle class="on" cx="33.8" cy="15.4" r="1.60"/><circle class="off" cx="38.4" cy="15.4" r="1.60"/><circle class="off" cx="43.0" cy="15.4" r="1.60"/><circle class="off" cx="47.6" cy="15.4" r="1.60"/><circle class="on" cx="52.2" cy="15.4" r="1.60"/><circle class="on" cx="33.8" cy="20.0" r="1.60"/><circle class="off" cx="38.4" cy="20.0" r="1.60"/><circle class="off" cx="43.0" cy="20.0" r="1.60"/><circle class="off" cx="47.6" cy="20.0" r="1.60"/><circle class="on" cx="52.2" cy="20.0" r="1.60"/><circle class="on" cx="33.8" cy="24.6" r="1.60"/><circle class="off" cx="38.4" cy="24.6" r="1.60"/><circle class="off" cx="43.0" cy="24.6" r="1.60"/><circle class="off" cx="47.6" cy="24.6" r="1.60"/><circle class="on" cx="52.2" cy="24.6" r="1.60"/><circle class="off" cx="33.8" cy="29.2" r="1.60"/><circle class="on" cx="38.4" cy="29.2" r="1.60"/><circle class="on" cx="43.0" cy="29.2" r="1.60"/><circle class="on" cx="47.6" cy="29.2" r="1.60"/><circle class="off" cx="52.2" cy="29.2" r="1.60"/><circle class="on" cx="66.0" cy="1.6" r="1.60"/><circle class="off" cx="70.6" cy="1.6" r="1.60"/><circle class="off" cx="75.2" cy="1.6" r="1.60"/><circle class="off" cx="79.8" cy="1.6" r="1.60"/><circle class="on" cx="84.4" cy="1.6" r="1.60"/><circle class="on" cx="66.0" cy="6.2" r="1.60"/><circle class="on" cx="70.6" cy="6.2" r="1.60"/><circle class="off" cx="75.2" cy="6.2" r="1.60"/><circle class="off" cx="79.8" cy="6.2" r="1.60"/><circle class="on" cx="84.4" cy="6.2" r="1.60"/><circle class="on" cx="66.0" cy="10.8" r="1.60"/><circle class="off" cx="70.6" cy="10.8" r="1.60"/><circle class="on" cx="75.2" cy="10.8" r="1.60"/><circle class="off" cx="79.8" cy="10.8" r="1.60"/><circle class="on" cx="84.4" cy="10.8" r="1.60"/><circle class="on" cx="66.0" cy="15.4" r="1.60"/><circle class="off" cx="70.6" cy="15.4" r="1.60"/><circle class="off" cx="75.2" cy="15.4" r="1.60"/><circle class="on" cx="79.8" cy="15.4" r="1.60"/><circle class="on" cx="84.4" cy="15.4" r="1.60"/><circle class="on" cx="66.0" cy="20.0" r="1.60"/><circle class="off" cx="70.6" cy="20.0" r="1.60"/><circle class="off" cx="75.2" cy="20.0" r="1.60"/><circle class="off" cx="79.8" cy="20.0" r="1.60"/><circle class="on" cx="84.4" cy="20.0" r="1.60"/><circle class="on" cx="66.0" cy="24.6" r="1.60"/><circle class="off" cx="70.6" cy="24.6" r="1.60"/><circle class="off" cx="75.2" cy="24.6" r="1.60"/><circle class="off" cx="79.8" cy="24.6" r="1.60"/><circle class="on" cx="84.4" cy="24.6" r="1.60"/><circle class="on" cx="66.0" cy="29.2" r="1.60"/><circle class="off" cx="70.6" cy="29.2" r="1.60"/><circle class="off" cx="75.2" cy="29.2" r="1.60"/><circle class="off" cx="79.8" cy="29.2" r="1.60"/><circle class="on" cx="84.4" cy="29.2" r="1.60"/><circle class="off" cx="98.2" cy="1.6" r="1.60"/><circle class="on" cx="102.8" cy="1.6" r="1.60"/><circle class="on" cx="107.4" cy="1.6" r="1.60"/><circle class="on" cx="112.0" cy="1.6" r="1.60"/><circle class="off" cx="116.6" cy="1.6" r="1.60"/><circle class="on" cx="98.2" cy="6.2" r="1.60"/><circle class="off" cx="102.8" cy="6.2" r="1.60"/><circle class="off" cx="107.4" cy="6.2" r="1.60"/><circle class="off" cx="112.0" cy="6.2" r="1.60"/><circle class="on" cx="116.6" cy="6.2" r="1.60"/><circle class="on" cx="98.2" cy="10.8" r="1.60"/><circle class="off" cx="102.8" cy="10.8" r="1.60"/><circle class="off" cx="107.4" cy="10.8" r="1.60"/><circle class="off" cx="112.0" cy="10.8" r="1.60"/><circle class="off" cx="116.6" cy="10.8" r="1.60"/><circle class="on" cx="98.2" cy="15.4" r="1.60"/><circle class="off" cx="102.8" cy="15.4" r="1.60"/><circle class="on" cx="107.4" cy="15.4" r="1.60"/><circle class="on" cx="112.0" cy="15.4" r="1.60"/><circle class="on" cx="116.6" cy="15.4" r="1.60"/><circle class="on" cx="98.2" cy="20.0" r="1.60"/><circle class="off" cx="102.8" cy="20.0" r="1.60"/><circle class="off" cx="107.4" cy="20.0" r="1.60"/><circle class="off" cx="112.0" cy="20.0" r="1.60"/><circle class="on" cx="116.6" cy="20.0" r="1.60"/><circle class="on" cx="98.2" cy="24.6" r="1.60"/><circle class="off" cx="102.8" cy="24.6" r="1.60"/><circle class="off" cx="107.4" cy="24.6" r="1.60"/><circle class="off" cx="112.0" cy="24.6" r="1.60"/><circle class="on" cx="116.6" cy="24.6" r="1.60"/><circle class="off" cx="98.2" cy="29.2" r="1.60"/><circle class="on" cx="102.8" cy="29.2" r="1.60"/><circle class="on" cx="107.4" cy="29.2" r="1.60"/><circle class="on" cx="112.0" cy="29.2" r="1.60"/><circle class="off" cx="116.6" cy="29.2" r="1.60"/><circle class="off" cx="130.4" cy="1.6" r="1.60"/><circle class="off" cx="135.0" cy="1.6" r="1.60"/><circle class="off" cx="139.6" cy="1.6" r="1.60"/><circle class="off" cx="144.2" cy="1.6" r="1.60"/><circle class="off" cx="148.8" cy="1.6" r="1.60"/><circle class="off" cx="130.4" cy="6.2" r="1.60"/><circle class="off" cx="135.0" cy="6.2" r="1.60"/><circle class="off" cx="139.6" cy="6.2" r="1.60"/><circle class="off" cx="144.2" cy="6.2" r="1.60"/><circle class="off" cx="148.8" cy="6.2" r="1.60"/><circle class="off" cx="130.4" cy="10.8" r="1.60"/><circle class="off" cx="135.0" cy="10.8" r="1.60"/><circle class="off" cx="139.6" cy="10.8" r="1.60"/><circle class="off" cx="144.2" cy="10.8" r="1.60"/><circle class="off" cx="148.8" cy="10.8" r="1.60"/><circle class="off" cx="130.4" cy="15.4" r="1.60"/><circle class="off" cx="135.0" cy="15.4" r="1.60"/><circle class="off" cx="139.6" cy="15.4" r="1.60"/><circle class="off" cx="144.2" cy="15.4" r="1.60"/><circle class="off" cx="148.8" cy="15.4" r="1.60"/><circle class="off" cx="130.4" cy="20.0" r="1.60"/><circle class="off" cx="135.0" cy="20.0" r="1.60"/><circle class="off" cx="139.6" cy="20.0" r="1.60"/><circle class="off" cx="144.2" cy="20.0" r="1.60"/><circle class="off" cx="148.8" cy="20.0" r="1.60"/><circle class="off" cx="130.4" cy="24.6" r="1.60"/><circle class="off" cx="135.0" cy="24.6" r="1.60"/><circle class="off" cx="139.6" cy="24.6" r="1.60"/><circle class="off" cx="144.2" cy="24.6" r="1.60"/><circle class="off" cx="148.8" cy="24.6" r="1.60"/><circle class="off" cx="130.4" cy="29.2" r="1.60"/><circle class="off" cx="135.0" cy="29.2" r="1.60"/><circle class="off" cx="139.6" cy="29.2" r="1.60"/><circle class="off" cx="144.2" cy="29.2" r="1.60"/><circle class="off" cx="148.8" cy="29.2" r="1.60"/><circle class="off" cx="162.6" cy="1.6" r="1.60"/><circle class="on" cx="167.2" cy="1.6" r="1.60"/><circle class="on" cx="171.8" cy="1.6" r="1.60"/><circle class="on" cx="176.4" cy="1.6" r="1.60"/><circle class="off" cx="181.0" cy="1.6" r="1.60"/><circle class="on" cx="162.6" cy="6.2" r="1.60"/><circle class="off" cx="167.2" cy="6.2" r="1.60"/><circle class="off" cx="171.8" cy="6.2" r="1.60"/><circle class="off" cx="176.4" cy="6.2" r="1.60"/><circle class="on" cx="181.0" cy="6.2" r="1.60"/><circle class="on" cx="162.6" cy="10.8" r="1.60"/><circle class="off" cx="167.2" cy="10.8" r="1.60"/><circle class="off" cx="171.8" cy="10.8" r="1.60"/><circle class="off" cx="176.4" cy="10.8" r="1.60"/><circle class="on" cx="181.0" cy="10.8" r="1.60"/><circle class="on" cx="162.6" cy="15.4" r="1.60"/><circle class="off" cx="167.2" cy="15.4" r="1.60"/><circle class="off" cx="171.8" cy="15.4" r="1.60"/><circle class="off" cx="176.4" cy="15.4" r="1.60"/><circle class="on" cx="181.0" cy="15.4" r="1.60"/><circle class="on" cx="162.6" cy="20.0" r="1.60"/><circle class="off" cx="167.2" cy="20.0" r="1.60"/><circle class="off" cx="171.8" cy="20.0" r="1.60"/><circle class="off" cx="176.4" cy="20.0" r="1.60"/><circle class="on" cx="181.0" cy="20.0" r="1.60"/><circle class="on" cx="162.6" cy="24.6" r="1.60"/><circle class="off" cx="167.2" cy="24.6" r="1.60"/><circle class="off" cx="171.8" cy="24.6" r="1.60"/><circle class="off" cx="176.4" cy="24.6" r="1.60"/><circle class="on" cx="181.0" cy="24.6" r="1.60"/><circle class="off" cx="162.6" cy="29.2" r="1.60"/><circle class="on" cx="167.2" cy="29.2" r="1.60"/><circle class="on" cx="171.8" cy="29.2" r="1.60"/><circle class="on" cx="176.4" cy="29.2" r="1.60"/><circle class="off" cx="181.0" cy="29.2" r="1.60"/><circle class="on" cx="194.8" cy="1.6" r="1.60"/><circle class="on" cx="199.4" cy="1.6" r="1.60"/><circle class="on" cx="204.0" cy="1.6" r="1.60"/><circle class="on" cx="208.6" cy="1.6" r="1.60"/><circle class="on" cx="213.2" cy="1.6" r="1.60"/><circle class="on" cx="194.8" cy="6.2" r="1.60"/><circle class="off" cx="199.4" cy="6.2" r="1.60"/><circle class="off" cx="204.0" cy="6.2" r="1.60"/><circle class="off" cx="208.6" cy="6.2" r="1.60"/><circle class="off" cx="213.2" cy="6.2" r="1.60"/><circle class="on" cx="194.8" cy="10.8" r="1.60"/><circle class="off" cx="199.4" cy="10.8" r="1.60"/><circle class="off" cx="204.0" cy="10.8" r="1.60"/><circle class="off" cx="208.6" cy="10.8" r="1.60"/><circle class="off" cx="213.2" cy="10.8" r="1.60"/><circle class="on" cx="194.8" cy="15.4" r="1.60"/><circle class="on" cx="199.4" cy="15.4" r="1.60"/><circle class="on" cx="204.0" cy="15.4" r="1.60"/><circle class="on" cx="208.6" cy="15.4" r="1.60"/><circle class="off" cx="213.2" cy="15.4" r="1.60"/><circle class="on" cx="194.8" cy="20.0" r="1.60"/><circle class="off" cx="199.4" cy="20.0" r="1.60"/><circle class="off" cx="204.0" cy="20.0" r="1.60"/><circle class="off" cx="208.6" cy="20.0" r="1.60"/><circle class="off" cx="213.2" cy="20.0" r="1.60"/><circle class="on" cx="194.8" cy="24.6" r="1.60"/><circle class="off" cx="199.4" cy="24.6" r="1.60"/><circle class="off" cx="204.0" cy="24.6" r="1.60"/><circle class="off" cx="208.6" cy="24.6" r="1.60"/><circle class="off" cx="213.2" cy="24.6" r="1.60"/><circle class="on" cx="194.8" cy="29.2" r="1.60"/><circle class="off" cx="199.4" cy="29.2" r="1.60"/><circle class="off" cx="204.0" cy="29.2" r="1.60"/><circle class="off" cx="208.6" cy="29.2" r="1.60"/><circle class="off" cx="213.2" cy="29.2" r="1.60"/><circle class="off" cx="227.0" cy="1.6" r="1.60"/><circle class="off" cx="231.6" cy="1.6" r="1.60"/><circle class="off" cx="236.2" cy="1.6" r="1.60"/><circle class="off" cx="240.8" cy="1.6" r="1.60"/><circle class="off" cx="245.4" cy="1.6" r="1.60"/><circle class="off" cx="227.0" cy="6.2" r="1.60"/><circle class="off" cx="231.6" cy="6.2" r="1.60"/><circle class="off" cx="236.2" cy="6.2" r="1.60"/><circle class="off" cx="240.8" cy="6.2" r="1.60"/><circle class="off" cx="245.4" cy="6.2" r="1.60"/><circle class="off" cx="227.0" cy="10.8" r="1.60"/><circle class="off" cx="231.6" cy="10.8" r="1.60"/><circle class="off" cx="236.2" cy="10.8" r="1.60"/><circle class="off" cx="240.8" cy="10.8" r="1.60"/><circle class="off" cx="245.4" cy="10.8" r="1.60"/><circle class="off" cx="227.0" cy="15.4" r="1.60"/><circle class="off" cx="231.6" cy="15.4" r="1.60"/><circle class="off" cx="236.2" cy="15.4" r="1.60"/><circle class="off" cx="240.8" cy="15.4" r="1.60"/><circle class="off" cx="245.4" cy="15.4" r="1.60"/><circle class="off" cx="227.0" cy="20.0" r="1.60"/><circle class="off" cx="231.6" cy="20.0" r="1.60"/><circle class="off" cx="236.2" cy="20.0" r="1.60"/><circle class="off" cx="240.8" cy="20.0" r="1.60"/><circle class="off" cx="245.4" cy="20.0" r="1.60"/><circle class="off" cx="227.0" cy="24.6" r="1.60"/><circle class="off" cx="231.6" cy="24.6" r="1.60"/><circle class="off" cx="236.2" cy="24.6" r="1.60"/><circle class="off" cx="240.8" cy="24.6" r="1.60"/><circle class="off" cx="245.4" cy="24.6" r="1.60"/><circle class="off" cx="227.0" cy="29.2" r="1.60"/><circle class="off" cx="231.6" cy="29.2" r="1.60"/><circle class="off" cx="236.2" cy="29.2" r="1.60"/><circle class="off" cx="240.8" cy="29.2" r="1.60"/><circle class="off" cx="245.4" cy="29.2" r="1.60"/><circle class="off" cx="259.2" cy="1.6" r="1.60"/><circle class="on" cx="263.8" cy="1.6" r="1.60"/><circle class="on" cx="268.4" cy="1.6" r="1.60"/><circle class="on" cx="273.0" cy="1.6" r="1.60"/><circle class="off" cx="277.6" cy="1.6" r="1.60"/><circle class="on" cx="259.2" cy="6.2" r="1.60"/><circle class="off" cx="263.8" cy="6.2" r="1.60"/><circle class="off" cx="268.4" cy="6.2" r="1.60"/><circle class="off" cx="273.0" cy="6.2" r="1.60"/><circle class="on" cx="277.6" cy="6.2" r="1.60"/><circle class="on" cx="259.2" cy="10.8" r="1.60"/><circle class="off" cx="263.8" cy="10.8" r="1.60"/><circle class="off" cx="268.4" cy="10.8" r="1.60"/><circle class="off" cx="273.0" cy="10.8" r="1.60"/><circle class="on" cx="277.6" cy="10.8" r="1.60"/><circle class="on" cx="259.2" cy="15.4" r="1.60"/><circle class="on" cx="263.8" cy="15.4" r="1.60"/><circle class="on" cx="268.4" cy="15.4" r="1.60"/><circle class="on" cx="273.0" cy="15.4" r="1.60"/><circle class="on" cx="277.6" cy="15.4" r="1.60"/><circle class="on" cx="259.2" cy="20.0" r="1.60"/><circle class="off" cx="263.8" cy="20.0" r="1.60"/><circle class="off" cx="268.4" cy="20.0" r="1.60"/><circle class="off" cx="273.0" cy="20.0" r="1.60"/><circle class="on" cx="277.6" cy="20.0" r="1.60"/><circle class="on" cx="259.2" cy="24.6" r="1.60"/><circle class="off" cx="263.8" cy="24.6" r="1.60"/><circle class="off" cx="268.4" cy="24.6" r="1.60"/><circle class="off" cx="273.0" cy="24.6" r="1.60"/><circle class="on" cx="277.6" cy="24.6" r="1.60"/><circle class="on" cx="259.2" cy="29.2" r="1.60"/><circle class="off" cx="263.8" cy="29.2" r="1.60"/><circle class="off" cx="268.4" cy="29.2" r="1.60"/><circle class="off" cx="273.0" cy="29.2" r="1.60"/><circle class="on" cx="277.6" cy="29.2" r="1.60"/><circle class="off" cx="291.4" cy="1.6" r="1.60"/><circle class="off" cx="296.0" cy="1.6" r="1.60"/><circle class="off" cx="300.6" cy="1.6" r="1.60"/><circle class="off" cx="305.2" cy="1.6" r="1.60"/><circle class="off" cx="309.8" cy="1.6" r="1.60"/><circle class="off" cx="291.4" cy="6.2" r="1.60"/><circle class="off" cx="296.0" cy="6.2" r="1.60"/><circle class="off" cx="300.6" cy="6.2" r="1.60"/><circle class="off" cx="305.2" cy="6.2" r="1.60"/><circle class="off" cx="309.8" cy="6.2" r="1.60"/><circle class="off" cx="291.4" cy="10.8" r="1.60"/><circle class="off" cx="296.0" cy="10.8" r="1.60"/><circle class="off" cx="300.6" cy="10.8" r="1.60"/><circle class="off" cx="305.2" cy="10.8" r="1.60"/><circle class="off" cx="309.8" cy="10.8" r="1.60"/><circle class="off" cx="291.4" cy="15.4" r="1.60"/><circle class="off" cx="296.0" cy="15.4" r="1.60"/><circle class="off" cx="300.6" cy="15.4" r="1.60"/><circle class="off" cx="305.2" cy="15.4" r="1.60"/><circle class="off" cx="309.8" cy="15.4" r="1.60"/><circle class="off" cx="291.4" cy="20.0" r="1.60"/><circle class="off" cx="296.0" cy="20.0" r="1.60"/><circle class="off" cx="300.6" cy="20.0" r="1.60"/><circle class="off" cx="305.2" cy="20.0" r="1.60"/><circle class="off" cx="309.8" cy="20.0" r="1.60"/><circle class="off" cx="291.4" cy="24.6" r="1.60"/><circle class="off" cx="296.0" cy="24.6" r="1.60"/><circle class="off" cx="300.6" cy="24.6" r="1.60"/><circle class="off" cx="305.2" cy="24.6" r="1.60"/><circle class="off" cx="309.8" cy="24.6" r="1.60"/><circle class="off" cx="291.4" cy="29.2" r="1.60"/><circle class="off" cx="296.0" cy="29.2" r="1.60"/><circle class="off" cx="300.6" cy="29.2" r="1.60"/><circle class="off" cx="305.2" cy="29.2" r="1.60"/><circle class="off" cx="309.8" cy="29.2" r="1.60"/><circle class="on" cx="323.6" cy="1.6" r="1.60"/><circle class="off" cx="328.2" cy="1.6" r="1.60"/><circle class="off" cx="332.8" cy="1.6" r="1.60"/><circle class="off" cx="337.4" cy="1.6" r="1.60"/><circle class="on" cx="342.0" cy="1.6" r="1.60"/><circle class="on" cx="323.6" cy="6.2" r="1.60"/><circle class="on" cx="328.2" cy="6.2" r="1.60"/><circle class="off" cx="332.8" cy="6.2" r="1.60"/><circle class="off" cx="337.4" cy="6.2" r="1.60"/><circle class="on" cx="342.0" cy="6.2" r="1.60"/><circle class="on" cx="323.6" cy="10.8" r="1.60"/><circle class="off" cx="328.2" cy="10.8" r="1.60"/><circle class="on" cx="332.8" cy="10.8" r="1.60"/><circle class="off" cx="337.4" cy="10.8" r="1.60"/><circle class="on" cx="342.0" cy="10.8" r="1.60"/><circle class="on" cx="323.6" cy="15.4" r="1.60"/><circle class="off" cx="328.2" cy="15.4" r="1.60"/><circle class="off" cx="332.8" cy="15.4" r="1.60"/><circle class="on" cx="337.4" cy="15.4" r="1.60"/><circle class="on" cx="342.0" cy="15.4" r="1.60"/><circle class="on" cx="323.6" cy="20.0" r="1.60"/><circle class="off" cx="328.2" cy="20.0" r="1.60"/><circle class="off" cx="332.8" cy="20.0" r="1.60"/><circle class="off" cx="337.4" cy="20.0" r="1.60"/><circle class="on" cx="342.0" cy="20.0" r="1.60"/><circle class="on" cx="323.6" cy="24.6" r="1.60"/><circle class="off" cx="328.2" cy="24.6" r="1.60"/><circle class="off" cx="332.8" cy="24.6" r="1.60"/><circle class="off" cx="337.4" cy="24.6" r="1.60"/><circle class="on" cx="342.0" cy="24.6" r="1.60"/><circle class="on" cx="323.6" cy="29.2" r="1.60"/><circle class="off" cx="328.2" cy="29.2" r="1.60"/><circle class="off" cx="332.8" cy="29.2" r="1.60"/><circle class="off" cx="337.4" cy="29.2" r="1.60"/><circle class="on" cx="342.0" cy="29.2" r="1.60"/><circle class="on" cx="355.8" cy="1.6" r="1.60"/><circle class="on" cx="360.4" cy="1.6" r="1.60"/><circle class="on" cx="365.0" cy="1.6" r="1.60"/><circle class="on" cx="369.6" cy="1.6" r="1.60"/><circle class="on" cx="374.2" cy="1.6" r="1.60"/><circle class="on" cx="355.8" cy="6.2" r="1.60"/><circle class="off" cx="360.4" cy="6.2" r="1.60"/><circle class="off" cx="365.0" cy="6.2" r="1.60"/><circle class="off" cx="369.6" cy="6.2" r="1.60"/><circle class="off" cx="374.2" cy="6.2" r="1.60"/><circle class="on" cx="355.8" cy="10.8" r="1.60"/><circle class="off" cx="360.4" cy="10.8" r="1.60"/><circle class="off" cx="365.0" cy="10.8" r="1.60"/><circle class="off" cx="369.6" cy="10.8" r="1.60"/><circle class="off" cx="374.2" cy="10.8" r="1.60"/><circle class="on" cx="355.8" cy="15.4" r="1.60"/><circle class="on" cx="360.4" cy="15.4" r="1.60"/><circle class="on" cx="365.0" cy="15.4" r="1.60"/><circle class="on" cx="369.6" cy="15.4" r="1.60"/><circle class="off" cx="374.2" cy="15.4" r="1.60"/><circle class="on" cx="355.8" cy="20.0" r="1.60"/><circle class="off" cx="360.4" cy="20.0" r="1.60"/><circle class="off" cx="365.0" cy="20.0" r="1.60"/><circle class="off" cx="369.6" cy="20.0" r="1.60"/><circle class="off" cx="374.2" cy="20.0" r="1.60"/><circle class="on" cx="355.8" cy="24.6" r="1.60"/><circle class="off" cx="360.4" cy="24.6" r="1.60"/><circle class="off" cx="365.0" cy="24.6" r="1.60"/><circle class="off" cx="369.6" cy="24.6" r="1.60"/><circle class="off" cx="374.2" cy="24.6" r="1.60"/><circle class="on" cx="355.8" cy="29.2" r="1.60"/><circle class="on" cx="360.4" cy="29.2" r="1.60"/><circle class="on" cx="365.0" cy="29.2" r="1.60"/><circle class="on" cx="369.6" cy="29.2" r="1.60"/><circle class="on" cx="374.2" cy="29.2" r="1.60"/><circle class="on" cx="388.0" cy="1.6" r="1.60"/><circle class="off" cx="392.6" cy="1.6" r="1.60"/><circle class="off" cx="397.2" cy="1.6" r="1.60"/><circle class="off" cx="401.8" cy="1.6" r="1.60"/><circle class="on" cx="406.4" cy="1.6" r="1.60"/><circle class="on" cx="388.0" cy="6.2" r="1.60"/><circle class="off" cx="392.6" cy="6.2" r="1.60"/><circle class="off" cx="397.2" cy="6.2" r="1.60"/><circle class="off" cx="401.8" cy="6.2" r="1.60"/><circle class="on" cx="406.4" cy="6.2" r="1.60"/><circle class="on" cx="388.0" cy="10.8" r="1.60"/><circle class="off" cx="392.6" cy="10.8" r="1.60"/><circle class="off" cx="397.2" cy="10.8" r="1.60"/><circle class="off" cx="401.8" cy="10.8" r="1.60"/><circle class="on" cx="406.4" cy="10.8" r="1.60"/><circle class="on" cx="388.0" cy="15.4" r="1.60"/><circle class="off" cx="392.6" cy="15.4" r="1.60"/><circle class="on" cx="397.2" cy="15.4" r="1.60"/><circle class="off" cx="401.8" cy="15.4" r="1.60"/><circle class="on" cx="406.4" cy="15.4" r="1.60"/><circle class="on" cx="388.0" cy="20.0" r="1.60"/><circle class="off" cx="392.6" cy="20.0" r="1.60"/><circle class="on" cx="397.2" cy="20.0" r="1.60"/><circle class="off" cx="401.8" cy="20.0" r="1.60"/><circle class="on" cx="406.4" cy="20.0" r="1.60"/><circle class="on" cx="388.0" cy="24.6" r="1.60"/><circle class="on" cx="392.6" cy="24.6" r="1.60"/><circle class="off" cx="397.2" cy="24.6" r="1.60"/><circle class="on" cx="401.8" cy="24.6" r="1.60"/><circle class="on" cx="406.4" cy="24.6" r="1.60"/><circle class="on" cx="388.0" cy="29.2" r="1.60"/><circle class="off" cx="392.6" cy="29.2" r="1.60"/><circle class="off" cx="397.2" cy="29.2" r="1.60"/><circle class="off" cx="401.8" cy="29.2" r="1.60"/><circle class="on" cx="406.4" cy="29.2" r="1.60"/><circle class="off" cx="420.2" cy="1.6" r="1.60"/><circle class="off" cx="424.8" cy="1.6" r="1.60"/><circle class="off" cx="429.4" cy="1.6" r="1.60"/><circle class="off" cx="434.0" cy="1.6" r="1.60"/><circle class="off" cx="438.6" cy="1.6" r="1.60"/><circle class="off" cx="420.2" cy="6.2" r="1.60"/><circle class="off" cx="424.8" cy="6.2" r="1.60"/><circle class="off" cx="429.4" cy="6.2" r="1.60"/><circle class="off" cx="434.0" cy="6.2" r="1.60"/><circle class="off" cx="438.6" cy="6.2" r="1.60"/><circle class="off" cx="420.2" cy="10.8" r="1.60"/><circle class="off" cx="424.8" cy="10.8" r="1.60"/><circle class="off" cx="429.4" cy="10.8" r="1.60"/><circle class="off" cx="434.0" cy="10.8" r="1.60"/><circle class="off" cx="438.6" cy="10.8" r="1.60"/><circle class="off" cx="420.2" cy="15.4" r="1.60"/><circle class="off" cx="424.8" cy="15.4" r="1.60"/><circle class="off" cx="429.4" cy="15.4" r="1.60"/><circle class="off" cx="434.0" cy="15.4" r="1.60"/><circle class="off" cx="438.6" cy="15.4" r="1.60"/><circle class="off" cx="420.2" cy="20.0" r="1.60"/><circle class="off" cx="424.8" cy="20.0" r="1.60"/><circle class="off" cx="429.4" cy="20.0" r="1.60"/><circle class="off" cx="434.0" cy="20.0" r="1.60"/><circle class="off" cx="438.6" cy="20.0" r="1.60"/><circle class="off" cx="420.2" cy="24.6" r="1.60"/><circle class="off" cx="424.8" cy="24.6" r="1.60"/><circle class="off" cx="429.4" cy="24.6" r="1.60"/><circle class="off" cx="434.0" cy="24.6" r="1.60"/><circle class="off" cx="438.6" cy="24.6" r="1.60"/><circle class="off" cx="420.2" cy="29.2" r="1.60"/><circle class="off" cx="424.8" cy="29.2" r="1.60"/><circle class="off" cx="429.4" cy="29.2" r="1.60"/><circle class="off" cx="434.0" cy="29.2" r="1.60"/><circle class="off" cx="438.6" cy="29.2" r="1.60"/><circle class="on" cx="452.4" cy="1.6" r="1.60"/><circle class="on" cx="457.0" cy="1.6" r="1.60"/><circle class="on" cx="461.6" cy="1.6" r="1.60"/><circle class="on" cx="466.2" cy="1.6" r="1.60"/><circle class="on" cx="470.8" cy="1.6" r="1.60"/><circle class="off" cx="452.4" cy="6.2" r="1.60"/><circle class="off" cx="457.0" cy="6.2" r="1.60"/><circle class="on" cx="461.6" cy="6.2" r="1.60"/><circle class="off" cx="466.2" cy="6.2" r="1.60"/><circle class="off" cx="470.8" cy="6.2" r="1.60"/><circle class="off" cx="452.4" cy="10.8" r="1.60"/><circle class="off" cx="457.0" cy="10.8" r="1.60"/><circle class="on" cx="461.6" cy="10.8" r="1.60"/><circle class="off" cx="466.2" cy="10.8" r="1.60"/><circle class="off" cx="470.8" cy="10.8" r="1.60"/><circle class="off" cx="452.4" cy="15.4" r="1.60"/><circle class="off" cx="457.0" cy="15.4" r="1.60"/><circle class="on" cx="461.6" cy="15.4" r="1.60"/><circle class="off" cx="466.2" cy="15.4" r="1.60"/><circle class="off" cx="470.8" cy="15.4" r="1.60"/><circle class="off" cx="452.4" cy="20.0" r="1.60"/><circle class="off" cx="457.0" cy="20.0" r="1.60"/><circle class="on" cx="461.6" cy="20.0" r="1.60"/><circle class="off" cx="466.2" cy="20.0" r="1.60"/><circle class="off" cx="470.8" cy="20.0" r="1.60"/><circle class="off" cx="452.4" cy="24.6" r="1.60"/><circle class="off" cx="457.0" cy="24.6" r="1.60"/><circle class="on" cx="461.6" cy="24.6" r="1.60"/><circle class="off" cx="466.2" cy="24.6" r="1.60"/><circle class="off" cx="470.8" cy="24.6" r="1.60"/><circle class="off" cx="452.4" cy="29.2" r="1.60"/><circle class="off" cx="457.0" cy="29.2" r="1.60"/><circle class="on" cx="461.6" cy="29.2" r="1.60"/><circle class="off" cx="466.2" cy="29.2" r="1.60"/><circle class="off" cx="470.8" cy="29.2" r="1.60"/><circle class="on" cx="484.6" cy="1.6" r="1.60"/><circle class="on" cx="489.2" cy="1.6" r="1.60"/><circle class="on" cx="493.8" cy="1.6" r="1.60"/><circle class="on" cx="498.4" cy="1.6" r="1.60"/><circle class="on" cx="503.0" cy="1.6" r="1.60"/><circle class="on" cx="484.6" cy="6.2" r="1.60"/><circle class="off" cx="489.2" cy="6.2" r="1.60"/><circle class="off" cx="493.8" cy="6.2" r="1.60"/><circle class="off" cx="498.4" cy="6.2" r="1.60"/><circle class="off" cx="503.0" cy="6.2" r="1.60"/><circle class="on" cx="484.6" cy="10.8" r="1.60"/><circle class="off" cx="489.2" cy="10.8" r="1.60"/><circle class="off" cx="493.8" cy="10.8" r="1.60"/><circle class="off" cx="498.4" cy="10.8" r="1.60"/><circle class="off" cx="503.0" cy="10.8" r="1.60"/><circle class="on" cx="484.6" cy="15.4" r="1.60"/><circle class="on" cx="489.2" cy="15.4" r="1.60"/><circle class="on" cx="493.8" cy="15.4" r="1.60"/><circle class="on" cx="498.4" cy="15.4" r="1.60"/><circle class="off" cx="503.0" cy="15.4" r="1.60"/><circle class="on" cx="484.6" cy="20.0" r="1.60"/><circle class="off" cx="489.2" cy="20.0" r="1.60"/><circle class="off" cx="493.8" cy="20.0" r="1.60"/><circle class="off" cx="498.4" cy="20.0" r="1.60"/><circle class="off" cx="503.0" cy="20.0" r="1.60"/><circle class="on" cx="484.6" cy="24.6" r="1.60"/><circle class="off" cx="489.2" cy="24.6" r="1.60"/><circle class="off" cx="493.8" cy="24.6" r="1.60"/><circle class="off" cx="498.4" cy="24.6" r="1.60"/><circle class="off" cx="503.0" cy="24.6" r="1.60"/><circle class="on" cx="484.6" cy="29.2" r="1.60"/><circle class="on" cx="489.2" cy="29.2" r="1.60"/><circle class="on" cx="493.8" cy="29.2" r="1.60"/><circle class="on" cx="498.4" cy="29.2" r="1.60"/><circle class="on" cx="503.0" cy="29.2" r="1.60"/><circle class="on" cx="516.8" cy="1.6" r="1.60"/><circle class="on" cx="521.4" cy="1.6" r="1.60"/><circle class="on" cx="526.0" cy="1.6" r="1.60"/><circle class="on" cx="530.6" cy="1.6" r="1.60"/><circle class="off" cx="535.2" cy="1.6" r="1.60"/><circle class="on" cx="516.8" cy="6.2" r="1.60"/><circle class="off" cx="521.4" cy="6.2" r="1.60"/><circle class="off" cx="526.0" cy="6.2" r="1.60"/><circle class="off" cx="530.6" cy="6.2" r="1.60"/><circle class="on" cx="535.2" cy="6.2" r="1.60"/><circle class="on" cx="516.8" cy="10.8" r="1.60"/><circle class="off" cx="521.4" cy="10.8" r="1.60"/><circle class="off" cx="526.0" cy="10.8" r="1.60"/><circle class="off" cx="530.6" cy="10.8" r="1.60"/><circle class="on" cx="535.2" cy="10.8" r="1.60"/><circle class="on" cx="516.8" cy="15.4" r="1.60"/><circle class="on" cx="521.4" cy="15.4" r="1.60"/><circle class="on" cx="526.0" cy="15.4" r="1.60"/><circle class="on" cx="530.6" cy="15.4" r="1.60"/><circle class="off" cx="535.2" cy="15.4" r="1.60"/><circle class="on" cx="516.8" cy="20.0" r="1.60"/><circle class="off" cx="521.4" cy="20.0" r="1.60"/><circle class="on" cx="526.0" cy="20.0" r="1.60"/><circle class="off" cx="530.6" cy="20.0" r="1.60"/><circle class="off" cx="535.2" cy="20.0" r="1.60"/><circle class="on" cx="516.8" cy="24.6" r="1.60"/><circle class="off" cx="521.4" cy="24.6" r="1.60"/><circle class="off" cx="526.0" cy="24.6" r="1.60"/><circle class="on" cx="530.6" cy="24.6" r="1.60"/><circle class="off" cx="535.2" cy="24.6" r="1.60"/><circle class="on" cx="516.8" cy="29.2" r="1.60"/><circle class="off" cx="521.4" cy="29.2" r="1.60"/><circle class="off" cx="526.0" cy="29.2" r="1.60"/><circle class="off" cx="530.6" cy="29.2" r="1.60"/><circle class="on" cx="535.2" cy="29.2" r="1.60"/><circle class="on" cx="549.0" cy="1.6" r="1.60"/><circle class="off" cx="553.6" cy="1.6" r="1.60"/><circle class="off" cx="558.2" cy="1.6" r="1.60"/><circle class="off" cx="562.8" cy="1.6" r="1.60"/><circle class="on" cx="567.4" cy="1.6" r="1.60"/><circle class="on" cx="549.0" cy="6.2" r="1.60"/><circle class="on" cx="553.6" cy="6.2" r="1.60"/><circle class="off" cx="558.2" cy="6.2" r="1.60"/><circle class="on" cx="562.8" cy="6.2" r="1.60"/><circle class="on" cx="567.4" cy="6.2" r="1.60"/><circle class="on" cx="549.0" cy="10.8" r="1.60"/><circle class="off" cx="553.6" cy="10.8" r="1.60"/><circle class="on" cx="558.2" cy="10.8" r="1.60"/><circle class="off" cx="562.8" cy="10.8" r="1.60"/><circle class="on" cx="567.4" cy="10.8" r="1.60"/><circle class="on" cx="549.0" cy="15.4" r="1.60"/><circle class="off" cx="553.6" cy="15.4" r="1.60"/><circle class="on" cx="558.2" cy="15.4" r="1.60"/><circle class="off" cx="562.8" cy="15.4" r="1.60"/><circle class="on" cx="567.4" cy="15.4" r="1.60"/><circle class="on" cx="549.0" cy="20.0" r="1.60"/><circle class="off" cx="553.6" cy="20.0" r="1.60"/><circle class="off" cx="558.2" cy="20.0" r="1.60"/><circle class="off" cx="562.8" cy="20.0" r="1.60"/><circle class="on" cx="567.4" cy="20.0" r="1.60"/><circle class="on" cx="549.0" cy="24.6" r="1.60"/><circle class="off" cx="553.6" cy="24.6" r="1.60"/><circle class="off" cx="558.2" cy="24.6" r="1.60"/><circle class="off" cx="562.8" cy="24.6" r="1.60"/><circle class="on" cx="567.4" cy="24.6" r="1.60"/><circle class="on" cx="549.0" cy="29.2" r="1.60"/><circle class="off" cx="553.6" cy="29.2" r="1.60"/><circle class="off" cx="558.2" cy="29.2" r="1.60"/><circle class="off" cx="562.8" cy="29.2" r="1.60"/><circle class="on" cx="567.4" cy="29.2" r="1.60"/><circle class="on" cx="581.2" cy="1.6" r="1.60"/><circle class="on" cx="585.8" cy="1.6" r="1.60"/><circle class="on" cx="590.4" cy="1.6" r="1.60"/><circle class="on" cx="595.0" cy="1.6" r="1.60"/><circle class="on" cx="599.6" cy="1.6" r="1.60"/><circle class="off" cx="581.2" cy="6.2" r="1.60"/><circle class="off" cx="585.8" cy="6.2" r="1.60"/><circle class="on" cx="590.4" cy="6.2" r="1.60"/><circle class="off" cx="595.0" cy="6.2" r="1.60"/><circle class="off" cx="599.6" cy="6.2" r="1.60"/><circle class="off" cx="581.2" cy="10.8" r="1.60"/><circle class="off" cx="585.8" cy="10.8" r="1.60"/><circle class="on" cx="590.4" cy="10.8" r="1.60"/><circle class="off" cx="595.0" cy="10.8" r="1.60"/><circle class="off" cx="599.6" cy="10.8" r="1.60"/><circle class="off" cx="581.2" cy="15.4" r="1.60"/><circle class="off" cx="585.8" cy="15.4" r="1.60"/><circle class="on" cx="590.4" cy="15.4" r="1.60"/><circle class="off" cx="595.0" cy="15.4" r="1.60"/><circle class="off" cx="599.6" cy="15.4" r="1.60"/><circle class="off" cx="581.2" cy="20.0" r="1.60"/><circle class="off" cx="585.8" cy="20.0" r="1.60"/><circle class="on" cx="590.4" cy="20.0" r="1.60"/><circle class="off" cx="595.0" cy="20.0" r="1.60"/><circle class="off" cx="599.6" cy="20.0" r="1.60"/><circle class="off" cx="581.2" cy="24.6" r="1.60"/><circle class="off" cx="585.8" cy="24.6" r="1.60"/><circle class="on" cx="590.4" cy="24.6" r="1.60"/><circle class="off" cx="595.0" cy="24.6" r="1.60"/><circle class="off" cx="599.6" cy="24.6" r="1.60"/><circle class="on" cx="581.2" cy="29.2" r="1.60"/><circle class="on" cx="585.8" cy="29.2" r="1.60"/><circle class="on" cx="590.4" cy="29.2" r="1.60"/><circle class="on" cx="595.0" cy="29.2" r="1.60"/><circle class="on" cx="599.6" cy="29.2" r="1.60"/><circle class="on" cx="613.4" cy="1.6" r="1.60"/><circle class="off" cx="618.0" cy="1.6" r="1.60"/><circle class="off" cx="622.6" cy="1.6" r="1.60"/><circle class="off" cx="627.2" cy="1.6" r="1.60"/><circle class="on" cx="631.8" cy="1.6" r="1.60"/><circle class="on" cx="613.4" cy="6.2" r="1.60"/><circle class="on" cx="618.0" cy="6.2" r="1.60"/><circle class="off" cx="622.6" cy="6.2" r="1.60"/><circle class="off" cx="627.2" cy="6.2" r="1.60"/><circle class="on" cx="631.8" cy="6.2" r="1.60"/><circle class="on" cx="613.4" cy="10.8" r="1.60"/><circle class="off" cx="618.0" cy="10.8" r="1.60"/><circle class="on" cx="622.6" cy="10.8" r="1.60"/><circle class="off" cx="627.2" cy="10.8" r="1.60"/><circle class="on" cx="631.8" cy="10.8" r="1.60"/><circle class="on" cx="613.4" cy="15.4" r="1.60"/><circle class="off" cx="618.0" cy="15.4" r="1.60"/><circle class="off" cx="622.6" cy="15.4" r="1.60"/><circle class="on" cx="627.2" cy="15.4" r="1.60"/><circle class="on" cx="631.8" cy="15.4" r="1.60"/><circle class="on" cx="613.4" cy="20.0" r="1.60"/><circle class="off" cx="618.0" cy="20.0" r="1.60"/><circle class="off" cx="622.6" cy="20.0" r="1.60"/><circle class="off" cx="627.2" cy="20.0" r="1.60"/><circle class="on" cx="631.8" cy="20.0" r="1.60"/><circle class="on" cx="613.4" cy="24.6" r="1.60"/><circle class="off" cx="618.0" cy="24.6" r="1.60"/><circle class="off" cx="622.6" cy="24.6" r="1.60"/><circle class="off" cx="627.2" cy="24.6" r="1.60"/><circle class="on" cx="631.8" cy="24.6" r="1.60"/><circle class="on" cx="613.4" cy="29.2" r="1.60"/><circle class="off" cx="618.0" cy="29.2" r="1.60"/><circle class="off" cx="622.6" cy="29.2" r="1.60"/><circle class="off" cx="627.2" cy="29.2" r="1.60"/><circle class="on" cx="631.8" cy="29.2" r="1.60"/><circle class="off" cx="645.6" cy="1.6" r="1.60"/><circle class="on" cx="650.2" cy="1.6" r="1.60"/><circle class="on" cx="654.8" cy="1.6" r="1.60"/><circle class="on" cx="659.4" cy="1.6" r="1.60"/><circle class="off" cx="664.0" cy="1.6" r="1.60"/><circle class="on" cx="645.6" cy="6.2" r="1.60"/><circle class="off" cx="650.2" cy="6.2" r="1.60"/><circle class="off" cx="654.8" cy="6.2" r="1.60"/><circle class="off" cx="659.4" cy="6.2" r="1.60"/><circle class="on" cx="664.0" cy="6.2" r="1.60"/><circle class="on" cx="645.6" cy="10.8" r="1.60"/><circle class="off" cx="650.2" cy="10.8" r="1.60"/><circle class="off" cx="654.8" cy="10.8" r="1.60"/><circle class="off" cx="659.4" cy="10.8" r="1.60"/><circle class="on" cx="664.0" cy="10.8" r="1.60"/><circle class="on" cx="645.6" cy="15.4" r="1.60"/><circle class="on" cx="650.2" cy="15.4" r="1.60"/><circle class="on" cx="654.8" cy="15.4" r="1.60"/><circle class="on" cx="659.4" cy="15.4" r="1.60"/><circle class="on" cx="664.0" cy="15.4" r="1.60"/><circle class="on" cx="645.6" cy="20.0" r="1.60"/><circle class="off" cx="650.2" cy="20.0" r="1.60"/><circle class="off" cx="654.8" cy="20.0" r="1.60"/><circle class="off" cx="659.4" cy="20.0" r="1.60"/><circle class="on" cx="664.0" cy="20.0" r="1.60"/><circle class="on" cx="645.6" cy="24.6" r="1.60"/><circle class="off" cx="650.2" cy="24.6" r="1.60"/><circle class="off" cx="654.8" cy="24.6" r="1.60"/><circle class="off" cx="659.4" cy="24.6" r="1.60"/><circle class="on" cx="664.0" cy="24.6" r="1.60"/><circle class="on" cx="645.6" cy="29.2" r="1.60"/><circle class="off" cx="650.2" cy="29.2" r="1.60"/><circle class="off" cx="654.8" cy="29.2" r="1.60"/><circle class="off" cx="659.4" cy="29.2" r="1.60"/><circle class="on" cx="664.0" cy="29.2" r="1.60"/><circle class="on" cx="677.8" cy="1.6" r="1.60"/><circle class="off" cx="682.4" cy="1.6" r="1.60"/><circle class="off" cx="687.0" cy="1.6" r="1.60"/><circle class="off" cx="691.6" cy="1.6" r="1.60"/><circle class="off" cx="696.2" cy="1.6" r="1.60"/><circle class="on" cx="677.8" cy="6.2" r="1.60"/><circle class="off" cx="682.4" cy="6.2" r="1.60"/><circle class="off" cx="687.0" cy="6.2" r="1.60"/><circle class="off" cx="691.6" cy="6.2" r="1.60"/><circle class="off" cx="696.2" cy="6.2" r="1.60"/><circle class="on" cx="677.8" cy="10.8" r="1.60"/><circle class="off" cx="682.4" cy="10.8" r="1.60"/><circle class="off" cx="687.0" cy="10.8" r="1.60"/><circle class="off" cx="691.6" cy="10.8" r="1.60"/><circle class="off" cx="696.2" cy="10.8" r="1.60"/><circle class="on" cx="677.8" cy="15.4" r="1.60"/><circle class="off" cx="682.4" cy="15.4" r="1.60"/><circle class="off" cx="687.0" cy="15.4" r="1.60"/><circle class="off" cx="691.6" cy="15.4" r="1.60"/><circle class="off" cx="696.2" cy="15.4" r="1.60"/><circle class="on" cx="677.8" cy="20.0" r="1.60"/><circle class="off" cx="682.4" cy="20.0" r="1.60"/><circle class="off" cx="687.0" cy="20.0" r="1.60"/><circle class="off" cx="691.6" cy="20.0" r="1.60"/><circle class="off" cx="696.2" cy="20.0" r="1.60"/><circle class="on" cx="677.8" cy="24.6" r="1.60"/><circle class="off" cx="682.4" cy="24.6" r="1.60"/><circle class="off" cx="687.0" cy="24.6" r="1.60"/><circle class="off" cx="691.6" cy="24.6" r="1.60"/><circle class="off" cx="696.2" cy="24.6" r="1.60"/><circle class="on" cx="677.8" cy="29.2" r="1.60"/><circle class="on" cx="682.4" cy="29.2" r="1.60"/><circle class="on" cx="687.0" cy="29.2" r="1.60"/><circle class="on" cx="691.6" cy="29.2" r="1.60"/><circle class="on" cx="696.2" cy="29.2" r="1.60"/></svg>
+          <div class="cta"><span>NEW TERMINAL</span><span class="k">CMD T</span></div>
+          <div class="hints">
+            <span>CMD K</span><span>QUICK ACTIONS</span>
+            <span>CMD J</span><span>TASKS</span>
+          </div>
+          <div class="tab">TASKS</div>
+        </div>
       </div>
-      <figcaption>
-        The screen with nothing open. A departures board, because a column of
-        terminals is a list of things in progress.
-      </figcaption>
-    </figure>
+    </div>
+    <p class="caption">The screen with nothing open. A departures board, because a column of terminals is a list of things in progress.</p>
   </header>
 
   <section>
-    <div class="col">
-      <p class="eyebrow">What this is about</p>
-      <h2>A different product, not a smaller one.</h2>
+    <p class="pill">Intro</p>
+    <div class="prose">
       <p>
-        A developer terminal earns its keep with power: panes, plugins, profiles,
-        a config language. All of it assumes you know what to type, what broke,
-        and what to install. For someone whose first terminal is this one, every
-        one of those assumptions fails at the same moment — and the session ends.
+        A developer terminal earns its keep with power — panes, plugins,
+        profiles, a config language. All of it assumes you know what to type,
+        what broke, and what to install.
       </p>
       <p>
-        Ocarina removes the need to know rather than adding another way to be
-        expert. It carries the commands you would otherwise go and find in a
-        browser. It reads what you asked your coding agent and keeps the list.
-        When something fails, it offers to explain it. And it is opinionated
-        about staying small: no plugin system, no config language, nothing to
-        learn before you can open it.
+        For someone whose first terminal is this one, every one of those
+        assumptions fails at the same moment, and the session ends. Ocarina
+        <strong>removes the need to know</strong> rather than adding another way
+        to be expert.
+      </p>
+      <p>
+        It carries the commands you would otherwise find in a browser. It reads
+        what you asked your coding agent and keeps the list. When something
+        fails, it offers to explain it.
       </p>
     </div>
   </section>
 
   <section>
-    <p class="eyebrow">Inside</p>
-    <h2 class="col">Three things you can see.</h2>
-
-    <div class="feature">
-      <div class="body">
-        <h3>Install something without opening a browser</h3>
-        <p>
-          The old path was: find the docs, copy a line you cannot read, come
-          back, paste, hope. Quick Actions carries those commands — Claude Code,
-          Gemini CLI, Codex, Homebrew, Node — and <strong>nothing in it runs
-          itself</strong>. Choosing types the command at your prompt and says
-          what it does. You press Return.
-        </p>
-        <p>
-          That is the whole point. <code>curl … | bash</code> is exactly the
-          pattern a beginner should never learn to trust on sight, and seeing
-          the command each time is how you stop needing the drawer at all.
-        </p>
-        <div class="meta"><span><kbd>⌘K</kbd> to open</span><span>Every recipe carries the docs it was checked against, and the date</span></div>
-      </div>
-      <figure>
-        <div class="shot"><img src="assets/quick-actions.jpg" alt="The Quick Actions drawer, listing Claude Code, Gemini CLI and Codex CLI under Install an AI coding agent, and Homebrew, Node and Git below." width="1240"></div>
-      </figure>
+    <p class="pill">What you get</p>
+    <div class="head">
+      <h2>Three things you will use <span class="rest">in the first ten minutes</span></h2>
+      <p class="aside">Everything else the app does is in service of these, or stays out of the way.</p>
     </div>
 
-    <div class="feature">
-      <div class="body">
-        <h3>Remember what you asked the agent</h3>
-        <p>
-          Give an agent five things across twenty minutes and you will not
-          remember which it actually got to. The Tasks panel reads the
-          transcript your agent already writes and keeps the list — Claude
-          names each line, so it reads like a to-do rather than a log.
-        </p>
-        <p>
-          It says <strong>finished</strong>, never “done”. The only signal
-          available is that the agent stopped talking, which is not the same as
-          the work being right, and the wording should not claim more than the
-          data supports.
-        </p>
-        <div class="meta"><span><kbd>⌘J</kbd> or the tab on the edge</span><span>Opens itself the first time a tab has any</span></div>
-      </div>
-      <figure>
-        <div class="shot"><img src="assets/tasks.jpg" alt="Ocarina with the Tasks panel open on the right, listing short task titles with ticks against the finished ones." width="1240"></div>
-      </figure>
-    </div>
-
-    <div class="feature">
-      <div class="body">
-        <h3>Fourteen themes, and none of them can hide an error</h3>
-        <p>
-          Colour, texture and type all move together: a faint motif behind the
-          panels — cherry blossoms, brushed metal, falling glyphs — and Geist
-          throughout, bundled rather than borrowed from your system.
-        </p>
-        <p>
-          Every theme is checked against a contrast floor before it is offered.
-          A pretty palette that makes error text unreadable is not a cosmetic
-          problem for someone who cannot yet read errors — it is the end of the
-          session, so a theme that fails simply does not appear.
-        </p>
-        <div class="meta"><span>All dark</span><span>Drop your own in <code>~/.ocarina/themes</code></span></div>
-      </div>
-      <figure>
-        <div class="shot"><img src="assets/themes.jpg" alt="The theme picker, a grid of fourteen dark themes each shown as its terminal background with its eight base colours." width="1240"></div>
-        <div class="pair" style="margin-top: 18px;">
-          <div class="shot"><img src="assets/theme-sakura.jpg" alt="Ocarina in the Sakura theme: dark plum with pink accents and faint cherry blossoms in the sidebar." width="620"></div>
-          <div class="shot"><img src="assets/theme-matrix.jpg" alt="Ocarina in the Matrix theme: near-black with green text and falling glyph trails." width="620"></div>
+    <div class="cards">
+      <div class="card">
+        <div class="art">
+          <svg viewBox="0 0 320 210" role="img" aria-label="An isometric keycap.">
+            <line class="iso-hair" x1="0" y1="168" x2="320" y2="36"/>
+            <line class="iso-hair" x1="0" y1="196" x2="320" y2="64"/>
+            <path class="iso-face" d="M160 122 L262 180 L160 238 L58 180 Z"/>
+            <path class="iso-line" d="M160 122 L262 180 L160 238 L58 180 Z"/>
+            <path class="iso-face" d="M105 128 L160 96 L215 128 L160 160 Z"/>
+            <path class="iso-line" d="M105 128 L160 96 L215 128 L160 160 Z"/>
+            <path class="iso-line" d="M105 128 L58 180 M215 128 L262 180 M160 160 L160 238"/>
+            <path class="iso-glow" d="M105 128 L160 96 L215 128 L160 160 Z"/>
+            <circle class="iso-mark" cx="160" cy="128" r="4"/>
+            <path class="iso-lit" d="M120 190 L160 213"/>
+          </svg>
         </div>
-        <figcaption>Sakura and Matrix. The motif is drawn, not shipped as artwork, so it takes each theme's own colour.</figcaption>
-      </figure>
+        <div class="txt">
+          <h3>Install without a browser</h3>
+          <p>The commands are already here. Choosing one types it at your prompt and explains it — nothing runs itself.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="art">
+          <svg viewBox="0 0 320 210" role="img" aria-label="Three isometric panels stacked, with tick marks.">
+            <line class="iso-hair" x1="0" y1="176" x2="320" y2="44"/>
+            <line class="iso-hair" x1="0" y1="204" x2="320" y2="72"/>
+            <g>
+              <path class="iso-face" d="M96 148 L176 102 L256 148 L176 194 Z"/>
+              <path class="iso-line" d="M96 148 L176 102 L256 148 L176 194 Z"/>
+              <path class="iso-lit" d="M132 148 L146 156 L176 138"/>
+            </g>
+            <g opacity="0.72">
+              <path class="iso-face" d="M84 122 L164 76 L244 122 L164 168 Z"/>
+              <path class="iso-line" d="M84 122 L164 76 L244 122 L164 168 Z"/>
+              <path class="iso-line" d="M120 122 L134 130 L164 112"/>
+            </g>
+            <g opacity="0.45">
+              <path class="iso-face" d="M72 96 L152 50 L232 96 L152 142 Z"/>
+              <path class="iso-line" d="M72 96 L152 50 L232 96 L152 142 Z"/>
+              <path class="iso-line" d="M108 96 L146 74"/>
+            </g>
+          </svg>
+        </div>
+        <div class="txt">
+          <h3>Remember what you asked</h3>
+          <p>The tasks you gave your agent, read from the transcript it already writes, and named by Claude so the list reads like a list.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="art">
+          <svg viewBox="0 0 320 210" role="img" aria-label="A stack of isometric discs, the top one lit.">
+            <line class="iso-hair" x1="0" y1="170" x2="320" y2="38"/>
+            <line class="iso-hair" x1="0" y1="198" x2="320" y2="66"/>
+            <g opacity="0.4">
+              <ellipse class="iso-face" cx="160" cy="158" rx="86" ry="42"/>
+              <ellipse class="iso-line" cx="160" cy="158" rx="86" ry="42"/>
+            </g>
+            <g opacity="0.7">
+              <path class="iso-face" d="M74 134 a86 42 0 0 0 172 0 v-14 a86 42 0 0 1 -172 0 Z"/>
+              <path class="iso-line" d="M74 134 a86 42 0 0 0 172 0"/>
+              <ellipse class="iso-line" cx="160" cy="120" rx="86" ry="42"/>
+            </g>
+            <path class="iso-face" d="M74 96 a86 42 0 0 0 172 0 v-14 a86 42 0 0 1 -172 0 Z"/>
+            <path class="iso-line" d="M74 96 a86 42 0 0 0 172 0"/>
+            <ellipse class="iso-glow" cx="160" cy="82" rx="86" ry="42"/>
+            <ellipse class="iso-lit" cx="160" cy="82" rx="86" ry="42"/>
+            <ellipse class="iso-line" cx="160" cy="82" rx="42" ry="20"/>
+          </svg>
+        </div>
+        <div class="txt">
+          <h3>Fourteen themes, all legible</h3>
+          <p>Colour, texture and type move together — and every theme is contrast-checked before it is offered to you.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <section>
-    <p class="eyebrow">What is the separation?</p>
-    <h2 class="col">Other terminals add power. This one removes the need to know.</h2>
-    <div class="split ours" style="margin-top: 28px;">
+    <p class="pill">What is the separation?</p>
+    <div class="head">
+      <h2>Other terminals add power. <span class="rest">This one removes the need to know.</span></h2>
+      <p class="aside">The same product decision, made about forty small things.</p>
+    </div>
+    <div class="vs">
       <div>
         <h4>Every other terminal</h4>
         <ul>
-          <li>Twenty tabs all named <code>zsh</code></li>
-          <li>A config file you have to learn first</li>
-          <li>An error is a wall of text and a dead end</li>
+          <li>Twenty tabs, all called zsh</li>
+          <li>A config file to learn first</li>
+          <li>An error is a wall and a dead end</li>
           <li>Pasting from a website is on you</li>
           <li>Installing anything starts in a browser</li>
-          <li>Features aimed at people who already know</li>
         </ul>
       </div>
-      <div>
+      <div class="mine">
         <h4>Ocarina</h4>
         <ul>
-          <li>Tabs named for what they are <em>doing</em></li>
+          <li>Tabs named for what they are doing</li>
           <li>Nothing to configure before it is useful</li>
           <li>A failure offers to explain itself</li>
           <li>A risky paste is described before it lands</li>
-          <li>The commands are already here</li>
-          <li>Built for the first hour, not the thousandth</li>
+          <li>The commands are already in the app</li>
         </ul>
       </div>
     </div>
   </section>
 
   <section>
-    <p class="eyebrow">What makes it great?</p>
-    <h2 class="col">The details are all the same detail.</h2>
-    <p class="col">
-      Each of these is the same decision made again: assume the person reading
-      cannot yet recover from a mistake, and design so they do not have to.
-    </p>
-
+    <p class="pill">What makes it great?</p>
+    <div class="head">
+      <h2>The details are <span class="rest">all the same detail.</span></h2>
+      <p class="aside">Assume the person reading cannot yet recover from a mistake, and design so they never have to.</p>
+    </div>
     <div class="points">
-      <div>
-        <h3>Nothing runs itself</h3>
-        <p>Every path that puts a command in front of you types it and stops. The last act is always yours.</p>
-      </div>
-      <div>
-        <h3>Legibility is enforced, not hoped for</h3>
-        <p>All sixteen ANSI colours in every theme are contrast-checked. A theme that fails is listed as broken rather than quietly shipped.</p>
-      </div>
-      <div>
-        <h3>It says what it can support</h3>
-        <p>“Finished”, not “done”. A refused keep-awake shows as refused. The interface does not claim more than it knows.</p>
-      </div>
-      <div>
-        <h3>A paste is read before it lands</h3>
-        <p>Ordinary commands paste silently — a terminal that interrupts everything is one you learn to click through. Only multi-command or destructive text stops for a sentence.</p>
-      </div>
-      <div>
-        <h3>It knows when work is happening</h3>
-        <p>A dot per tab, driven by the shell itself, so a silent <code>sleep 30</code> still reads as busy and a failure reads as red.</p>
-      </div>
-      <div>
-        <h3>Small on purpose</h3>
-        <p>No plugin system, no scripting layer, no profile format. The whole app is one window you can describe in a sentence.</p>
-      </div>
+      <div><span class="n">01</span><h3>Nothing runs itself</h3><p>Every path that puts a command in front of you types it and stops. The last act is always yours.</p></div>
+      <div><span class="n">02</span><h3>Legibility is enforced</h3><p>All sixteen ANSI colours in every theme are contrast-checked. A theme that fails is listed as broken, not quietly shipped.</p></div>
+      <div><span class="n">03</span><h3>It says what it can support</h3><p>“Finished”, never “done”. A refused keep-awake shows as refused. The interface does not claim more than it knows.</p></div>
+      <div><span class="n">04</span><h3>A paste is read first</h3><p>Ordinary commands paste silently. Only multi-command or destructive text stops for a sentence.</p></div>
+      <div><span class="n">05</span><h3>It knows when work is happening</h3><p>A dot per tab, driven by the shell itself, so a silent sleep still reads as busy and a failure reads as red.</p></div>
+      <div><span class="n">06</span><h3>Small on purpose</h3><p>No plugin system, no scripting layer, no profile format. One window you can describe in a sentence.</p></div>
     </div>
   </section>
 
   <section>
-    <p class="eyebrow">Who is it for?</p>
-    <div class="qa col">
-      <div class="qa-item">
-        <h3>People building with agents, not with tooling</h3>
-        <p>
-          You describe what you want, an agent writes it, and the terminal is
-          simply where that happens. You do not want to become good at the
-          terminal — you want it to stop being the obstacle.
-        </p>
+    <p class="pill">Who is it for?</p>
+    <div class="head">
+      <h2>People building with agents, <span class="rest">not with tooling.</span></h2>
+      <p class="aside">And, just as importantly, people it is not for.</p>
+    </div>
+    <div class="who">
+      <div>
+        <h3>You describe, an agent writes</h3>
+        <p>The terminal is simply where that happens. You do not want to get good at it — you want it to stop being the obstacle.</p>
       </div>
-      <div class="qa-item">
-        <h3>Anyone whose first terminal is this one</h3>
-        <p>
-          No technical background assumed. If you have never installed anything
-          from a command line, the first thing you will need is the thing
-          <kbd>⌘K</kbd> already has.
-        </p>
+      <div>
+        <h3>Your first terminal is this one</h3>
+        <p>No technical background assumed. If you have never installed anything from a command line, the first thing you need is already behind ⌘K.</p>
       </div>
-      <div class="qa-item">
-        <h3>Not for everyone, and that is the point</h3>
-        <p>
-          If you want tmux integration, split panes, a plugin ecosystem and a
-          config language, this is the wrong terminal and it always will be.
-          Those are good features. They are also the bulk that sent this user
-          away in the first place.
-        </p>
+      <div class="no">
+        <h3>Not for everyone</h3>
+        <p>If you want tmux integration, split panes, a plugin ecosystem and a config language, this is the wrong terminal and always will be.</p>
       </div>
     </div>
   </section>
 
   <footer>
-    <span class="prompt">%</span>
-    <span>Ocarina · a macOS terminal, written in Swift</span>
+    <span>Ocarina — a macOS terminal, written in Swift</span>
     <span>macOS 14+</span>
     <span><a href="https://github.com/VaibhavVishal07/Ocarina-Terminal">github.com/VaibhavVishal07/Ocarina-Terminal</a></span>
     <span>In active development</span>
   </footer>
-
 </div>
 
 </body>
