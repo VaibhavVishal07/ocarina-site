@@ -453,6 +453,15 @@
      control that sits perfectly still for that frame reads as a stutter
      rather than as a wait. Transform only, so it never touches the layout. */
   .swatch:active { transform:translateY(-1px) scale(.9); transition-duration:.06s; }
+  /* The chip is inside the picture the browser takes of the page. The press
+     lets go on mouseup and eases back over a quarter second, and the shutter
+     falls a frame after that — so the picture holds a half-released chip
+     still for the whole wipe, and the real one is found settled when the
+     picture comes down. That one-frame change of pose is the jitter.
+     Transitions off for the length of the swap: the spring-back lands in the
+     frame the press ends, and the chip is in the same pose on both sides of
+     the picture. */
+  html.swapping .swatch { transition:none; }
   /* drawn outside the chip, so picking one does not resize it */
   .swatch.on::after { content:""; position:absolute; inset:-5px; border-radius:11px;
                       border:1.5px solid color-mix(in srgb,var(--sw-c) 62%,transparent); }
@@ -460,18 +469,21 @@
   @media (max-width:560px) { .swatches { gap:7px; } .swatch { width:32px; height:21px; } }
 
   /* ── the colour arriving ──────────────────────────────
-     Not a glow over the page: the page itself, in the new theme, wiped in
-     along the edge of a circle growing out of the chip you pressed. What is
-     inside the circle has already changed and what is outside has not, so
-     the colour changes on the front's path rather than washing over it.
+     Not a glow over the page: the page itself, in the new theme, drawn on
+     from the side by one straight edge crossing the viewport. Behind the
+     edge the colour has already changed and ahead of it it has not, so the
+     theme arrives on the front's path rather than washing over the page.
+     The edge enters from whichever side the chip you pressed is nearer, so
+     the press is still what the motion comes out of.
      Two snapshots and a clip-path — the browser holds the old page still
      underneath while the new one is revealed on top of it. */
   ::view-transition-old(root) { animation:none; z-index:1; }
   ::view-transition-new(root) {
     animation:none; z-index:2;
     /* the state the script's animation starts from, declared here so it is
-       already true on the first frame the snapshot exists */
-    clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%));
+       already true on the first frame the snapshot exists — shut against
+       the left edge until the script says which side it opens from */
+    clip-path:inset(0 var(--vt-r,100%) 0 var(--vt-l,0%));
   }
 
   .stage { position:relative; aspect-ratio:16/8.6; border-radius:var(--r); overflow:hidden;
@@ -901,9 +913,10 @@
     <div class="swatches rise d1" id="swatches" role="radiogroup" aria-label="Theme"></div>
   </div>
 </header>
-<!-- The colour arriving. One circle, grown from the dot that was pressed
-     until it has covered the page, over the top of everything and catching
-     no clicks; the theme itself is applied at the moment it is let go. -->
+<!-- The colour arriving. One edge, entering from the side the pressed dot
+     is on and crossing until it has covered the page, over the top of
+     everything and catching no clicks; the theme itself is applied at the
+     moment it is let go. -->
 
 
 <section id="one">
@@ -1163,18 +1176,28 @@
      through the C, then the A, and on across the word, with a short trail
      behind the head. Not a shimmer over the top of it, the dots themselves
      lighting and going out. */
+  /* Held still while a theme is being wiped in, for the same reason the
+     flickering grid is: the mark is behind two snapshots for the whole of
+     that half second, so every dot painted in it is painted for nobody, and
+     those are the frames the wipe wants. The clock is wound on by however
+     long the hold lasted, so the head comes back where it left off rather
+     than eight dots along — that jump was the mark's own share of the
+     jitter. */
+  var swapHold = false;
   function chase(cv, model, o) {
     if (reduce) { o.chase = null; paint(cv, model, o); return; }
     var seq = [];
     for (var i = 0; i < model.list.length; i++) if (model.list[i].on) seq.push(i);
     var rank = {};
     for (var k = 0; k < seq.length; k++) rank[seq[k]] = k;
-    var gap = 26, total = seq.length + gap, t0 = 0, lastHead = -1;
+    var gap = 26, total = seq.length + gap, t0 = 0, prev = 0, lastHead = -1;
     o.chase = { rank: rank, head: 0, trail: 15 };
     requestAnimationFrame(function frame(t) {
-      if (!t0) t0 = t;
+      if (!t0) { t0 = t; prev = t; }
+      if (swapHold) t0 += t - prev;         // the wipe's frames are not ours
+      prev = t;
       var head = ((t - t0) / 72) % total;   // one dot every 72ms
-      if (head !== lastHead) {
+      if (!swapHold && head !== lastHead) {
         lastHead = head;
         o.chase.head = head;
         paint(cv, model, o);
@@ -1190,24 +1213,27 @@
      theme change can repaint the lot. `role` is which of the theme's colours
      the mark takes: the board's lamp, or one of the two chrome text weights. */
   var MARKS = [];
-  function mark(el, opts, role, defer) {
+  function mark(el, opts, role) {
     if (!el) return opts;
-    MARKS.push({ el: el, opts: opts, role: role || "lit", defer: !!defer });
+    MARKS.push({ el: el, opts: opts, role: role || "lit" });
     paint(el, MO, opts);
     return opts;
   }
-  /* Every mark is a canvas redrawn cell by cell. Inside a theme swap that
-     work lands in the one frame the browser is also capturing two pictures
-     of the page in, so the marks that are off screen — and therefore in
-     neither picture — are set aside and caught up when the frames are free.
-     `defer` collects them; passing a list repaints just that list. */
+  /* Every mark is a canvas redrawn cell by cell — 287 dots each, seven of
+     them. Inside a theme swap that work lands in the one frame the browser
+     is also capturing two pictures of the page in, so the marks that are off
+     screen — and therefore in neither picture — are set aside and caught up
+     when the frames are free. Whether a mark is off screen is asked of the
+     mark, not declared at the call: this was a `defer` flag no caller ever
+     passed, so the list was never anything but all seven. Passing a list
+     repaints just that list, which is how the cold ones are caught up. */
   var cold = [];
   function repaintMarks(t, only) {
     var list = only || MARKS;
     for (var i = 0; i < list.length; i++) {
       var m = list[i];
       m.opts.color = m.role === "chrome" ? t.t1 : m.role === "quiet" ? t.t2 : t.lit;
-      if (!only && m.defer) {
+      if (!only) {
         var r = m.el.getBoundingClientRect();
         if (r.bottom < -200 || r.top > innerHeight + 200) { cold.push(m); continue; }
       }
@@ -1714,10 +1740,10 @@
   }
 
   /* ── the picker ────────────────────────────────────────────
-     Fourteen dots under the hero window. Pressing one grows a circle of that
-     theme's ground out of the dot itself; the palette is swapped while the
-     circle is over the page, so the colour that arrives is the one already
-     spreading rather than a cut you catch mid-blink. */
+     Fourteen dots under the hero window. Pressing one draws that theme
+     across the page from the near side; the palette is swapped while the
+     edge is travelling, so the colour that arrives is the one already
+     crossing rather than a cut you catch mid-blink. */
   var swatches = document.getElementById("swatches");
   var current = null;
 
@@ -1729,38 +1755,49 @@
     });
   }
 
-  /* Growing the new page out of the chip you pressed.
+  /* Drawing the new page on from the side the chip is on.
      The browser takes a picture of the page as it is, lets the palette be
      rewritten, takes a second picture, and holds the first still while the
-     second is revealed through a circle opening from the chip. Nothing is
-     drawn over the page: the colour changes at the edge of that circle as it
-     travels. Where the API is missing, the palette simply changes. */
+     second is uncovered by a straight edge crossing the viewport. Nothing is
+     drawn over the page: the colour changes at that edge as it travels.
+     Where the API is missing, the palette simply changes. */
   var VT = typeof document.startViewTransition === "function";
-  function pick(id, from) {
+  function pick(id, el) {
     if (id === current) return;
     current = id;
     light(id);
-    if (!VT || reduce || !from) { applyTheme(id); return; }
+    if (!VT || reduce || !el) { applyTheme(id); return; }
 
-    var x = from.left + from.width / 2, y = from.top + from.height / 2;
-    // the far corner from wherever the chip is, so the front leaves no gap
-    var reach = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     var root = document.documentElement;
+    /* Before the chip is measured and before the shutter falls: this settles
+       the press the same frame it is let go, so the pose in the picture is
+       the pose underneath it, and the rect read here is where the chip
+       actually is rather than where it was passing through. */
+    root.classList.add("swapping");
+    swapHold = true;
+    var from = el.getBoundingClientRect();
+    // the chip's own half of the row picks the edge the swipe comes in from
+    var fromLeft = from.left + from.width / 2 < innerWidth / 2;
+    var shut = fromLeft ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)";
     // where the stylesheet holds the snapshot shut until the animation lands
-    root.style.setProperty("--vt-x", x + "px");
-    root.style.setProperty("--vt-y", y + "px");
+    root.style.setProperty("--vt-l", fromLeft ? "0%" : "100%");
+    root.style.setProperty("--vt-r", fromLeft ? "100%" : "0%");
     document.dispatchEvent(new CustomEvent("ocarina:swap", { detail: true }));
 
     var t = document.startViewTransition(function () { applyTheme(id); });
     t.ready.then(function () {
       root.animate(
-        { clipPath: ["circle(0px at " + x + "px " + y + "px)",
-                     "circle(" + reach + "px at " + x + "px " + y + "px)"] },
-        { duration: 560, easing: "cubic-bezier(.16,1,.3,1)",
+        { clipPath: [shut, "inset(0 0 0 0)"] },
+        // An edge crossing the whole viewport, so it holds its speed through
+        // the middle instead of covering the distance up front and crawling
+        // home the way a bloom's curve does.
+        { duration: 520, easing: "cubic-bezier(.5,0,.2,1)",
           pseudoElement: "::view-transition-new(root)" }
       );
     });
     t.finished.finally(function () {
+      root.classList.remove("swapping");
+      swapHold = false;
       document.dispatchEvent(new CustomEvent("ocarina:swap", { detail: false }));
       // the marks nobody could see are caught up once the frames are free
       if (cold.length) { repaintMarks(THEMES[current], cold); cold.length = 0; }
@@ -1776,10 +1813,13 @@
     b.title = t.name;
     // one colour: the lamp this theme lights its board with
     b.style.setProperty("--sw-c", t.lit);
-    b.addEventListener("click", function () { pick(id, b.getBoundingClientRect()); });
+    b.addEventListener("click", function () { pick(id, b); });
     swatches.appendChild(b);
   });
   applyTheme("ocarina");
+  // no wipe to come and flush it, so the marks the first paint skipped are
+  // caught up here; cold is empty except while a swap is in the air
+  if (cold.length) { repaintMarks(THEMES["ocarina"], cold); cold.length = 0; }
   current = "ocarina";
   light("ocarina");
 
@@ -1798,12 +1838,16 @@
 
   var SIZE = 4, GAP = 6, STEP = SIZE + GAP;
   var CHANCE = 0.32, MAX = 0.34;
-  var RGBA = "rgba(100,178,216,";
+  /* One colour for the whole field; only the alpha differs cell to cell, and
+     that is `globalAlpha`, not a colour. Built per cell this was six and a
+     half thousand strings concatenated and parsed as CSS every frame — and
+     one of those frames is the shutter frame of a theme swap. */
+  var SOLID = "rgb(100,178,216)";
   /* A canvas cannot read a custom property, so the picker says it out loud
      and the grid listens. */
   document.addEventListener("ocarina:theme", function (e) {
     var n = parseInt(e.detail.lit.slice(1), 16);
-    RGBA = "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + ",";
+    SOLID = "rgb(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + ")";
     // Once, here, and not on the next frame: a theme change is captured as a
     // picture the moment it is applied, and the grid is held still for the
     // wipe. Left to the animation loop it would be the old colour in that
@@ -1831,13 +1875,15 @@
   function draw() {
     ctx.clearRect(0, 0, cv.width, cv.height);
     var s = SIZE * dpr, g = STEP * dpr;
+    ctx.fillStyle = SOLID;
     for (var i = 0; i < cols; i++) {
-      var x = i * g;
+      var x = i * g, col = i * rows;
       for (var j = 0; j < rows; j++) {
-        ctx.fillStyle = RGBA + cells[i * rows + j].toFixed(3) + ")";
+        ctx.globalAlpha = cells[col + j];
         ctx.fillRect(x, j * g, s, s);
       }
     }
+    ctx.globalAlpha = 1;
   }
 
   function frame(t) {
