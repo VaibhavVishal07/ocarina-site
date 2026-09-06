@@ -276,8 +276,9 @@
   /* The switch lives in the app, so it is shown in the app. And the thing it
      protects is the machine staying awake, so the app is shown inside a Mac
      that visibly goes dark when you turn it off. */
+  .macbox { border-radius:var(--r); padding:38px 34px 30px; }
   .macwrap { display:flex; flex-direction:column; align-items:center; }
-  .mac { width:100%; max-width:560px; }
+  .mac { width:100%; max-width:490px; }
   .mac-screen {
     position:relative; border-radius:14px; overflow:hidden; background:#000;
     border:11px solid #191C20; border-bottom-width:13px;
@@ -424,7 +425,7 @@
   <div class="wrap hero-inner">
     <canvas class="mark hero-mark" id="heroMark" role="img" aria-label="Ocarina"></canvas>
     <h1>You don't need to know the terminal <span class="soft">to use this one.</span></h1>
-    <div class="flip" aria-label="Ocarina is built for people who opened Terminal once and closed it, were told to just run this command, build with AI agents rather than shells, have never written a line of bash, or do not know where to start.">
+    <div class="flip" aria-label="Ocarina is built for people who opened Terminal once and closed it, were told to just run this command, paste commands they cannot read, build with agents rather than shells, have never written a line of bash, design and ship without writing code, gave up the first time they tried, learned all of it from a tutorial, or do not know where to start.">
       <span class="pr">~ &rsaquo;</span>
       <span class="flip-lead">built for people who</span>
       <span class="flip-word" id="flipWord"></span><span class="caret"></span>
@@ -577,12 +578,13 @@
 <section id="awake">
   <div class="wrap narrow awake">
     <div class="rise">
-      <h2>You walk away. Your Mac sleeps. <span class="soft">The agent stops.</span></h2>
-      <p class="sub">A real task takes minutes, so you go and do something else. The display sleeps on its usual timer and the run dies halfway.</p>
-      <p class="sub" style="margin-top:16px">Ocarina holds it awake for as long as it is open, on from launch, because you were never going to remember.</p>
+      <h2>Your Mac stays awake <span class="soft">while the agent works.</span></h2>
+      <p class="sub">Leave a long run going and macOS sleeps the display on its usual timer, taking the run with it.</p>
+      <p class="sub" style="margin-top:16px">Ocarina holds it awake for as long as it is open, on from launch, because you were never going to remember. <span style="color:var(--ink)">Flip the switch to see what happens without it.</span></p>
     </div>
 
-    <div class="macwrap rise d1">
+    <div class="macbox glass rise d1">
+      <div class="macwrap">
       <div class="mac">
         <div class="mac-screen">
           <div class="awin">
@@ -621,7 +623,8 @@
         <div class="mac-hinge"></div>
         <div class="mac-base"></div>
       </div>
-      <p class="macsay" id="macsay">The screen stays on and the agent keeps going.</p>
+        <p class="macsay" id="macsay">The screen stays on and the agent keeps going.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -805,8 +808,12 @@
   var FLIP = [
     "opened Terminal once and closed it",
     "were told to \u201cjust run this command\u201d",
+    "paste commands they cannot read",
     "build with agents, not with shells",
     "have never written a line of bash",
+    "design and ship without writing code",
+    "gave up the first time they tried",
+    "learned all of it from a tutorial",
     "do not know where to start"
   ];
   var flipWord = document.getElementById("flipWord");
