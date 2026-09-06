@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Nine questions &middot; Ocarina</title>
+<meta name="description" content="Nine questions about what using Terminal is actually like. Answers go straight to the person building Ocarina.">
+
+<link rel="icon" href="../icon-32.png" sizes="32x32">
+<link rel="icon" href="../icon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<meta property="og:title" content="Nine questions about your terminal">
+<meta property="og:description" content="I'm building a Mac terminal for people who work with AI agents. Tell me what the one you have now is actually like.">
+<meta property="og:image" content="../og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;450;500;600&family=Geist+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --ground:#07090C; --raise:#0D1218; --raise-2:#121A22;
+    --line:rgba(200,222,242,.085); --line-2:rgba(200,222,242,.16);
+    --accent:#45B6E8; --accent-2:#2C7EA8;
+    --ink:#EEF3F8; --muted:#8A96A3; --ghost:#68737F; --faint:#59636E;
+    --ok:#5FC98D; --bad:#F06C6C;
+    --r:16px; --r-sm:10px;
+    --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+    padding:0 20px 80px;
+  }
+  ::selection { background:rgba(69,182,232,.28); }
+
+  .wrap { max-width:660px; margin:0 auto; position:relative; }
+
+  /* The same aura the landing page opens with, so this reads as a room in
+     the same building rather than a form someone bolted on. */
+  .aura {
+    position:absolute; left:50%; top:-220px; width:1100px; height:620px;
+    transform:translateX(-50%); pointer-events:none; filter:blur(40px); z-index:0;
+    background:radial-gradient(42% 46% at 50% 46%,rgba(69,182,232,.14),transparent 70%);
+  }
+
+  header { position:relative; z-index:1; padding:46px 0 0; }
+  .lockup { display:flex; align-items:center; gap:14px; }
+  .lockup img { width:38px; height:38px; border-radius:9px; display:block; }
+  .lockup canvas { height:15px; width:auto; display:block; }
+
+  h1 {
+    margin:30px 0 18px; font-size:clamp(30px,7.2vw,42px); font-weight:500;
+    line-height:1.1; letter-spacing:-.024em; text-wrap:balance;
+  }
+  h1 .soft { color:var(--muted); }
+  .lede { margin:0 0 13px; color:var(--muted); font-size:17px; max-width:50ch; }
+  .lede b { color:var(--ink); font-weight:450; }
+
+  .meta {
+    margin:26px 0 0; padding:13px 15px; display:flex; gap:11px; align-items:flex-start;
+    border:1px solid var(--line); border-radius:var(--r-sm); background:var(--raise);
+    font-size:14.5px; color:var(--muted); line-height:1.5;
+  }
+  .meta svg { width:17px; height:17px; flex:none; margin-top:3px; color:var(--faint); }
+  .meta b { color:var(--ink); font-weight:450; }
+
+  /* ── the questions ─────────────────────────────────────── */
+  .sheet { position:relative; z-index:1; margin:30px 0 0; display:grid; gap:14px; }
+
+  .q {
+    background:var(--raise); border:1px solid var(--line); border-radius:var(--r);
+    padding:20px 18px 18px;
+  }
+  .q:focus-within { border-color:var(--line-2); }
+  .q-head { display:grid; grid-template-columns:26px 1fr; gap:0 12px; align-items:start; }
+  .q-n {
+    font-family:var(--mono); font-size:12px; color:var(--faint);
+    padding-top:4px; text-align:right; font-variant-numeric:tabular-nums;
+  }
+  .q-t { margin:0; font-size:17px; font-weight:450; line-height:1.45; letter-spacing:-.006em; }
+  .q-also { display:block; margin-top:5px; color:var(--muted); font-size:15px; font-weight:400; }
+
+  textarea {
+    display:block; width:100%; margin:14px 0 0; padding:12px 13px;
+    min-height:82px; resize:vertical;
+    background:var(--ground); color:var(--ink);
+    border:1px solid var(--line); border-radius:var(--r-sm);
+    font-family:inherit; font-size:15.5px; line-height:1.55;
+  }
+  textarea::placeholder { color:var(--faint); }
+  textarea:focus, input:focus { outline:none; border-color:var(--accent-2); }
+
+  .who { margin:22px 0 0; }
+  .who label {
+    display:block; margin:0 0 9px;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.11em;
+    text-transform:uppercase; color:var(--faint);
+  }
+  input[type="text"] {
+    width:100%; padding:12px 13px;
+    background:var(--raise); color:var(--ink);
+    border:1px solid var(--line); border-radius:var(--r-sm);
+    font-family:inherit; font-size:15.5px;
+  }
+  input[type="text"]::placeholder { color:var(--faint); }
+
+  /* Spam bots fill in every field they find. People never see this one. */
+  .trap { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+  /* ── save ──────────────────────────────────────────────── */
+  .foot { position:relative; z-index:1; margin:24px 0 0; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .btn {
+    font:inherit; font-size:15px; font-weight:450; cursor:pointer;
+    padding:13px 24px; border-radius:var(--r-sm);
+    border:1px solid var(--accent); background:var(--accent); color:#04151E;
+    transition:filter .16s ease, opacity .16s ease;
+  }
+  .btn:hover { filter:brightness(1.07); }
+  .btn:disabled { opacity:.5; cursor:default; filter:none; }
+  .btn:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+  .status { font-size:14.5px; color:var(--muted); }
+  .status.bad { color:var(--bad); }
+  .status.ok { color:var(--ok); }
+  .saved { font-family:var(--mono); font-size:11.5px; color:var(--faint); letter-spacing:.04em; }
+
+  /* ── after ─────────────────────────────────────────────── */
+  .done {
+    position:relative; z-index:1; margin:40px 0 0; padding:34px 26px;
+    border:1px solid var(--line); border-radius:var(--r); background:var(--raise);
+    text-align:center;
+  }
+  .done img { width:56px; height:56px; border-radius:13px; margin:0 auto 18px; display:block; }
+  .done h2 { margin:0 0 10px; font-size:24px; font-weight:500; letter-spacing:-.02em; }
+  .done p { margin:0 auto; color:var(--muted); font-size:16px; max-width:40ch; }
+  .done a { color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(69,182,232,.3); }
+  .done a:hover { border-bottom-color:var(--accent); }
+
+  .rescue { margin:18px 0 0; }
+  .rescue textarea { min-height:180px; font-family:var(--mono); font-size:13px; }
+
+  .colophon {
+    position:relative; z-index:1; margin:54px 0 0; padding-top:20px;
+    border-top:1px solid var(--line);
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    font-size:13.5px; color:var(--faint);
+  }
+  .colophon canvas { height:11px; width:auto; display:block; }
+  .colophon a { color:var(--muted); text-decoration:none; font-family:var(--mono); font-size:12px; }
+  .colophon a:hover { color:var(--ink); }
+  .colophon .push { flex:1; }
+
+  @media (max-width:560px) {
+    body { padding:0 16px 64px; }
+    header { padding:34px 0 0; }
+    .q { padding:17px 15px 16px; }
+    .q-head { grid-template-columns:22px 1fr; gap:0 9px; }
+    .foot .btn { width:100%; }
+    .colophon .push { display:none; }
+  }
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="aura" aria-hidden="true"></div>
+
+  <header>
+    <div class="lockup">
+      <img src="../icon.png" alt="" width="360" height="360">
+      <canvas id="mark" role="img" aria-label="Ocarina"></canvas>
+    </div>
+
+    <h1>What is Terminal <span class="soft">actually like for you?</span></h1>
+    <p class="lede">I'm building a Mac terminal for people who work with AI agents rather than people who love command lines. Before I build more of it, I want to know which of these are real problems and which ones I invented.</p>
+    <p class="lede"><b>Answer whichever ones you have an opinion about.</b> Leave the rest blank.</p>
+
+    <div class="meta">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 6.2A2.2 2.2 0 0 1 4.7 4h10.6a2.2 2.2 0 0 1 2.2 2.2v7.6a2.2 2.2 0 0 1-2.2 2.2H4.7a2.2 2.2 0 0 1-2.2-2.2Z"/><path d="m3.2 5.6 6.8 5 6.8-5"/></svg>
+      <div>Answers come straight to me by email. <b>No account, no sign in</b>, and nothing is published anywhere.</div>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+    <div class="sheet" id="sheet"></div>
+
+    <div class="who">
+      <label for="who">Who are you? (optional)</label>
+      <input type="text" id="who" name="who" autocomplete="name" placeholder="A name, so I know who to thank">
+    </div>
+
+    <div class="trap" aria-hidden="true">
+      <label for="website">Leave this empty</label>
+      <input type="text" id="website" name="_honey" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="foot">
+      <button class="btn" id="save" type="submit">Save and send</button>
+      <span class="status" id="status"></span>
+      <span class="saved" id="draft"></span>
+    </div>
+  </form>
+
+  <div id="after" hidden></div>
+
+  <div class="colophon">
+    <canvas id="footMark" aria-hidden="true"></canvas>
+    <span>Ocarina</span>
+    <span class="push"></span>
+    <a href="../">ocarina, the terminal</a>
+    <a href="https://github.com/VaibhavVishal07/Ocarina-Terminal">github</a>
+  </div>
+</div>
+
+<script>
+/* ── the mark ─────────────────────────────────────────────────
+   The same 5x7 bitmap the app and the landing page use, painted to
+   canvas so it stays crisp at any size. */
+(function () {
+  var F = {
+    A:"01110,10001,10001,11111,10001,10001,10001", B:"11110,10001,10001,11110,10001,10001,11110",
+    C:"01110,10001,10000,10000,10000,10001,01110", D:"11110,10001,10001,10001,10001,10001,11110",
+    E:"11111,10000,10000,11110,10000,10000,11111", F:"11111,10000,10000,11110,10000,10000,10000",
+    G:"01110,10001,10000,10111,10001,10001,01111", H:"10001,10001,10001,11111,10001,10001,10001",
+    I:"11111,00100,00100,00100,00100,00100,11111", J:"00111,00010,00010,00010,00010,10010,01100",
+    K:"10001,10010,10100,11000,10100,10010,10001", L:"10000,10000,10000,10000,10000,10000,11111",
+    M:"10001,11011,10101,10101,10001,10001,10001", N:"10001,11001,10101,10011,10001,10001,10001",
+    O:"01110,10001,10001,10001,10001,10001,01110", P:"11110,10001,10001,11110,10000,10000,10000",
+    Q:"01110,10001,10001,10001,10101,10010,01101", R:"11110,10001,10001,11110,10100,10010,10001",
+    S:"01111,10000,10000,01110,00001,00001,11110", T:"11111,00100,00100,00100,00100,00100,00100",
+    U:"10001,10001,10001,10001,10001,10001,01110", V:"10001,10001,10001,10001,10001,01010,00100",
+    W:"10001,10001,10001,10101,10101,11011,10001", X:"10001,10001,01010,00100,01010,10001,10001",
+    Y:"10001,10001,01010,00100,00100,00100,00100", Z:"11111,00001,00010,00100,01000,10000,11111"
+  };
+  function cells(text) {
+    var out = [], x = 0;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i], w = ch === " " ? 2 : 5;
+      var rows = F[ch] ? F[ch].split(",") : ["00000","00000","00000","00000","00000","00000","00000"];
+      for (var cx = 0; cx < w; cx++) for (var cy = 0; cy < 7; cy++)
+        out.push({ x: x + cx, y: cy, on: ch !== " " && rows[cy][cx] === "1" });
+      x += w + 1;
+    }
+    return { list: out, cols: x - 1 };
+  }
+  function paint(cv, model, pitch, color, showOff) {
+    if (!cv) return;
+    var dpr = 2;
+    cv.width = model.cols * pitch * dpr; cv.height = 7 * pitch * dpr;
+    var g = cv.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, model.cols * pitch, 7 * pitch);
+    for (var i = 0; i < model.list.length; i++) {
+      var c = model.list[i];
+      if (!c.on && !showOff) continue;
+      g.globalAlpha = c.on ? 1 : 0.055;
+      g.fillStyle = color;
+      g.beginPath();
+      g.arc(c.x * pitch + pitch / 2, c.y * pitch + pitch / 2, pitch * (c.on ? 0.33 : 0.30), 0, 6.2832);
+      g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  var MO = cells("OCARINA");
+  paint(document.getElementById("mark"), MO, 4.4, "#EEF3F8", true);
+  paint(document.getElementById("footMark"), MO, 3.2, "#8A96A3", false);
+})();
+
+/* ── the sheet ──────────────────────────────────────────────── */
+(function () {
+  "use strict";
+
+  /* GitHub Pages serves static files and cannot send mail itself, so a
+     saved sheet is posted to Web3Forms, which forwards it on as email.
+     The access key is a write-only token: it lets anyone post to this
+     form, which is what a public form is, and it does not reveal the
+     address the mail lands in. Get one at web3forms.com and paste it in
+     below. Until then the page still works and hands people their
+     answers back as text. */
+  var ENDPOINT   = "https://api.web3forms.com/submit";
+  var ACCESS_KEY = "__WEB3FORMS_ACCESS_KEY__";
+
+  var QUESTIONS = [
+    { q: "When you have a few projects going at once, how many terminal windows or tabs do you end up with?",
+      also: "Does it start to feel like more than you want to keep track of?" },
+    { q: "Once you have fired off a few long commands or prompts, can you still tell what you asked for and which of them finished?",
+      also: null },
+    { q: "Think back to the first time you opened Terminal. What made you close it again?",
+      also: null },
+    { q: "When something goes wrong, does the terminal tell you what happened in a way you can act on?",
+      also: "Or do you paste it somewhere else to find out what it meant?" },
+    { q: "Can you tell the difference between something that is still working and something that is stuck?",
+      also: null },
+    { q: "Have you ever set something long running, walked away, and come back to a black screen and a job that died when the Mac slept?",
+      also: "Or do you sit there keeping it awake until it finishes?" },
+    { q: "Is there anything you avoid doing in there because you are worried you will break something?",
+      also: null },
+    { q: "Is using the terminal ever enjoyable, or is it only ever the thing standing between you and what you wanted?",
+      also: null },
+    { q: "If one thing about it changed tomorrow, what would you pick?",
+      also: null }
+  ];
+
+  var KEY = "ocarina.questions.draft";
+  var sheet  = document.getElementById("sheet");
+  var form   = document.getElementById("form");
+  var saveBtn= document.getElementById("save");
+  var status = document.getElementById("status");
+  var draftEl= document.getElementById("draft");
+  var whoEl  = document.getElementById("who");
+  var after  = document.getElementById("after");
+  var boxes  = [];
+
+  QUESTIONS.forEach(function (item, i) {
+    var n = i + 1;
+    var d = document.createElement("div");
+    d.className = "q";
+    d.innerHTML =
+      '<div class="q-head"><span class="q-n" aria-hidden="true">' + n + '</span>' +
+      '<label class="q-t" for="a' + n + '">' + item.q +
+        (item.also ? '<span class="q-also">' + item.also + "</span>" : "") +
+      "</label></div>";
+    var ta = document.createElement("textarea");
+    ta.id = "a" + n;
+    ta.rows = 3;
+    ta.placeholder = "Type here, or skip it";
+    d.appendChild(ta);
+    sheet.appendChild(d);
+    boxes.push(ta);
+  });
+
+  /* A half-finished answer sheet should survive a closed tab. Nothing here
+     leaves the browser until Save is pressed. */
+  var store = (function () {
+    try { localStorage.setItem(KEY + ".t", "1"); localStorage.removeItem(KEY + ".t"); return localStorage; }
+    catch (e) { return null; }
+  })();
+
+  if (store) {
+    try {
+      var d = JSON.parse(store.getItem(KEY) || "{}");
+      if (d && d.a) {
+        boxes.forEach(function (b, i) { if (d.a[i]) b.value = d.a[i]; });
+        if (d.who) whoEl.value = d.who;
+        if (d.a.some(function (v) { return v; })) draftEl.textContent = "Draft restored";
+      }
+    } catch (e) { /* corrupt draft: start clean */ }
+  }
+
+  var saveTimer;
+  function keepDraft() {
+    if (!store) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        store.setItem(KEY, JSON.stringify({ a: boxes.map(function (b) { return b.value; }), who: whoEl.value }));
+        draftEl.textContent = "Draft saved on this device";
+      } catch (e) {}
+    }, 600);
+  }
+  boxes.forEach(function (b) { b.addEventListener("input", keepDraft); });
+  whoEl.addEventListener("input", keepDraft);
+
+  function answered() {
+    return boxes.filter(function (b) { return b.value.trim(); }).length;
+  }
+
+  function asText() {
+    var out = [];
+    if (whoEl.value.trim()) out.push("From: " + whoEl.value.trim(), "");
+    QUESTIONS.forEach(function (item, i) {
+      var v = boxes[i].value.trim();
+      if (!v) return;
+      out.push((i + 1) + ". " + item.q, v, "");
+    });
+    return out.join("\n");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (document.getElementById("website").value) return;   // a bot filled the trap
+
+    var n = answered();
+    if (!n) {
+      status.className = "status bad";
+      status.textContent = "Answer at least one first.";
+      boxes[0].focus();
+      return;
+    }
+
+    saveBtn.disabled = true;
+    status.className = "status";
+    status.textContent = "Sending…";
+
+    var who = whoEl.value.trim();
+    var payload = {
+      access_key: ACCESS_KEY,
+      subject: "Ocarina questions: " + n + " of " + QUESTIONS.length + " answered" + (who ? " by " + who : ""),
+      from_name: who || "Someone",
+      botcheck: false
+    };
+    if (who) payload["Who"] = who;
+    QUESTIONS.forEach(function (item, i) {
+      var v = boxes[i].value.trim();
+      if (v) payload[(i + 1) + ". " + item.q] = v;
+    });
+
+    send(payload).then(function () {
+      if (store) { try { store.removeItem(KEY); } catch (e) {} }
+      thanks(n);
+    }).catch(function (err) {
+      saveBtn.disabled = false;
+      status.className = "status bad";
+      status.textContent = unwired() ? "This form is not connected yet." : "That didn't send.";
+      rescue(err);
+    });
+  });
+
+  function unwired() { return ACCESS_KEY.indexOf("__") === 0; }
+
+  function send(payload) {
+    if (unwired()) {
+      return Promise.reject(new Error("No access key set on this page yet."));
+    }
+    return fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (body) {
+        // Web3Forms answers 200 with success:false for a bad key, so the
+        // status code on its own is not proof the mail went anywhere.
+        if (!r.ok || body.success === false) {
+          throw new Error(body.message || "HTTP " + r.status);
+        }
+        return body;
+      });
+    });
+  }
+
+  function thanks(n) {
+    form.hidden = true;
+    after.hidden = false;
+    after.innerHTML =
+      '<div class="done">' +
+      '<img src="../icon.png" alt="" width="360" height="360">' +
+      "<h2>Got it. Thank you.</h2>" +
+      "<p>" + n + (n === 1 ? " answer is" : " answers are") + " on the way to me. " +
+      "If you think of something after the fact, just send it in the chat.</p>" +
+      "</div>";
+    after.scrollIntoView({ behavior: "smooth", block: "center" });
+    after.setAttribute("tabindex", "-1");
+    after.focus({ preventScroll: true });
+  }
+
+  /* If the send fails there is no server to retry against, and the worst
+     outcome is someone losing what they just typed. Hand it back to them
+     as text they can send by hand. */
+  function rescue(err) {
+    if (document.getElementById("rescue")) return;
+    var text = asText();
+    var box = document.createElement("div");
+    box.className = "rescue";
+    box.id = "rescue";
+    box.innerHTML =
+      '<p class="lede" style="font-size:15px;margin-bottom:10px">Nothing is lost. Your answers are ' +
+      "below: copy them and send them back in the chat, or try Save again in a minute.</p>";
+    var ta = document.createElement("textarea");
+    ta.readOnly = true;
+    ta.value = text;
+    box.appendChild(ta);
+    form.appendChild(box);
+    ta.focus(); ta.select();
+    if (window.console && err) console.warn("[questions] send failed:", err);
+  }
+})();
+</script>
+</body>
+</html>
