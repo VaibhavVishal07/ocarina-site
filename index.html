@@ -406,14 +406,33 @@
   .akrow .sw.on::after { translate:13px 0; background:#2A1119; }
 
   /* ── tour ─────────────────────────────────────────────── */
-  .tour-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
-  .tour-chips button { cursor:pointer; font:inherit; font-size:13.5px; padding:9px 15px; border-radius:var(--r-sm);
+  /* Picker on the left, window on the right, so the four moments are
+     visible at the same time as the thing they change. Stacked under the
+     stage they read as a footnote nobody scrolls to. */
+  .tour-grid { display:grid; grid-template-columns:minmax(250px,29%) 1fr; gap:20px 34px;
+               align-content:start; margin-top:40px; }
+  .tour-grid > .tour-chips { grid-column:1; grid-row:1; }
+  .tour-grid > .tour-say   { grid-column:1; grid-row:2; }
+  .tour-grid > .stage      { grid-column:2; grid-row:1 / span 2; align-self:start; }
+  .tour-chips { display:grid; gap:8px; align-content:start; }
+  .tour-chips button { cursor:pointer; font:inherit; font-size:13.5px; padding:11px 15px; border-radius:var(--r-sm);
                        border:1px solid var(--line); background:transparent; color:var(--muted);
+                       text-align:left; width:100%;
                        transition:color .2s,border-color .2s,background-color .2s; }
   .tour-chips button:hover { color:var(--ink); border-color:var(--line-2); }
   .tour-chips button.on { color:#0A0E13; background:var(--ink); border-color:var(--ink); }
-  .tour-say { margin:22px 0 0; min-height:56px; color:var(--muted); font-size:16.5px; max-width:66ch; line-height:1.6; }
+  .tour-say { margin:0; min-height:56px; color:var(--muted); font-size:15.5px; max-width:66ch; line-height:1.6; }
   .tour-say b { color:var(--ink); font-weight:500; }
+  @media (max-width:920px) {
+    .tour-grid { grid-template-columns:1fr; gap:22px; margin-top:30px; }
+    /* Source order puts the picker first, so it is still the first thing
+       you meet on a phone. */
+    .tour-grid > .tour-chips, .tour-grid > .tour-say, .tour-grid > .stage {
+      grid-column:1; grid-row:auto; }
+    .tour-chips { grid-template-columns:1fr 1fr; }
+    .tour-say { font-size:16px; }
+  }
+  @media (max-width:520px) { .tour-chips { grid-template-columns:1fr; } }
 
   /* ── themes ───────────────────────────────────────────── */
   .theme-grid { display:grid; grid-template-columns:1.18fr .82fr; gap:34px; align-items:start; margin-top:40px; }
@@ -735,9 +754,11 @@
   <div class="wrap">
     <h2 class="rise">When you don't know what to type, <span class="soft">it helps.</span></h2>
     <p class="sub rise">The moments that stop a beginner cold, and what happens instead.</p>
-    <div class="stage rise d1" id="tourStage" style="margin-top:40px"></div>
-    <div class="tour-chips rise" id="tourChips" role="tablist" aria-label="Features"></div>
-    <p class="tour-say rise" id="tourSay"></p>
+    <div class="tour-grid">
+      <div class="tour-chips rise d1" id="tourChips" role="tablist" aria-label="Features"></div>
+      <p class="tour-say rise d2" id="tourSay"></p>
+      <div class="stage rise d1" id="tourStage"></div>
+    </div>
   </div>
 </section>
 
@@ -1170,8 +1191,7 @@
     tourStage.addEventListener("pointerleave", arm);
   }
   var rt;
-  narrow.addEventListener("change", function () { fitAll(); show(scene); });
-  addEventListener("resize", function () {
+  function reframe() {
     fitAll();
     clearTimeout(rt);
     rt = setTimeout(function () {
@@ -1180,7 +1200,13 @@
       tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
       void tZoom.offsetWidth; tZoom.style.transition = keep;
     }, 180);
-  });
+  }
+  narrow.addEventListener("change", function () { fitAll(); show(scene); });
+  addEventListener("resize", reframe);
+  // The stage can change size without the window doing so: a late font, or
+  // the copy beside it in the left column reflowing. The frame is computed
+  // from the stage's measurements, so it has to be recomputed when they move.
+  if ("ResizeObserver" in window) new ResizeObserver(reframe).observe(tourStage);
 
   /* ── themes, from the app's own JSON ─────────────────────── */
   var THEMES = {
