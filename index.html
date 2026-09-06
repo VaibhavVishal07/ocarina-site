@@ -344,69 +344,6 @@
   .lamps i.on { background:var(--wlit); box-shadow:0 0 3px var(--wlit); }
   .tokencard .rem { font-size:10px; color:var(--wdim); font-variant-numeric:tabular-nums; }
 
-  /* The drop target. Not a focus ring — the gesture this app's user knows is
-     the web one, so the panel dims and a dashed box says what letting go does. */
-  .dropzone { position:absolute; inset:0; z-index:6; display:flex; flex-direction:column;
-              align-items:center; justify-content:center; gap:9px; text-align:center;
-              background:color-mix(in srgb,var(--wbg) 72%,transparent);
-              font-family:"Geist",sans-serif; opacity:0; visibility:hidden;
-              transition:opacity .3s ease,visibility .3s; }
-  .win.dropping .dropzone { opacity:1; visibility:visible; }
-  .dropzone::before { content:""; position:absolute; inset:9px; border-radius:10px;
-                      border:2px dashed color-mix(in srgb,var(--wacc) 75%,transparent); }
-  .dropzone .dt { font-size:15px; font-weight:600; color:var(--wfg); }
-  .dropzone .db { font-size:11.5px; color:var(--wdim); line-height:1.55; }
-  .dropzone .di { font-size:22px; color:var(--wacc); line-height:1; }
-
-
-  /* ── drag and drop, and the token window ──────────────────────────────── */
-  .duo { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
-  @media (max-width:860px) { .duo { grid-template-columns:1fr; } }
-  .demo { border:1px solid var(--line-2); border-radius:var(--r); background:var(--raise);
-          padding:16px; display:flex; flex-direction:column; gap:12px; }
-  .demo .cap { font-size:11px; letter-spacing:.10em; color:var(--faint); text-transform:uppercase; }
-
-  /* A terminal, small, with the drop overlay over it. Same two sentences the
-     app says, because saying them before the mouse is released is the whole
-     point of the overlay. */
-  .droplet { position:relative; border-radius:11px; overflow:hidden; padding:14px 16px;
-             background:var(--oc-bg); border:1px solid rgba(200,222,242,.10);
-             font-family:var(--mono); font-size:12.5px; line-height:1.9; color:var(--oc-fg);
-             min-height:150px; }
-  .droplet .pale { color:color-mix(in srgb,var(--oc-fg) 45%,transparent); }
-  .droplet .over { position:absolute; inset:0; display:flex; flex-direction:column;
-                   align-items:center; justify-content:center; gap:7px; text-align:center;
-                   font-family:"Geist",sans-serif;
-                   background:color-mix(in srgb,var(--oc-bg) 74%,transparent); }
-  .droplet .over::before { content:""; position:absolute; inset:8px; border-radius:9px;
-                           border:2px dashed color-mix(in srgb,var(--oc-acc) 75%,transparent); }
-  .droplet .over b { font-size:14px; color:var(--ink); font-weight:600; }
-  .droplet .over span { font-size:11.5px; color:var(--muted); line-height:1.5; }
-  .droplet .over em { font-style:normal; font-size:20px; color:var(--oc-acc); }
-  .after { font-family:var(--mono); font-size:12.5px; color:var(--muted); line-height:1.9;
-           padding:0 2px; }
-  .after b { color:var(--ink); font-weight:400; }
-
-  /* The token card at the size the app draws it. */
-  /* Held to the width the app draws it at. Stretched across the column the
-     twenty lamps came out as twenty dashes, which is a progress bar again —
-     the shape the dot matrix exists to avoid. */
-  .tokdemo { max-width:300px; border:1px solid rgba(200,222,242,.13); border-radius:11px;
-             padding:10px 13px; background:linear-gradient(var(--oc-bot),var(--oc-top));
-             font-family:"Geist",sans-serif; }
-  .tokdemo .r1 { display:flex; align-items:baseline; gap:6px; font-size:11.5px;
-                 color:color-mix(in srgb,var(--oc-fg) 55%,transparent); }
-  .tokdemo .r1 b { margin-left:auto; font-size:15px; font-weight:600; color:var(--oc-fg); }
-  .tokdemo .r2 { display:flex; align-items:center; gap:9px; margin-top:7px; }
-  .tokdemo .lam { flex:1; display:grid; grid-template-columns:repeat(20,1fr); gap:2px; }
-  .tokdemo .lam i { display:block; height:4px; border-radius:1px;
-                    background:color-mix(in srgb,var(--oc-fg) 14%,transparent); }
-  .tokdemo .lam i.on { background:var(--oc-lit); box-shadow:0 0 4px var(--oc-lit); }
-  .tokdemo .rm { font-size:11px; color:color-mix(in srgb,var(--oc-fg) 55%,transparent);
-                 font-variant-numeric:tabular-nums; }
-  .plain { margin:0; font-size:14px; color:var(--muted); line-height:1.7; }
-  .plain b { color:var(--ink); font-weight:500; }
-
   .stage { position:relative; aspect-ratio:16/8.6; border-radius:var(--r); overflow:hidden;
            border:1px solid var(--line-2); background:var(--raise);
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
@@ -688,7 +625,6 @@
     <span class="spacer"></span>
     <span class="navlinks">
       <a class="link" href="#one">One window</a>
-      <a class="link" href="#drop">Drop a file</a>
       <a class="link" href="#awake">Keep awake</a>
       <a class="link" href="#install">Install an agent</a>
       <a class="link" href="#tour">While it works</a>
@@ -780,11 +716,6 @@
                 <span class="say">The tests stopped with an error.</span>
                 <span class="go">Explain this</span>
               </div>
-              <div class="dropzone">
-                <span class="di">&#10515;</span>
-                <span class="dt">Drop to add it here</span>
-                <span class="db">The file's location is typed at the prompt.<br>Nothing is uploaded, and nothing runs.</span>
-              </div>
               <div class="drawer">
                 <div class="q">What do you want to do?</div>
                 <div class="grp">INSTALL AN AI CODING AGENT</div>
@@ -875,43 +806,6 @@
   </div>
 </section>
 
-<section id="drop">
-  <div class="wrap">
-    <h2 class="rise">Drag a file in. <span class="soft">And see what the hours cost.</span></h2>
-    <p class="sub rise">Two things a terminal has never done for you: take a file you dragged at it, and say what the conversation has spent.</p>
-
-    <div class="duo">
-      <div class="demo glass rise d1">
-        <div class="cap">Dragging a screenshot onto the terminal</div>
-        <div class="droplet">
-          <span class="pale">~ &rsaquo;</span> claude &quot;look at this and tell me what is off&quot;
-          <div class="over">
-            <em>&#10515;</em>
-            <b>Drop to add it here</b>
-            <span>The file&rsquo;s location is typed at the prompt.<br>Nothing is uploaded, and nothing runs.</span>
-          </div>
-        </div>
-        <div class="after">~ &rsaquo; claude &quot;look at this&quot; <b>'~/Desktop/Screenshot 2026-09-06.png'</b></div>
-        <p class="plain">The path lands at the prompt, quoted only where it needs to be, with a space after it so you can carry on typing. <b>An image with no file behind it</b> — dragged off a web page or out of a message — is written out first, so there is still a path to hand the agent. Terminal.app refuses those.</p>
-      </div>
-
-      <div class="demo glass rise d2">
-        <div class="cap">Under the task list</div>
-        <div class="tokdemo">
-          <div class="r1">This window <b>1.4M</b> <span>tokens</span></div>
-          <div class="r2">
-            <span class="lam" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-            <span class="rm">3h 12m</span>
-          </div>
-        </div>
-        <p class="plain">Tokens spent in the five-hour block the agent is inside, and how much of that block is left — lamps on a dot-matrix board, the same alphabet as the wordmark. The same reading sits in the menu bar while an agent is running.</p>
-        <p class="plain">It says <b>used</b>, not <b>left</b>, and that is not a hedge. Nothing on your Mac records the size of your allowance; the only way to ask would be to spend your own credentials on a request you did not make. A meter with a number invented for it would be worse than no meter.</p>
-      </div>
-    </div>
-
-    <p class="takeaway rise">Drop a file and <b>the path is already typed.</b> Glance right and the window says what it has cost.</p>
-  </div>
-</section>
 
 <section id="awake">
   <div class="wrap">
