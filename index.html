@@ -41,9 +41,13 @@
     /* Ocarina, straight out of the app's own theme file. Every window drawn
        on this page that is meant to be Ocarina reads its colours from here,
        so the site and the app cannot drift apart. */
-    --oc-bg:#12171E; --oc-fg:#C9D4E0; --oc-top:#202224; --oc-bot:#141517;
-    --oc-red:#F06C6C; --oc-grn:#5FC98D; --oc-yel:#E5B25A; --oc-blu:#5AA9F0;
-    --oc-acc:#38C2FF;
+    --oc-bg:#060B10; --oc-fg:#C9D4E0; --oc-top:#101721; --oc-bot:#0B1019;
+    --oc-red:#F06C86; --oc-grn:#5FC9A2; --oc-yel:#E5CE5A; --oc-blu:#5A96F0;
+    --oc-acc:#31789B;
+    /* The window's own ground, which the four panels float on, and the board's
+       two lamp states. Derived in the app from the panel colour; derived here
+       the same way so the two cannot drift. */
+    --oc-ground:#070A10; --oc-lit:#3D96C2; --oc-unlit:#0A0E14;
   }
   @media (max-width:760px) { :root { --gutter:22px; --sect:64px; } }
   @media (max-width:420px) { :root { --gutter:18px; } }
@@ -119,7 +123,7 @@
   nav .spacer { flex:1; }
   nav a.link { color:var(--muted); text-decoration:none; font-size:14.5px; padding:8px 10px; border-radius:8px; }
   nav a.link:hover { color:var(--ink); background:rgba(255,255,255,.05); }
-  @media (max-width:760px) { nav a.link { display:none; } }
+  @media (max-width:760px) { nav .navlinks { display:none; } }
   .btn { display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:450;
          padding:9px 17px; border-radius:var(--r-sm); text-decoration:none; white-space:nowrap;
          transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .2s,border-color .2s,opacity .2s; }
@@ -132,6 +136,20 @@
   nav .brand { display:flex; align-items:center; gap:11px; text-decoration:none; }
   nav .nav-icon { width:25px; height:25px; display:block; border-radius:6px; }
   nav canvas.mark { height:14px; width:auto; }
+  /* the two buttons read as one control group, closer than the bar gap */
+  nav .navcta { display:flex; align-items:center; gap:9px; }
+  /* links carry 10px of their own padding, so they group tighter than the bar gap */
+  nav .navlinks { display:flex; align-items:center; gap:2px; }
+
+  /* The pill is the way back up, not part of the first screen: it sits out
+     the fold and slides in once the headline is behind you. Armed by script,
+     never by the stylesheet, so a scriptless load keeps its nav. */
+  .navfold nav .bar {
+    opacity:0; visibility:hidden; transform:translateY(-16px); pointer-events:none;
+    transition:opacity .26s ease, transform .42s cubic-bezier(.16,1,.3,1), visibility .26s;
+  }
+  .navfold nav.show .bar { opacity:1; visibility:visible; transform:none; pointer-events:auto; }
+  @media (prefers-reduced-motion:reduce) { .navfold nav .bar { transform:none; } }
 
   /* ── hero ─────────────────────────────────────────────── */
   header.hero { position:relative; padding:56px 0 var(--sect); overflow:hidden; }
@@ -194,6 +212,7 @@
     --wblu:var(--oc-blu); --wacc:var(--oc-acc);
     --wline:color-mix(in srgb,var(--wfg) 13%,transparent);
     --wdim:color-mix(in srgb,var(--wfg) 55%,transparent);
+    --wground:var(--oc-ground); --wlit:var(--oc-lit); --wunlit:var(--oc-unlit);
     /* Fixed design size, scaled to whatever the stage is. Reflowing a
        three-pane desktop window into a phone gives you three crushed
        columns; scaling keeps every proportion and never breaks. */
@@ -203,27 +222,43 @@
     background:var(--wbg); color:var(--wfg);
     transition:background-color .5s ease,color .5s ease;
   }
+  /* A real titlebar with nothing written in it, the way the app draws it: the
+     sidebar carries the wordmark, so a title here would be the name twice. */
   .win-bar { height:34px; flex:none; display:flex; align-items:center; gap:7px; padding:0 14px;
-             background:var(--wtop); border-bottom:1px solid var(--wline); transition:background-color .5s ease; }
+             background:var(--wground); transition:background-color .5s ease; }
   .tl { width:10px; height:10px; border-radius:50%; }
-  .win-bar .name { margin-left:9px; font-size:12px; color:var(--wdim); }
-  .win-body { flex:1; display:flex; min-height:0; }
+  .win-bar .name { display:none; }
 
-  .side { width:222px; flex:none; background:var(--wbot); border-right:1px solid var(--wline);
-          display:flex; flex-direction:column; padding:11px 9px; gap:2px; transition:background-color .5s ease; }
-  .side .brand { padding:3px 9px 11px; font-size:13.5px; font-weight:600; letter-spacing:-.015em; }
-  .row { display:flex; align-items:center; gap:9px; padding:7px 9px; border-radius:7px;
+  /* Four panels floating on the window's ground, with the same gap outside
+     them as between them. Dividers are gone with the panes they divided. */
+  .win-body { flex:1; display:flex; gap:10px; padding:10px; min-height:0;
+              background:var(--wground); transition:background-color .5s ease; }
+  .card { background:var(--wbot); border:1px solid var(--wline); border-radius:12px;
+          transition:background-color .5s ease,border-color .5s ease; }
+  /* Stacked cards mirror their gradients, so the light falls across the pair
+     once instead of restarting at every card. */
+  .card.up   { background:linear-gradient(var(--wtop),var(--wbot)); }
+  .card.down { background:linear-gradient(var(--wbot),var(--wtop)); }
+
+  .side { width:230px; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; }
+  .side .tabs { flex:1; min-height:0; display:flex; flex-direction:column; padding:11px 9px; gap:2px; overflow:hidden; }
+  .side .brand { padding:3px 9px 16px; font-size:13.5px; font-weight:600; letter-spacing:-.015em; }
+  .row { display:flex; align-items:center; gap:9px; padding:10px 9px; border-radius:9px;
          font-size:13px; color:var(--wdim); white-space:nowrap; overflow:hidden; }
   .row .g { font-family:var(--mono); font-size:11px; width:12px; flex:none; text-align:center; opacity:.85; }
   .row .t { overflow:hidden; text-overflow:ellipsis; }
-  .row.on { background:color-mix(in srgb,var(--wfg) 9%,transparent); color:var(--wfg); }
+  /* The selected tab wears the theme's accent, fill and edge — it was a
+     white-ish wash, which is the same grey rectangle in every theme. */
+  .row.on { background:color-mix(in srgb,var(--wacc) 11%,transparent); color:var(--wfg);
+            box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 34%,transparent); }
   .row .k { margin-left:auto; font-size:11px; opacity:.45; padding-left:8px; }
   .dot { width:7px; height:7px; border-radius:50%; margin-left:auto; flex:none; background:var(--wdim); }
   .dot.busy { background:var(--wyel); animation:pulse 1.5s ease-in-out infinite; }
   .dot.bad { background:var(--wred); } .dot.ok { background:var(--wgrn); }
   @keyframes pulse { 50% { opacity:.22; } }
   .side .fill { flex:1; min-height:8px; }
-  .side .foot { border-top:1px solid var(--wline); padding-top:8px; margin-top:8px; }
+  .side .foot { flex:none; padding:8px 9px; }
+  .side .foot .row { padding:6px 9px; }
   .sw { margin-left:auto; width:28px; height:16px; border-radius:9px; flex:none;
         background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
   .sw::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
@@ -232,6 +267,7 @@
   .sw.on::after { translate:12px 0; background:#0B1015; }
 
   .main { flex:1; position:relative; min-width:0; overflow:hidden;
+          background:var(--wbg); border:1px solid var(--wline); border-radius:12px;
           font-family:var(--mono); font-size:14px; line-height:2.0; }
   .board { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
            justify-content:center; gap:10px; transition:opacity .4s ease; }
@@ -261,6 +297,10 @@
   .banner .go { margin-left:auto; border:1px solid var(--wred); border-radius:6px;
                 padding:5px 12px; color:var(--wred); white-space:nowrap; }
   .win.erred .banner { translate:0 0; opacity:1; }
+  /* the failure line belongs to the scene that is about a failure; anywhere
+     else it contradicts a prompt that is still waiting. Hidden, not removed,
+     so the window keeps the height every scene is framed against. */
+  .win:not(.erred) .shell .rd { visibility:hidden; }
   .win.erred .shell { padding-top:56px; }
 
   .drawer { position:absolute; left:50%; top:50%; z-index:4; width:74%; max-width:420px;
@@ -275,10 +315,11 @@
   .drawer .it.sel { background:color-mix(in srgb,var(--wacc) 17%,transparent); }
   .drawer .it .b { color:var(--wdim); font-size:11.5px; }
 
-  .panel { width:0; flex:none; background:var(--wbot); overflow:hidden; border-left:1px solid transparent;
-           transition:width .5s cubic-bezier(.16,1,.3,1),border-color .5s ease,background-color .5s ease; }
-  .win.tasked .panel { width:236px; border-left-color:var(--wline); }
-  .panel .inner { width:236px; padding:14px 16px; }
+  .right { width:0; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:hidden;
+           transition:width .5s cubic-bezier(.16,1,.3,1); }
+  .win.tasked .right { width:230px; }
+  .panel { flex:1; min-height:0; overflow:hidden; }
+  .panel .inner { width:230px; padding:12px; }
   .panel h4 { margin:0 0 3px; font-size:13.5px; font-weight:500; font-family:"Geist",sans-serif; }
   .panel .note { margin:0 0 12px; font-size:11.5px; color:var(--wdim); font-family:"Geist",sans-serif; line-height:1.55; }
   .task { display:flex; gap:9px; align-items:flex-start; padding:4.5px 0; font-size:12.5px;
@@ -289,6 +330,82 @@
   .task.done .bx { background:var(--wfg); border-color:var(--wfg); }
   .task.done .bx::after { content:""; position:absolute; left:3px; top:.5px; width:3px; height:6px;
                           border:solid var(--wbot); border-width:0 1.6px 1.6px 0; rotate:42deg; }
+
+  /* The token card: what the five-hour window has cost, and how much of it is
+     left. The meter is lamps on a dot-matrix board, the same alphabet as the
+     wordmark — a departure board is a thing for counting down. */
+  .tokencard { flex:none; padding:8px 11px; font-family:"Geist",sans-serif; }
+  .tokencard .tl1 { display:flex; align-items:baseline; gap:6px; font-size:10.5px; color:var(--wdim); }
+  .tokencard .tl1 b { margin-left:auto; font-size:12.5px; font-weight:600; color:var(--wfg); }
+  .tokencard .tl2 { display:flex; align-items:center; gap:8px; margin-top:5px; }
+  .lamps { flex:1; display:grid; grid-template-columns:repeat(20,1fr); gap:1.6px; }
+  .lamps i { display:block; height:3px; border-radius:1px;
+             background:color-mix(in srgb,var(--wfg) 14%,transparent); }
+  .lamps i.on { background:var(--wlit); box-shadow:0 0 3px var(--wlit); }
+  .tokencard .rem { font-size:10px; color:var(--wdim); font-variant-numeric:tabular-nums; }
+
+  /* The drop target. Not a focus ring — the gesture this app's user knows is
+     the web one, so the panel dims and a dashed box says what letting go does. */
+  .dropzone { position:absolute; inset:0; z-index:6; display:flex; flex-direction:column;
+              align-items:center; justify-content:center; gap:9px; text-align:center;
+              background:color-mix(in srgb,var(--wbg) 72%,transparent);
+              font-family:"Geist",sans-serif; opacity:0; visibility:hidden;
+              transition:opacity .3s ease,visibility .3s; }
+  .win.dropping .dropzone { opacity:1; visibility:visible; }
+  .dropzone::before { content:""; position:absolute; inset:9px; border-radius:10px;
+                      border:2px dashed color-mix(in srgb,var(--wacc) 75%,transparent); }
+  .dropzone .dt { font-size:15px; font-weight:600; color:var(--wfg); }
+  .dropzone .db { font-size:11.5px; color:var(--wdim); line-height:1.55; }
+  .dropzone .di { font-size:22px; color:var(--wacc); line-height:1; }
+
+
+  /* ── drag and drop, and the token window ──────────────────────────────── */
+  .duo { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
+  @media (max-width:860px) { .duo { grid-template-columns:1fr; } }
+  .demo { border:1px solid var(--line-2); border-radius:var(--r); background:var(--raise);
+          padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .demo .cap { font-size:11px; letter-spacing:.10em; color:var(--faint); text-transform:uppercase; }
+
+  /* A terminal, small, with the drop overlay over it. Same two sentences the
+     app says, because saying them before the mouse is released is the whole
+     point of the overlay. */
+  .droplet { position:relative; border-radius:11px; overflow:hidden; padding:14px 16px;
+             background:var(--oc-bg); border:1px solid rgba(200,222,242,.10);
+             font-family:var(--mono); font-size:12.5px; line-height:1.9; color:var(--oc-fg);
+             min-height:150px; }
+  .droplet .pale { color:color-mix(in srgb,var(--oc-fg) 45%,transparent); }
+  .droplet .over { position:absolute; inset:0; display:flex; flex-direction:column;
+                   align-items:center; justify-content:center; gap:7px; text-align:center;
+                   font-family:"Geist",sans-serif;
+                   background:color-mix(in srgb,var(--oc-bg) 74%,transparent); }
+  .droplet .over::before { content:""; position:absolute; inset:8px; border-radius:9px;
+                           border:2px dashed color-mix(in srgb,var(--oc-acc) 75%,transparent); }
+  .droplet .over b { font-size:14px; color:var(--ink); font-weight:600; }
+  .droplet .over span { font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .droplet .over em { font-style:normal; font-size:20px; color:var(--oc-acc); }
+  .after { font-family:var(--mono); font-size:12.5px; color:var(--muted); line-height:1.9;
+           padding:0 2px; }
+  .after b { color:var(--ink); font-weight:400; }
+
+  /* The token card at the size the app draws it. */
+  /* Held to the width the app draws it at. Stretched across the column the
+     twenty lamps came out as twenty dashes, which is a progress bar again —
+     the shape the dot matrix exists to avoid. */
+  .tokdemo { max-width:300px; border:1px solid rgba(200,222,242,.13); border-radius:11px;
+             padding:10px 13px; background:linear-gradient(var(--oc-bot),var(--oc-top));
+             font-family:"Geist",sans-serif; }
+  .tokdemo .r1 { display:flex; align-items:baseline; gap:6px; font-size:11.5px;
+                 color:color-mix(in srgb,var(--oc-fg) 55%,transparent); }
+  .tokdemo .r1 b { margin-left:auto; font-size:15px; font-weight:600; color:var(--oc-fg); }
+  .tokdemo .r2 { display:flex; align-items:center; gap:9px; margin-top:7px; }
+  .tokdemo .lam { flex:1; display:grid; grid-template-columns:repeat(20,1fr); gap:2px; }
+  .tokdemo .lam i { display:block; height:4px; border-radius:1px;
+                    background:color-mix(in srgb,var(--oc-fg) 14%,transparent); }
+  .tokdemo .lam i.on { background:var(--oc-lit); box-shadow:0 0 4px var(--oc-lit); }
+  .tokdemo .rm { font-size:11px; color:color-mix(in srgb,var(--oc-fg) 55%,transparent);
+                 font-variant-numeric:tabular-nums; }
+  .plain { margin:0; font-size:14px; color:var(--muted); line-height:1.7; }
+  .plain b { color:var(--ink); font-weight:500; }
 
   .stage { position:relative; aspect-ratio:16/8.6; border-radius:var(--r); overflow:hidden;
            border:1px solid var(--line-2); background:var(--raise);
@@ -372,6 +489,12 @@
     font-family:var(--mono); font-size:12px; letter-spacing:.16em; color:rgba(255,255,255,.20);
   }
   .veil.on { opacity:1; }
+  .veil em { display:block; margin-top:11px; font-style:normal; font-size:10.5px;
+             letter-spacing:.1em; color:rgba(255,255,255,.14); }
+  /* Waking the slept screen shows what you would actually find on it. The run
+     did not pause and pick up again: it ended with the connection, mid-sentence. */
+  .screen.slept { cursor:pointer; }
+  .screen.woke .veil.on { opacity:0; }
 
   /* Apple's Terminal, at the same design size so both scale identically. */
   .twin { position:absolute; top:0; left:0; width:520px; height:300px;
@@ -386,6 +509,10 @@
   .twin .dim { color:rgba(201,207,212,.5); }
   .twin .dim b { color:#C9CFD4; font-weight:400; }
   .twin .caret { background:#C9CFD4; width:8px; }
+  /* --wred lives on .win; Apple's window is not one, so the dead line needs
+     the shared token directly or it inherits the ordinary foreground. */
+  .twin .rd, .twin .rd b { color:var(--oc-red); }
+  .twin .rd b { font-weight:500; }
 
   /* Ocarina, the same window the rest of the page draws. This used to be
      Sakura to read as a different machine next to Apple's black default;
@@ -559,12 +686,18 @@
       <canvas class="mark" id="navMark" role="img" aria-label="Ocarina"></canvas>
     </a>
     <span class="spacer"></span>
-    <a class="link" href="#one">One window</a>
-    <a class="link" href="#awake">Keep awake</a>
-    <a class="link" href="#tour">What it does</a>
-    <a class="link" href="#themes">Make it yours</a>
-    <a class="btn btn-ghost btn-sm" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg><span class="lbl">Buy me a coffee</span></a>
-    <span class="btn btn-soon btn-sm"><i></i>Coming soon</span>
+    <span class="navlinks">
+      <a class="link" href="#one">One window</a>
+      <a class="link" href="#drop">Drop a file</a>
+      <a class="link" href="#awake">Keep awake</a>
+      <a class="link" href="#install">Install an agent</a>
+      <a class="link" href="#tour">While it works</a>
+      <a class="link" href="#themes">Make it yours</a>
+    </span>
+    <span class="navcta">
+      <a class="btn btn-ghost btn-sm" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg><span class="lbl">Buy me a coffee</span></a>
+      <span class="btn btn-soon btn-sm"><i></i>Coming soon</span>
+    </span>
   </div>
 </nav>
 
@@ -580,7 +713,7 @@
       <span class="flip-lead">built for people who</span>
       <span class="roll" id="roll"></span>
     </div>
-    <p class="hero-sub">A macOS terminal for running AI coding agents. As many as you like, in one window, each one named after the work it is doing.</p>
+    <p class="hero-sub">A macOS terminal for running AI coding agents. As many as you like, in one window, each one named after what you asked it for.</p>
     <div class="cta">
       <span class="btn btn-soon"><i></i>Coming soon</span>
       <a class="btn btn-ghost" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
@@ -600,19 +733,22 @@
           </div>
           <div class="win-body">
             <div class="side" id="side">
-              <div class="brand">Ocarina</div>
-              <div id="tablist">
-                <div class="row on"><span class="g">&#10043;</span><span class="t">Fix the checkout page</span><span class="dot busy"></span></div>
-                <div class="row"><span class="g">&#10043;</span><span class="t">Write the sign-up tests</span><span class="dot busy"></span></div>
-                <div class="row"><span class="g">&#9671;</span><span class="t">Rename the theme files</span><span class="dot bad"></span></div>
-                <div class="row"><span class="g">&#10043;</span><span class="t">Add a dark mode toggle</span><span class="dot ok"></span></div>
-                <div class="row"><span class="g">$</span><span class="t">portfolio-site</span><span class="dot"></span></div>
-                <div class="row"><span class="g">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
+              <div class="card up tabs">
+                <div class="brand">Ocarina</div>
+                <div id="tablist">
+                  <div class="row on"><span class="g">&#10043;</span><span class="t">Fix the checkout page</span><span class="dot busy"></span></div>
+                  <div class="row"><span class="g">&#10043;</span><span class="t">Write the sign-up tests</span><span class="dot busy"></span></div>
+                  <div class="row"><span class="g">&#9671;</span><span class="t">Rename the theme files</span><span class="dot bad"></span></div>
+                  <div class="row"><span class="g">&#10043;</span><span class="t">Add a dark mode toggle</span><span class="dot ok"></span></div>
+                  <div class="row"><span class="g">$</span><span class="t">portfolio-site</span><span class="dot"></span></div>
+                  <div class="row"><span class="g">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
+                </div>
+                <div class="fill"></div>
               </div>
-              <div class="fill"></div>
-              <div class="foot">
-                <div class="row">Tasks<span class="k">&#8984;L</span></div>
-                <div class="row">Theme<span class="k" id="themeName">Ocarina</span></div>
+              <div class="card down foot">
+                <div class="row">Theme</div>
+                <div class="row">Share feedback</div>
+                <div class="row">Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
                 <div class="row" id="awakeRow">Keep awake<span class="sw on"></span></div>
               </div>
             </div>
@@ -644,6 +780,11 @@
                 <span class="say">The tests stopped with an error.</span>
                 <span class="go">Explain this</span>
               </div>
+              <div class="dropzone">
+                <span class="di">&#10515;</span>
+                <span class="dt">Drop to add it here</span>
+                <span class="db">The file's location is typed at the prompt.<br>Nothing is uploaded, and nothing runs.</span>
+              </div>
               <div class="drawer">
                 <div class="q">What do you want to do?</div>
                 <div class="grp">INSTALL AN AI CODING AGENT</div>
@@ -656,15 +797,24 @@
               </div>
             </div>
 
-            <div class="panel">
-              <div class="inner">
-                <h4>Tasks</h4>
-                <p class="note">Read from your agent's own transcript. Works with any agent you run here.</p>
-                <div class="task done"><span class="bx"></span>Install Claude Code</div>
-                <div class="task done"><span class="bx"></span>Set up the project folder</div>
-                <div class="task done"><span class="bx"></span>Add a dark mode toggle</div>
-                <div class="task"><span class="bx"></span>Fix the checkout page</div>
-                <div class="task"><span class="bx"></span>Write the sign-up tests</div>
+            <div class="right">
+              <div class="card up panel">
+                <div class="inner">
+                  <h4>Tasks</h4>
+                  <p class="note">Read from your agent's own transcript. Works with any agent you run here.</p>
+                  <div class="task done"><span class="bx"></span>Install Claude Code</div>
+                  <div class="task done"><span class="bx"></span>Set up the project folder</div>
+                  <div class="task done"><span class="bx"></span>Add a dark mode toggle</div>
+                  <div class="task"><span class="bx"></span>Fix the checkout page</div>
+                  <div class="task"><span class="bx"></span>Write the sign-up tests</div>
+                </div>
+              </div>
+              <div class="card down tokencard">
+                <div class="tl1">This window <b>1.4M</b> <span>tokens</span></div>
+                <div class="tl2">
+                  <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                  <span class="rem">3h 12m</span>
+                </div>
               </div>
             </div>
           </div>
@@ -676,8 +826,8 @@
 
 <section id="one">
   <div class="wrap">
-    <h2 class="rise">Three agents in Terminal <span class="soft">means three windows.</span></h2>
-    <p class="sub rise">macOS Terminal names every tab after the shell, so a third agent is a third window called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
+    <h2 class="rise">One window, <span class="soft">a tab for every agent.</span></h2>
+    <p class="sub rise">Open everything in the same window and the sidebar names each tab after what you asked for — nothing to juggle, nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>. The name is taken from the ask that opened the conversation, so it holds still instead of changing under you every time you type.</p>
 
     <div class="versus">
       <div class="vs glass rise d1">
@@ -721,20 +871,58 @@
       </div>
     </div>
 
-    <p class="takeaway rise">One window, one list, <b>each tab named after what you asked for.</b> The dot says working, waiting, or stopped.</p>
+    <p class="takeaway rise">One window, one list, <b>each tab named after what you asked for.</b> The dot says working, waiting, or stopped — read from the agent&rsquo;s own transcript, so it goes green when the work stops rather than blinking at work that finished ten minutes ago.</p>
+  </div>
+</section>
+
+<section id="drop">
+  <div class="wrap">
+    <h2 class="rise">Drag a file in. <span class="soft">And see what the hours cost.</span></h2>
+    <p class="sub rise">Two things a terminal has never done for you: take a file you dragged at it, and say what the conversation has spent.</p>
+
+    <div class="duo">
+      <div class="demo glass rise d1">
+        <div class="cap">Dragging a screenshot onto the terminal</div>
+        <div class="droplet">
+          <span class="pale">~ &rsaquo;</span> claude &quot;look at this and tell me what is off&quot;
+          <div class="over">
+            <em>&#10515;</em>
+            <b>Drop to add it here</b>
+            <span>The file&rsquo;s location is typed at the prompt.<br>Nothing is uploaded, and nothing runs.</span>
+          </div>
+        </div>
+        <div class="after">~ &rsaquo; claude &quot;look at this&quot; <b>'~/Desktop/Screenshot 2026-09-06.png'</b></div>
+        <p class="plain">The path lands at the prompt, quoted only where it needs to be, with a space after it so you can carry on typing. <b>An image with no file behind it</b> — dragged off a web page or out of a message — is written out first, so there is still a path to hand the agent. Terminal.app refuses those.</p>
+      </div>
+
+      <div class="demo glass rise d2">
+        <div class="cap">Under the task list</div>
+        <div class="tokdemo">
+          <div class="r1">This window <b>1.4M</b> <span>tokens</span></div>
+          <div class="r2">
+            <span class="lam" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="rm">3h 12m</span>
+          </div>
+        </div>
+        <p class="plain">Tokens spent in the five-hour block the agent is inside, and how much of that block is left — lamps on a dot-matrix board, the same alphabet as the wordmark. The same reading sits in the menu bar while an agent is running.</p>
+        <p class="plain">It says <b>used</b>, not <b>left</b>, and that is not a hedge. Nothing on your Mac records the size of your allowance; the only way to ask would be to spend your own credentials on a request you did not make. A meter with a number invented for it would be worse than no meter.</p>
+      </div>
+    </div>
+
+    <p class="takeaway rise">Drop a file and <b>the path is already typed.</b> Glance right and the window says what it has cost.</p>
   </div>
 </section>
 
 <section id="awake">
   <div class="wrap">
     <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-    <p class="sub rise">Leave a long run going and macOS sleeps the display on its usual timer, taking the run with it. Same task, same machine, side by side.</p>
+    <p class="sub rise">Ocarina holds the display awake for as long as a run is going, so a long task finishes instead of stopping when the screen does. Same task, same machine, side by side.</p>
   </div>
 
   <div class="wrap awake-pair">
     <div class="acol rise d1">
       <div class="cap">MACOS TERMINAL</div>
-      <div class="screen">
+      <div class="screen" id="screenA">
         <div class="twin">
           <div class="tbar"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span>vaibhav &mdash; -zsh &mdash; 80&times;24</span></div>
           <div class="tb">
@@ -742,12 +930,12 @@
             <span class="l">&nbsp;</span>
             <span class="l dim">&gt; Fix the checkout page</span>
             <span class="l">Looking through the cart files</span>
-            <span class="l">Making the change<span class="caret"></span></span>
+            <span class="l" id="lineA">Making the change<span class="caret" id="caretA"></span></span>
             <span class="l">&nbsp;</span>
-            <span class="l dim">running <b id="clockA">6:04</b></span>
+            <span class="l dim" id="runA"><span id="labA">running </span><b id="clockA">6:04</b></span>
           </div>
         </div>
-        <div class="veil" id="veilA"><span>Display asleep</span></div>
+        <div class="veil" id="veilA"><span>Display asleep<em>hover to wake it</em></span></div>
       </div>
       <p class="asay" id="sayA">Running.</p>
     </div>
@@ -780,12 +968,24 @@
   </div>
 </section>
 
+<section id="install">
+  <div class="wrap">
+    <h2 class="rise">The install command, <span class="soft">already in the app.</span></h2>
+    <p class="sub rise">&#8984;K keeps the commands that get an agent running, and writes the one you pick at your prompt.</p>
+    <div class="tour-grid">
+      <div class="tour-chips rise d1" id="kitChips" role="tablist" aria-label="Getting an agent running"></div>
+      <p class="tour-say rise d2" id="kitSay"></p>
+      <div class="stage rise d1" id="kitStage"></div>
+    </div>
+  </div>
+</section>
+
 <section id="tour">
   <div class="wrap">
-    <h2 class="rise">When you don't know what to type, <span class="soft">it helps.</span></h2>
-    <p class="sub rise">The moments that stop a beginner cold, and what happens instead.</p>
+    <h2 class="rise">Errors in plain English, <span class="soft">and a list of what you asked for.</span></h2>
+    <p class="sub rise">Both read out of the session you are already running.</p>
     <div class="tour-grid">
-      <div class="tour-chips rise d1" id="tourChips" role="tablist" aria-label="Features"></div>
+      <div class="tour-chips rise d1" id="tourChips" role="tablist" aria-label="While the agent works"></div>
       <p class="tour-say rise d2" id="tourSay"></p>
       <div class="stage rise d1" id="tourStage"></div>
     </div>
@@ -989,6 +1189,28 @@
     }
   }
 
+  /* ── nav: only once the fold is behind you ─────────
+     Same rule as the reveals below: the hiding is put on by script, so a
+     page that never runs this still has a nav to use. */
+  var navEl = document.querySelector("nav");
+  var navPast = false, navQueued = false;
+  function navSync() {
+    navQueued = false;
+    // one screen, less the pill's own height, so it arrives as the fold leaves
+    var past = (window.scrollY || window.pageYOffset) > innerHeight - 72;
+    if (past === navPast) return;
+    navPast = past;
+    navEl.classList.toggle("show", past);
+  }
+  if (navEl) {
+    document.documentElement.classList.add("navfold");
+    addEventListener("scroll", function () {
+      if (!navQueued) { navQueued = true; requestAnimationFrame(navSync); }
+    }, { passive: true });
+    addEventListener("resize", navSync);
+    navSync();
+  }
+
   /* ── reveals ─────────────────────────────────────────────
      Hiding is applied by script, never by the stylesheet, so a failed
      observer or an unpainted tab shows the page rather than nothing. */
@@ -1028,9 +1250,14 @@
     sayB:   document.getElementById("sayB"),
     lineB:  document.getElementById("lineB"),
     caretB: document.getElementById("caretB"),
-    beadB:  document.getElementById("beadB")
+    beadB:  document.getElementById("beadB"),
+    screenA: document.getElementById("screenA"),
+    runA:   document.getElementById("runA"),
+    labA:   document.getElementById("labA"),
+    caretA: document.getElementById("caretA")
   };
-  var SLEEP_AT = 6, FINISH_AT = 14, RESET_AT = 19;
+  var SLEEP_AT = 4, FINISH_AT = 14, RESET_AT = 20;
+  var awHover = false;
   var awTick = null, awStep = 0;
 
   function mmss(n) { return Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0"); }
@@ -1038,9 +1265,29 @@
     AW.clockA.textContent = mmss(a);
     AW.clockB.textContent = mmss(b);
   }
+  /* What the slept machine looks like underneath: the caret is gone, and the
+     line that was counting up is now the time the connection went away. */
+  function awSleep(a) {
+    AW.veil.classList.add("on");
+    AW.screenA.classList.add("slept");
+    AW.caretA.style.display = "none";
+    AW.labA.textContent = "disconnected ";
+    AW.runA.className = "l rd";
+    AW.sayA.innerHTML = "The display slept. <b>The run stopped at " + mmss(a) + ".</b>";
+    awWake();
+    if (awHover) awStop();
+  }
+  // the veil lifts only while the pointer is on a screen that has slept
+  function awWake() {
+    AW.screenA.classList.toggle("woke", awHover && AW.screenA.classList.contains("slept"));
+  }
   function awReset() {
     awStep = 0;
     AW.veil.classList.remove("on");
+    AW.screenA.classList.remove("slept", "woke");
+    AW.caretA.style.display = "";
+    AW.labA.textContent = "running ";
+    AW.runA.className = "l dim";
     AW.sayA.classList.remove("done");
     AW.sayB.classList.remove("done");
     AW.sayA.innerHTML = "Running.";
@@ -1055,10 +1302,7 @@
     var a = 364 + Math.min(awStep, SLEEP_AT);
     var b = 364 + Math.min(awStep, FINISH_AT);
     awPaint(a, b);
-    if (awStep === SLEEP_AT) {
-      AW.veil.classList.add("on");
-      AW.sayA.innerHTML = "The display slept. <b>The run stopped at " + mmss(a) + ".</b>";
-    }
+    if (awStep === SLEEP_AT) awSleep(a);
     if (awStep === FINISH_AT) {
       AW.lineB.firstChild.nodeValue = "\u2713 the total now updates";
       AW.caretB.style.display = "none";
@@ -1068,24 +1312,34 @@
     }
     if (awStep >= RESET_AT) awReset();
   }
-  function awStart() { if (!awTick && !reduce) awTick = setInterval(awFrame, 1000); }
+  var awSeen = false;
+  function awStart() { if (!awTick && !reduce && awSeen) awTick = setInterval(awFrame, 1000); }
   function awStop() { clearInterval(awTick); awTick = null; }
 
   awReset();
+  /* Reading the sleeping half means holding it still: the loop would otherwise
+     reset the window out from under whoever is looking at it. */
+  AW.screenA.addEventListener("pointerenter", function () {
+    awHover = true; awWake();
+    if (AW.screenA.classList.contains("slept")) awStop();
+  });
+  AW.screenA.addEventListener("pointerleave", function () { awHover = false; awWake(); awStart(); });
+
   if (reduce) {
     // no animation: show the outcome, which is the point of the section
-    AW.veil.classList.add("on");
     awPaint(370, 378);
-    AW.sayA.innerHTML = "The display slept. <b>The run stopped at 6:10.</b>";
+    awSleep(370);
     AW.lineB.firstChild.nodeValue = "\u2713 the total now updates";
     AW.caretB.style.display = "none";
     AW.beadB.style.background = "#5FC98D";
     AW.sayB.classList.add("done");
     AW.sayB.innerHTML = "The screen stayed on. <b>The agent finished at 6:18.</b>";
   } else if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) { e[0].isIntersecting ? awStart() : awStop(); },
-      { threshold: 0.25 }).observe(document.getElementById("awake"));
-  } else { awStart(); }
+    new IntersectionObserver(function (e) {
+      awSeen = e[0].isIntersecting;
+      awSeen ? awStart() : awStop();
+    }, { threshold: 0.25 }).observe(document.getElementById("awake"));
+  } else { awSeen = true; awStart(); }
 
   /* Each drawn window has a design size and is scaled to its container, so
      the same markup works from a phone to a wide display without reflowing
@@ -1102,6 +1356,7 @@
   }
   function fitAll() {
     fit(document.querySelector("#heroStage .win"), narrow.matches ? 620 : 1180, 634);
+    fit(document.querySelector("#kitStage .win"), 1180, 634);
     fit(document.querySelector("#tourStage .win"), 1180, 634);
     fit(document.querySelector("#tprev .win"), 1180, 634);
     fit(document.querySelector(".awin"), 520, 300);
@@ -1151,25 +1406,7 @@
   }
 
   var CMD = "curl -fsSL https://claude.ai/install.sh | bash";
-  var SCENES = [
-    { chip: "You don't know the command", cls: "drawn", sel: ".drawer", pad: 30, max: 1.75,
-      say: "You need an agent installed and every guide starts with a website. <b>&#8984;K</b> keeps those commands in the app instead: Claude Code, Gemini CLI, Codex, and the things they depend on." },
-    { chip: "It types, you decide", cls: "shelled", rect: [18, 4, 46, 28], max: 1.9, type: true,
-      say: "Picking one writes the command at your prompt with a plain sentence saying what it does, and then it waits. <b>Nothing here ever runs itself.</b>" },
-    { chip: "Something breaks", cls: "shelled erred", rect: [18, 0, 82, 32], max: 1.9,
-      say: "A red wall of output is where most people give up. Ocarina notices the command failed and offers to <b>turn it into a sentence you can act on.</b>" },
-    { chip: "What you asked for", cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1,
-      say: "Ask an agent five things over twenty minutes and you will not remember them all. The panel keeps the list, read from the transcript your agent already writes, and ticks a line when it stopped. It says <b>finished</b>, never done, because that is all it can honestly know." }
-  ];
-
-  var tourStage = document.getElementById("tourStage");
-  var tourChips = document.getElementById("tourChips");
-  var tourSay = document.getElementById("tourSay");
-  var tZoom = document.createElement("div"); tZoom.className = "zoom";
-  var tWin = makeWindow();
-  tZoom.appendChild(tWin); tourStage.appendChild(tZoom);
-  fitAll();
-  tWin.querySelector(".shell").innerHTML =
+  var SHELL =
     '<span class="l"><span class="pr">~ &rsaquo;</span> <span class="cmd"></span><span class="caret"></span></span>' +
     '<span class="l">&nbsp;</span>' +
     '<span class="l dimtx">This downloads an installer from claude.ai and runs it. It puts</span>' +
@@ -1178,99 +1415,144 @@
     '<span class="l dimtx">Checked on 5 September 2026 &middot; code.claude.com/docs</span>' +
     '<span class="l">&nbsp;</span>' +
     '<span class="l rd">The tests failed. 1 of 14 did not pass.</span>';
-  var tCmd = tWin.querySelector(".cmd");
-  var scene = -1, timer = null, typing = null;
 
-  SCENES.forEach(function (s, i) {
-    var b = document.createElement("button");
-    b.type = "button"; b.textContent = s.chip; b.setAttribute("role", "tab");
-    b.addEventListener("click", function () { show(i); arm(); });
-    tourChips.appendChild(b);
-  });
+  /* Getting an agent running: the command you would have gone looking for. */
+  var KIT = [
+    { chip: "Installing an agent", cls: "drawn", sel: ".drawer", pad: 30, max: 1.75,
+      say: "Claude Code, Gemini CLI and Codex each install with a command you have to go and find. <b>&#8984;K</b> keeps all three in the app, next to Homebrew and Node, which those installs assume you already have." },
+    { chip: "It types, you decide", cls: "shelled", rect: [18, 4, 46, 28], max: 1.9, type: true,
+      say: "Picking one writes the command at your prompt, with a plain sentence underneath saying what it does. Then it stops. <b>Nothing here runs until you press Return.</b>" }
+  ];
 
-  function show(i) {
-    scene = i;
-    var s = SCENES[i];
-    tWin.className = "win " + s.cls;
-    tourSay.innerHTML = s.say;
-    Array.prototype.forEach.call(tourChips.children, function (c, j) { c.classList.toggle("on", j === i); });
-    if (typing) { clearTimeout(typing); typing = null; }
-    tCmd.textContent = s.type ? "" : CMD;
-    var f = frameFor(tWin, tZoom, s);
-    tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
-    if (s.type && !reduce) {
-      var k = 0;
-      (function key() {
-        tCmd.textContent = CMD.slice(0, ++k);
-        if (k < CMD.length) typing = setTimeout(key, 19 + Math.random() * 26);
-      })();
-    } else if (s.type) { tCmd.textContent = CMD; }
-  }
-  function arm() {
-    if (timer) clearTimeout(timer);
-    if (reduce) return;
-    timer = setTimeout(function () { show((scene + 1) % SCENES.length); arm(); }, 6800);
-  }
-  function halt() { if (timer) { clearTimeout(timer); timer = null; } }
+  /* And once it is running: the two things the window keeps track of for you. */
+  var HELP = [
+    { chip: "Errors in plain English", cls: "shelled erred", rect: [18, 0, 82, 32], max: 1.9,
+      say: "When a command fails, Ocarina puts <b>Explain this</b> at the top of the window. One click turns the red output into a sentence saying what went wrong, and what to try next." },
+    { chip: "What you asked for", cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1,
+      say: "The side panel keeps the running list of everything you have asked for and <b>ticks each one off when the agent stops working on it.</b> It reads your agent\'s own transcript, so it works with any agent you run here." }
+  ];
 
-  show(0);
-  if (!reduce && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) { e[0].isIntersecting ? arm() : halt(); }, { threshold: 0.3 })
-      .observe(tourStage);
-    tourStage.addEventListener("pointerenter", halt);
-    tourStage.addEventListener("pointerleave", arm);
-  }
-  var rt;
-  function reframe() {
+  /* Both sections are the same machine: one drawn window, framed on a different
+     part of itself per step. Built twice rather than written twice. */
+  function buildTour(stage, chips, sayEl, SCENES) {
+    if (!stage) return;
+    var tZoom = document.createElement("div"); tZoom.className = "zoom";
+    var tWin = makeWindow();
+    tZoom.appendChild(tWin); stage.appendChild(tZoom);
     fitAll();
-    clearTimeout(rt);
-    rt = setTimeout(function () {
-      var f = frameFor(tWin, tZoom, SCENES[scene]);
-      var keep = tZoom.style.transition; tZoom.style.transition = "none";
+    tWin.querySelector(".shell").innerHTML = SHELL;
+    var tCmd = tWin.querySelector(".cmd");
+    var scene = -1, timer = null, typing = null;
+
+    SCENES.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = s.chip; b.setAttribute("role", "tab");
+      b.addEventListener("click", function () { show(i); arm(); });
+      chips.appendChild(b);
+    });
+
+    function show(i) {
+      scene = i;
+      var s = SCENES[i];
+      tWin.className = "win " + s.cls;
+      sayEl.innerHTML = s.say;
+      Array.prototype.forEach.call(chips.children, function (c, j) { c.classList.toggle("on", j === i); });
+      if (typing) { clearTimeout(typing); typing = null; }
+      tCmd.textContent = s.type ? "" : CMD;
+      var f = frameFor(tWin, tZoom, s);
       tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
-      void tZoom.offsetWidth; tZoom.style.transition = keep;
-    }, 180);
+      if (s.type && !reduce) {
+        var k = 0;
+        (function key() {
+          tCmd.textContent = CMD.slice(0, ++k);
+          if (k < CMD.length) typing = setTimeout(key, 19 + Math.random() * 26);
+        })();
+      } else if (s.type) { tCmd.textContent = CMD; }
+    }
+    function arm() {
+      if (timer) clearTimeout(timer);
+      if (reduce) return;
+      timer = setTimeout(function () { show((scene + 1) % SCENES.length); arm(); }, 6800);
+    }
+    function halt() { if (timer) { clearTimeout(timer); timer = null; } }
+
+    show(0);
+    if (!reduce && "IntersectionObserver" in window) {
+      new IntersectionObserver(function (e) { e[0].isIntersecting ? arm() : halt(); }, { threshold: 0.3 })
+        .observe(stage);
+      stage.addEventListener("pointerenter", halt);
+      stage.addEventListener("pointerleave", arm);
+    }
+    var rt;
+    function reframe() {
+      fitAll();
+      clearTimeout(rt);
+      rt = setTimeout(function () {
+        var f = frameFor(tWin, tZoom, SCENES[scene]);
+        var keep = tZoom.style.transition; tZoom.style.transition = "none";
+        tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
+        void tZoom.offsetWidth; tZoom.style.transition = keep;
+      }, 180);
+    }
+    narrow.addEventListener("change", function () { fitAll(); show(scene); });
+    addEventListener("resize", reframe);
+    // The stage can change size without the window doing so: a late font, or
+    // the copy beside it in the left column reflowing. The frame is computed
+    // from the stage's measurements, so it has to be recomputed when they move.
+    if ("ResizeObserver" in window) new ResizeObserver(reframe).observe(stage);
   }
-  narrow.addEventListener("change", function () { fitAll(); show(scene); });
-  addEventListener("resize", reframe);
-  // The stage can change size without the window doing so: a late font, or
-  // the copy beside it in the left column reflowing. The frame is computed
-  // from the stage's measurements, so it has to be recomputed when they move.
-  if ("ResizeObserver" in window) new ResizeObserver(reframe).observe(tourStage);
+
+  buildTour(document.getElementById("kitStage"), document.getElementById("kitChips"),
+            document.getElementById("kitSay"), KIT);
+  buildTour(document.getElementById("tourStage"), document.getElementById("tourChips"),
+            document.getElementById("tourSay"), HELP);
 
   /* ── themes, from the app's own JSON ─────────────────────── */
   var THEMES = {
-    "ocarina":       ["Ocarina","#12171E","#C9D4E0","#202224","#141517","#F06C6C","#5FC98D","#E5B25A","#5AA9F0","#38C2FF"],
-    "sakura":        ["Sakura","#1A1016","#EBD3DF","#251722","#180E14","#FF8095","#7FD8A6","#EFC27A","#9FB6F0","#FF9EC4"],
-    "matrix":        ["Matrix","#050A06","#8CF5A3","#0A140D","#050B07","#7ADF95","#5CFF8A","#A8F5B8","#66E39A","#5CFF8A"],
-    "ember":         ["Ember","#1A1310","#EDDCCB","#271C16","#17110D","#FF8A6B","#8FD48A","#F0BE63","#8FB6E8","#FFA35C"],
-    "blueprint":     ["Blueprint","#0A1622","#CFE1EF","#122334","#0A1420","#F0888A","#71D3A6","#E2C176","#6FB6F0","#6FC6F5"],
-    "lavender":      ["Lavender","#15121F","#D9D3EC","#201B30","#151120","#F0808F","#7ED6A4","#E4C077","#8FAEF2","#B79BFF"],
-    "matcha":        ["Matcha","#131A15","#CFDCC9","#1E2620","#141A16","#EE7B72","#7FD68A","#DBC46A","#79B8E0","#8FE39C"],
-    "ocean":         ["Ocean","#0E181C","#CFE0E4","#152429","#0D171B","#F0827F","#6FD3A4","#DFBE72","#74B6EC","#5FD6E0"],
-    "mocha":         ["Mocha","#17120F","#E4D7CB","#241C17","#161110","#EE8C7E","#8ACF95","#E0BE79","#94B4DE","#7CCCC6"],
-    "midnight":      ["Midnight","#0B0D14","#D3D7E4","#141826","#0A0C13","#EE8894","#77D3A4","#DFC37C","#8AAEE8","#6FCBD8"],
-    "steel":         ["Steel","#14171A","#D5DBE0","#22272C","#15181B","#EE8F8F","#84D2A2","#DFC583","#8FB6DE","#DDE5EC"],
-    "superman":      ["Superman","#0B1430","#DCE4F7","#132048","#0A1230","#FF7A7A","#6FD79A","#F2C33C","#6FA6F5","#F2C33C"],
-    "mono":          ["Mono","#101012","#D2D2D4","#1D1D20","#141416","#9A9A9E","#B4B4B8","#C2C2C6","#8E8E92","#D2D2D4"],
-    "high-contrast": ["High Contrast","#000000","#FFFFFF","#141414","#0A0A0A","#FF8A80","#69F0AE","#FFE14D","#82B9FF","#5CE8E8"]
+    "ocarina":        ["Ocarina", "#060B10", "#C9D4E0", "#101721", "#0B1019", "#F06C86", "#5FC9A2", "#E5CE5A", "#5A96F0", "#31789B"],
+    "sakura":         ["Sakura", "#12070C", "#EBD3DF", "#231119", "#1A0C12", "#FF80AE", "#7FD894", "#EFAB7A", "#9FA6F0", "#B34268"],
+    "matrix":         ["Matrix", "#040C06", "#8CF5A3", "#091A0E", "#051008", "#7ADF95", "#5CFF87", "#A8F5BD", "#66E387", "#24893C"],
+    "ember":          ["Ember", "#120906", "#EDDCCB", "#22150F", "#190E0A", "#FF976B", "#9ED48A", "#F0A263", "#8FA4E8", "#9F572D"],
+    "blueprint":      ["Blueprint", "#070D13", "#CFE1EF", "#0F1A23", "#0A121A", "#F0889F", "#71D3BA", "#E2D776", "#6FB4F0", "#3186A5"],
+    "lavender":       ["Lavender", "#0B0712", "#D9D3EC", "#191223", "#120C1B", "#F080A5", "#7ED6B6", "#E4AA77", "#8F9AF2", "#7345B0"],
+    "matcha":         ["Matcha", "#060E08", "#CFDCC9", "#101F13", "#0A160D", "#EE9472", "#7FD690", "#DBDB6A", "#79CDE0", "#398452"],
+    "ocean":          ["Ocean", "#060F11", "#CFE0E4", "#0E1E22", "#091618", "#F07F93", "#6FD3B8", "#DFD472", "#74CEEC", "#31838C"],
+    "mocha":          ["Mocha", "#110C07", "#E4D7CB", "#221912", "#1A120C", "#EEA27E", "#8DCF8A", "#E0A979", "#94A5DE", "#8F633D"],
+    "midnight":       ["Midnight", "#070811", "#D3D7E4", "#0F1322", "#0A0D19", "#EE88A8", "#77D3B6", "#DFAF7C", "#8A9DE8", "#4253B3"],
+    "steel":          ["Steel", "#080D10", "#D5DBE0", "#141A1F", "#0D1317", "#EE8FA2", "#84D2B2", "#DFD783", "#8FBCDE", "#507C95"],
+    "superman":       ["Superman", "#060913", "#DCE4F7", "#0E1426", "#090E1C", "#FF7A95", "#6FD7AF", "#F2E73C", "#6F93F5", "#9B313A"],
+    "mono":           ["Mono", "#0E0C0A", "#D2D2D4", "#1B1A19", "#151311", "#9A9A9E", "#B4B4B8", "#C2C2C6", "#8E8E92", "#877D6E"],
+    "high-contrast":  ["High Contrast", "#000000", "#FFFFFF", "#141414", "#0A0A0A", "#FF8A80", "#69F0AE", "#FFE14D", "#82B9FF", "#4DD8F0"]
   };
   var ORDER = Object.keys(THEMES);
   var VARS = ["--wbg","--wfg","--wtop","--wbot","--wred","--wgrn","--wyel","--wblu","--wacc"];
+
+  /* The window's ground and the board's two lamp states are derived rather
+     than listed, the same way the app derives them — so a theme added to the
+     table above needs nine colours, not twelve. */
+  function scale(hex, f) {
+    var n = parseInt(hex.slice(1), 16), out = "#";
+    for (var i = 16; i >= 0; i -= 8) {
+      var c = Math.min(255, Math.round(((n >> i) & 255) * f)).toString(16);
+      out += c.length < 2 ? "0" + c : c;
+    }
+    return out;
+  }
 
   var preview = makeWindow();
   preview.className = "win shelled tasked";
   document.getElementById("tprev").appendChild(preview);
   fitAll();
   var pBoard = preview.querySelector(".board canvas");
-  var pName = preview.querySelector(".foot .row:nth-child(2) .k");
   var chips = document.getElementById("chips");
   var touched = false, drift = null;
 
   function pick(id) {
     var t = THEMES[id];
     for (var i = 0; i < VARS.length; i++) preview.style.setProperty(VARS[i], t[i + 1]);
-    if (pName) pName.textContent = t[0];
+    preview.style.setProperty("--wground", scale(t[4], 0.62));
+    preview.style.setProperty("--wlit", t[9]);
+    preview.style.setProperty("--wunlit", t[3]);
     paint(pBoard, MO, { pitch: 7, color: t[9] });
     Array.prototype.forEach.call(chips.children, function (c) {
       c.classList.toggle("on", c.getAttribute("data-id") === id);
