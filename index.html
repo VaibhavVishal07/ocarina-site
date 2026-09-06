@@ -32,7 +32,12 @@
     --ok:#5FC98D; --warn:#E5B25A; --bad:#F06C6C;
     --r:16px; --r-sm:10px;
     --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+    /* One rail for the whole page. Every block on the page — the nav pill,
+       every section, the footer — is this wide and starts at this x. */
+    --rail:1180px; --gutter:30px;
   }
+  @media (max-width:760px) { :root { --gutter:22px; } }
+  @media (max-width:420px) { :root { --gutter:18px; } }
   * { box-sizing:border-box; }
   html { background:var(--ground); }
   /* body stays transparent so the fixed aura shows through beneath content */
@@ -51,8 +56,8 @@
     .progress { animation:prog linear both; animation-timeline:scroll(root block); }
     @keyframes prog { to { transform:scaleX(1); } } }}
 
-  .wrap { max-width:1240px; margin:0 auto; padding:0 30px; }
-  .narrow { max-width:1000px; }
+  .wrap { width:100%; max-width:calc(var(--rail) + var(--gutter) * 2);
+          margin:0 auto; padding:0 var(--gutter); }
   /* One rhythm: 96 between sections, 14 under a heading, 40 before the
      visual it introduces, 26 after it. */
   section { padding:96px 0; }
@@ -93,9 +98,9 @@
   .glass > * { position:relative; }
 
   /* ── nav: floats, never a black bar ───────────────────── */
-  nav { position:sticky; top:14px; z-index:50; padding:0 30px; }
+  nav { position:sticky; top:14px; z-index:50; padding:0 var(--gutter); }
   nav .bar {
-    max-width:1240px; margin:0 auto; height:58px; border-radius:14px;
+    max-width:var(--rail); margin:0 auto; height:58px; border-radius:14px;
     display:flex; align-items:center; gap:24px; padding:0 14px 0 18px;
   }
   nav .spacer { flex:1; }
@@ -319,7 +324,6 @@
        tab list is the whole point of this panel */
     .one .om { display:none; }
     .one .os { width:100%; }
-    .wrap { padding:0 22px; }
     .vs { padding:18px; }
     .vs .stack { min-height:250px; }
     .mini .mc { font-size:9.5px; }
@@ -472,6 +476,12 @@
 
   .coffee-card { margin-top:20px; border-radius:var(--r); padding:24px 28px;
                  display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+  /* On a phone the card's own inset eats the rail twice over, so pull it in
+     to something closer to the page gutter. */
+  @media (max-width:560px) {
+    .closing { padding:52px 22px; border-radius:20px; }
+    .coffee-card { padding:22px; }
+  }
   .coffee-card h3 { margin:0 0 3px; font-size:17px; font-weight:500; letter-spacing:-.015em; }
   .coffee-card p { margin:0; font-size:14.5px; color:var(--faint); }
 
@@ -645,7 +655,7 @@
 </header>
 
 <section id="one">
-  <div class="wrap narrow">
+  <div class="wrap">
     <h2 class="rise">Three agents in Terminal <span class="soft">means three windows.</span></h2>
     <p class="sub rise">macOS Terminal names every tab after the shell, so a third agent is a third window called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
 
@@ -696,7 +706,7 @@
 </section>
 
 <section id="awake">
-  <div class="wrap narrow">
+  <div class="wrap">
     <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
     <p class="sub rise">Leave a long run going and macOS sleeps the display on its usual timer, taking the run with it. Same task, same machine, side by side.</p>
   </div>
