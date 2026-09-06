@@ -324,12 +324,18 @@
   /* ── keep awake ───────────────────────────────────────── */
   .awake { display:grid; grid-template-columns:1fr 1fr; gap:54px; align-items:center; }
   @media (max-width:900px) { .awake { grid-template-columns:1fr; gap:32px; } }
-  /* The switch lives in the app, so it is shown in the app. And the thing it
-     protects is the machine staying awake, so the app is shown inside a Mac
-     that visibly goes dark when you turn it off. */
-  .macbox { border-radius:var(--r); padding:44px 42px 34px; }
-  @media (max-width:760px) { .macbox { padding:26px 20px 22px; } }
-  .macwrap { display:flex; flex-direction:column; align-items:center; }
+  /* Two machines, same task, side by side. A toggle made the reader do the
+     work of imagining the other case; this just shows both. */
+  .awake-pair { display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:44px; align-items:start; }
+  @media (max-width:900px) { .awake-pair { grid-template-columns:1fr; gap:44px; } }
+  .acol .cap { font-family:var(--mono); font-size:11.5px; letter-spacing:.13em;
+               color:var(--ghost); margin-bottom:18px; }
+  .acol.good .cap { color:var(--accent); }
+  .asay { margin:26px 0 0; font-size:15px; line-height:1.55; color:var(--ghost); min-height:44px;
+          transition:color .35s ease; }
+  .asay b { font-weight:500; }
+  .acol.good .asay b { color:var(--ink); }
+  .asay.done b { color:var(--ok); }
   .mac { width:100%; max-width:520px; }
   .mac-screen {
     position:relative; aspect-ratio:520/300; border-radius:14px; overflow:hidden; background:#000;
@@ -350,9 +356,20 @@
     font-family:var(--mono); font-size:12px; letter-spacing:.16em; color:rgba(255,255,255,.20);
   }
   .veil.on { opacity:1; }
-  .macsay { margin:26px 0 0; font-size:15.5px; color:var(--muted); text-align:center; min-height:24px;
-            transition:color .3s ease; }
-  .macsay.warn { color:var(--ghost); }
+
+  /* Apple's Terminal, at the same design size so both scale identically. */
+  .twin { position:absolute; top:0; left:0; width:520px; height:300px;
+          transform-origin:0 0; transform:scale(var(--fit,1));
+          display:flex; flex-direction:column; background:#000; color:#C9CFD4; }
+  .twin .tbar { flex:none; height:32px; display:flex; align-items:center; gap:7px; padding:0 13px;
+                background:#1E2124; border-bottom:1px solid rgba(255,255,255,.08); }
+  .twin .tbar i { width:9px; height:9px; border-radius:50%; display:block; }
+  .twin .tbar span { margin-left:9px; font-family:var(--mono); font-size:11.5px; color:rgba(255,255,255,.34); }
+  .twin .tb { flex:1; padding:18px 20px; font-family:var(--mono); font-size:14px; line-height:2.05; }
+  .twin .tb .l { display:block; white-space:pre-wrap; }
+  .twin .dim { color:rgba(201,207,212,.5); }
+  .twin .dim b { color:#C9CFD4; font-weight:400; }
+  .twin .caret { background:#C9CFD4; width:8px; }
 
   .awin { --wfg:#C9D4E0; --wacc:#38C2FF;
           position:absolute; top:0; left:0; width:520px; height:300px;
@@ -376,10 +393,9 @@
                   animation:pulse 1.5s ease-in-out infinite; }
   .astat .run b { color:#C9D4E0; font-weight:400; }
   .akrow { margin-left:auto; display:flex; align-items:center; gap:10px;
-           font-family:inherit; font-size:13px; cursor:pointer; color:#EAF1F8;
+           font-family:inherit; font-size:13px; color:#EAF1F8;
            background:rgba(201,212,224,.07); border:1px solid rgba(56,194,255,.45);
            border-radius:9px; padding:7px 11px; position:relative; }
-  .akrow:hover { background:rgba(201,212,224,.12); }
   .akrow .sw { width:30px; height:17px; border-radius:9px; flex:none; position:relative;
                background:rgba(201,212,224,.2); transition:background-color .3s ease; }
   .akrow .sw::after { content:""; position:absolute; top:2px; left:2px; width:13px; height:13px;
@@ -429,11 +445,23 @@
                 filter:drop-shadow(0 16px 34px rgba(0,0,0,.6)); }
   .closing h2 { margin:0 auto 14px; max-width:19ch; }
   .closing .sub { margin:0 auto 30px; }
-  .coffee { margin:26px auto 0; max-width:58ch; font-size:14.5px; line-height:1.6;
-            color:var(--faint); text-wrap:balance; }
-  .coffee a { color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line-2);
-              padding-bottom:1px; transition:color .2s ease, border-color .2s ease; }
-  .coffee a:hover { color:var(--ink); border-bottom-color:var(--accent); }
+  /* Buy Me a Coffee's own yellow. This is the one place a second colour is
+     allowed on the page: it is a third party's brand, and the recognition is
+     the point of using it rather than the site's blue. */
+  .btn-bmc { background:#FFDD00; color:#0B0B0B; font-weight:600; }
+  .btn-bmc:hover { background:#FFE84D; }
+  .btn-bmc .cup { width:17px; height:17px; display:block; flex:none; }
+
+  .ledger { margin-top:44px; }
+  .ledger > div { display:grid; grid-template-columns:0.3fr 1fr; gap:30px;
+                  padding:26px 0; border-top:1px solid var(--line); }
+  @media (max-width:760px) { .ledger > div { grid-template-columns:1fr; gap:8px; } }
+  .ledger .amt { font-family:var(--mono); font-size:13.5px; color:var(--accent); letter-spacing:.01em; }
+  .ledger h3 { margin:0 0 6px; font-size:17px; font-weight:500; letter-spacing:-.015em; }
+  .ledger p { margin:0; color:var(--muted); font-size:15px; line-height:1.6; max-width:58ch; }
+
+  .support-cta { margin-top:40px; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .support-cta .fine { margin:0; font-size:14.5px; color:var(--faint); max-width:44ch; line-height:1.55; }
 
   .specs { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:56px;
            border-top:1px solid var(--line); padding-top:32px; }
@@ -458,7 +486,7 @@
   @media (prefers-reduced-motion:reduce) {
     .rise { opacity:1; transform:none; filter:none; }
     .caret,.dot.busy { animation:none; }
-    .zoom,.panel,.banner,.drawer,.bigsw,.bigsw::after { transition:none; }
+    .zoom,.panel,.banner,.drawer,.veil,.asay { transition:none; }
     .progress { display:none; }
   }
 </style>
@@ -499,7 +527,7 @@
     <p class="hero-sub">A macOS terminal for running AI coding agents. As many as you like, in one window, each one named after the work it is doing.</p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Download for macOS</a>
-      <a class="btn btn-ghost" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer">Buy me a coffee</a>
+      <a class="btn btn-bmc" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
     </div>
     <p class="under">Free and open source &nbsp;&middot;&nbsp; macOS 14+</p>
   </div>
@@ -642,15 +670,37 @@
 </section>
 
 <section id="awake">
-  <div class="wrap narrow awake">
-    <div class="rise">
-      <h2>Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-      <p class="sub">Leave a long run going and macOS sleeps the display on its usual timer, taking the run with it.</p>
-      <p class="sub" style="margin-top:16px">Ocarina holds it awake for as long as it is open, on from launch, because you were never going to remember. <span style="color:var(--ink)">Flip the switch to see what happens without it.</span></p>
+  <div class="wrap narrow">
+    <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
+    <p class="sub rise">Leave a long run going and macOS sleeps the display on its usual timer, taking the run with it. Same task, same machine, side by side.</p>
+  </div>
+
+  <div class="wrap awake-pair">
+    <div class="acol rise d1">
+      <div class="cap">MACOS TERMINAL</div>
+      <div class="mac">
+        <div class="mac-screen">
+          <div class="twin">
+            <div class="tbar"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span>vaibhav &mdash; -zsh &mdash; 80&times;24</span></div>
+            <div class="tb">
+              <span class="l">~ % claude</span>
+              <span class="l">&nbsp;</span>
+              <span class="l dim">&gt; Fix the checkout page</span>
+              <span class="l">Looking through the cart files</span>
+              <span class="l">Making the change<span class="caret"></span></span>
+              <span class="l">&nbsp;</span>
+              <span class="l dim">running <b id="clockA">6:04</b></span>
+            </div>
+          </div>
+          <div class="veil" id="veilA"><span>Display asleep</span></div>
+        </div>
+        <div class="mac-hinge"></div><div class="mac-base"></div>
+      </div>
+      <p class="asay" id="sayA">Running.</p>
     </div>
 
-    <div class="macbox glass rise d1">
-      <div class="macwrap">
+    <div class="acol good rise d2">
+      <div class="cap">OCARINA</div>
       <div class="mac">
         <div class="mac-screen">
           <div class="awin">
@@ -664,22 +714,18 @@
               <span class="l"><span class="pr">~ &rsaquo;</span> claude</span>
               <span class="l">&nbsp;</span>
               <span class="l dimtx">&gt; Fix the checkout page</span>
-              <span class="l">Making the change<span class="caret"></span></span>
+              <span class="l">Looking through the cart files</span>
+              <span class="l" id="lineB">Making the change<span class="caret" id="caretB"></span></span>
             </div>
             <div class="astat">
-              <span class="run"><i></i>running <b id="elapsed">6:04</b></span>
-              <button type="button" class="akrow" id="bigsw" aria-pressed="true">
-                Keep awake<span class="sw on"></span>
-              </button>
+              <span class="run"><i id="beadB"></i>running <b id="clockB">6:04</b></span>
+              <span class="akrow static">Keep awake<span class="sw on"></span></span>
             </div>
           </div>
-          <div class="veil" id="veil"><span>Display asleep</span></div>
         </div>
-        <div class="mac-hinge"></div>
-        <div class="mac-base"></div>
+        <div class="mac-hinge"></div><div class="mac-base"></div>
       </div>
-        <p class="macsay" id="macsay">The screen stays on and the agent keeps going.</p>
-      </div>
+      <p class="asay" id="sayB">Running.</p>
     </div>
   </div>
 </section>
@@ -717,6 +763,42 @@
   </div>
 </section>
 
+<section id="support">
+  <div class="wrap narrow">
+    <h2 class="rise">Ocarina is free. <span class="soft">Keeping it free is not.</span></h2>
+    <p class="sub rise">No licence, no trial, no account, nothing held back for a paid tier. Here is what a coffee actually pays for.</p>
+
+    <div class="ledger">
+      <div class="rise">
+        <div class="amt">$99 a year</div>
+        <div>
+          <h3>Apple's Developer Program</h3>
+          <p>Without it the build is not notarised, and macOS puts up a warning that says the app cannot be checked for malware. Most first-time users stop there, and first-time users are the entire point of this thing.</p>
+        </div>
+      </div>
+      <div class="rise">
+        <div class="amt">Every release</div>
+        <div>
+          <h3>Install recipes that still work</h3>
+          <p>Every command in Quick Actions is checked against the real docs before it ships, and dated in the app so you can see when. They rot quietly, and a beginner is always the first person to hit a dead one.</p>
+        </div>
+      </div>
+      <div class="rise">
+        <div class="amt">Evenings</div>
+        <div>
+          <h3>The time itself</h3>
+          <p>This is a side project with no company behind it. A coffee is an hour spent on Ocarina rather than on something else.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="support-cta rise">
+      <a class="btn btn-bmc" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
+      <p class="fine">And if it never saves you an afternoon, do not. That is genuinely fine, and the app will not ask you again.</p>
+    </div>
+  </div>
+</section>
+
 <div class="wrap">
   <div class="closing glass rise">
     <img class="close-icon" src="icon.png" alt="" width="360" height="360">
@@ -726,8 +808,6 @@
       <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Download for macOS</a>
       <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Read the source</a>
     </div>
-    <p class="coffee">Free, and staying that way. If it saves you an afternoon, you can
-      <a href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer">buy me a coffee</a>.</p>
   </div>
 
   <dl class="specs">
@@ -922,59 +1002,96 @@
   }
 
   /* ── keep awake: the actual switch ───────────────────────── */
-  /* Awake: the clock runs and the screen stays lit. Off: the display goes
-     dark a moment later and the clock stops where it got to, which is the
-     whole of what this feature is. */
-  var bigsw = document.getElementById("bigsw");
-  var veil = document.getElementById("veil");
-  var macsay = document.getElementById("macsay");
-  var elapsed = document.getElementById("elapsed");
-  var heroSw = document.querySelector("#awakeRow .sw");
-  var secs = 364, ticking = null, sleepAt = null;
+  /* Both machines start the same job. One display sleeps on the usual timer
+     and takes the run with it; the other does not. Plays itself on a loop
+     while it is on screen, because a comparison the reader has to operate is
+     a comparison most readers never see. */
+  var AW = {
+    veil:   document.getElementById("veilA"),
+    clockA: document.getElementById("clockA"),
+    clockB: document.getElementById("clockB"),
+    sayA:   document.getElementById("sayA"),
+    sayB:   document.getElementById("sayB"),
+    lineB:  document.getElementById("lineB"),
+    caretB: document.getElementById("caretB"),
+    beadB:  document.getElementById("beadB")
+  };
+  var SLEEP_AT = 6, FINISH_AT = 14, RESET_AT = 19;
+  var awTick = null, awStep = 0;
 
-  function clock() { elapsed.textContent = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0"); }
-  function run(on) {
-    clearInterval(ticking); clearTimeout(sleepAt);
-    if (on) {
-      veil.classList.remove("on");
-      macsay.classList.remove("warn");
-      macsay.textContent = "The screen stays on, so the agent runs to the end.";
-      if (!reduce) ticking = setInterval(function () { secs++; clock(); }, 1000);
-    } else {
-      macsay.classList.add("warn");
-      macsay.textContent = "Without it the display sleeps, and the run stops where it got to.";
-      sleepAt = setTimeout(function () { veil.classList.add("on"); }, 1100);
-    }
+  function mmss(n) { return Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0"); }
+  function awPaint(a, b) {
+    AW.clockA.textContent = mmss(a);
+    AW.clockB.textContent = mmss(b);
   }
-  clock();
-  bigsw.addEventListener("click", function () {
-    var on = bigsw.getAttribute("aria-pressed") !== "true";
-    bigsw.setAttribute("aria-pressed", String(on));
-    bigsw.querySelector(".sw").classList.toggle("on", on);
-    if (heroSw) heroSw.classList.toggle("on", on);
-    run(on);
-  });
-  // only tick while it is on screen
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) {
-      if (e[0].isIntersecting) { if (bigsw.getAttribute("aria-pressed") === "true") run(true); }
-      else { clearInterval(ticking); }
-    }, { threshold: 0.25 }).observe(document.getElementById("awake"));
-  } else { run(true); }
+  function awReset() {
+    awStep = 0;
+    AW.veil.classList.remove("on");
+    AW.sayA.classList.remove("done");
+    AW.sayB.classList.remove("done");
+    AW.sayA.innerHTML = "Running.";
+    AW.sayB.innerHTML = "Running.";
+    AW.lineB.firstChild.nodeValue = "Making the change";
+    AW.caretB.style.display = "";
+    AW.beadB.style.background = "#E5B25A";
+    awPaint(364, 364);
+  }
+  function awFrame() {
+    awStep++;
+    var a = 364 + Math.min(awStep, SLEEP_AT);
+    var b = 364 + Math.min(awStep, FINISH_AT);
+    awPaint(a, b);
+    if (awStep === SLEEP_AT) {
+      AW.veil.classList.add("on");
+      AW.sayA.innerHTML = "The display slept. <b>The run stopped at " + mmss(a) + ".</b>";
+    }
+    if (awStep === FINISH_AT) {
+      AW.lineB.firstChild.nodeValue = "\u2713 the total now updates";
+      AW.caretB.style.display = "none";
+      AW.beadB.style.background = "#5FC98D";
+      AW.sayB.classList.add("done");
+      AW.sayB.innerHTML = "The screen stayed on. <b>The agent finished at " + mmss(b) + ".</b>";
+    }
+    if (awStep >= RESET_AT) awReset();
+  }
+  function awStart() { if (!awTick && !reduce) awTick = setInterval(awFrame, 1000); }
+  function awStop() { clearInterval(awTick); awTick = null; }
+
+  awReset();
+  if (reduce) {
+    // no animation: show the outcome, which is the point of the section
+    AW.veil.classList.add("on");
+    awPaint(370, 378);
+    AW.sayA.innerHTML = "The display slept. <b>The run stopped at 6:10.</b>";
+    AW.lineB.firstChild.nodeValue = "\u2713 the total now updates";
+    AW.caretB.style.display = "none";
+    AW.beadB.style.background = "#5FC98D";
+    AW.sayB.classList.add("done");
+    AW.sayB.innerHTML = "The screen stayed on. <b>The agent finished at 6:18.</b>";
+  } else if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (e) { e[0].isIntersecting ? awStart() : awStop(); },
+      { threshold: 0.25 }).observe(document.getElementById("awake"));
+  } else { awStart(); }
 
   /* Each drawn window has a design size and is scaled to its container, so
      the same markup works from a phone to a wide display without reflowing
-     a three-pane layout into three crushed columns. */
-  function fit(el, w) {
+     a multi-pane layout into crushed columns. */
+  function fit(el, w, h) {
     if (!el) return;
-    var box = el.parentElement.offsetWidth;   // layout width, not the transformed one
-    if (box) el.style.setProperty("--fit", box / w);
+    var p = el.parentElement;
+    // clientWidth/Height, not offset*: the Mac bezel is a border, and a
+    // width-only fit leaves the window taller than the content box it sits in
+    var bw = p.clientWidth, bh = p.clientHeight;
+    if (!bw || !bh) return;
+    // cover rather than contain, so no sliver of container ever shows through
+    el.style.setProperty("--fit", Math.max(bw / w, bh / h));
   }
   function fitAll() {
-    fit(document.querySelector("#heroStage .win"), narrow.matches ? 620 : 1180);
-    fit(document.querySelector("#tourStage .win"), 1180);
-    fit(document.querySelector("#tprev .win"), 1180);
-    fit(document.querySelector(".awin"), 520);
+    fit(document.querySelector("#heroStage .win"), narrow.matches ? 620 : 1180, 634);
+    fit(document.querySelector("#tourStage .win"), 1180, 634);
+    fit(document.querySelector("#tprev .win"), 1180, 634);
+    fit(document.querySelector(".awin"), 520, 300);
+    fit(document.querySelector(".twin"), 520, 300);
   }
 
   /* ── the tour ─────────────────────────────────────────────
