@@ -25,11 +25,25 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;450;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
   :root {
-    --ground:#07090C; --raise:#0D1218; --raise-2:#121A22;
-    --line:rgba(200,222,242,.085); --line-2:rgba(200,222,242,.16);
-    --accent:#45B6E8; --accent-2:#2C7EA8;
-    --ink:#EEF3F8; --muted:#8A96A3; --ghost:#68737F; --faint:#59636E;
-    --ok:#5FC98D; --warn:#E5B25A; --bad:#F06C6C;
+    /* The page's palette is one of the app's fourteen themes, written out
+       here as Ocarina so a scriptless page still has colours, and rewritten
+       on :root by the picker in the themes section. Everything the page is
+       painted with resolves through these, so changing them changes the
+       site — ground, type, glow, grid, icon and every drawn window. */
+    --ground:#060B10; --raise:#0B1019; --raise-2:#101721;
+    --ink:#D9DBDE; --muted:#999FA9; --ghost:#68717E;
+    --accent:#64B2D8; --accent-2:#31789B;
+    --ok:#4CC773; --warn:#E5CE5A; --bad:#F25959;
+    --bd:#97A9C4;
+    /* derived, so a theme is a list of colours and not a list of opacities */
+    --line:color-mix(in srgb,var(--bd) 9%,transparent);
+    --line-2:color-mix(in srgb,var(--bd) 17%,transparent);
+    --faint:color-mix(in srgb,var(--ghost) 76%,var(--ground));
+    /* the icon's four gradient stops, so it turns with the accent */
+    --ic-1:color-mix(in srgb,var(--accent) 34%,#FFFFFF);
+    --ic-2:var(--accent);
+    --ic-3:var(--accent-2);
+    --ic-4:color-mix(in srgb,var(--accent-2) 46%,#000000);
     --r:16px; --r-sm:10px;
     --mono:"Geist Mono",ui-monospace,Menlo,monospace;
     /* One rail for the whole page. Every block on the page — the nav pill,
@@ -44,10 +58,12 @@
     --oc-bg:#060B10; --oc-fg:#C9D4E0; --oc-top:#101721; --oc-bot:#0B1019;
     --oc-red:#F06C86; --oc-grn:#5FC9A2; --oc-yel:#E5CE5A; --oc-blu:#5A96F0;
     --oc-acc:#31789B;
+    /* the app's status group, which is not three of the ansi sixteen */
+    --oc-si:#87C7FF; --oc-sr:#5CA8FF; --oc-sg:#4CC773; --oc-sf:#F25959;
     /* The window's own ground, which the four panels float on, and the board's
        two lamp states. Derived in the app from the panel colour; derived here
        the same way so the two cannot drift. */
-    --oc-ground:#070A10; --oc-lit:#64B2D8; --oc-unlit:#0A0E14;
+    --oc-ground:#04070B; --oc-lit:#64B2D8; --oc-unlit:#0A0E14;
   }
   @media (max-width:760px) { :root { --gutter:22px; --sect:64px; } }
   @media (max-width:420px) { :root { --gutter:18px; } }
@@ -95,10 +111,11 @@
   .aura {
     position:fixed; inset:0; z-index:-1; pointer-events:none;
     background:
-      radial-gradient(46% 32% at 16% 8%,  rgba(69,182,232,.13), transparent 70%),
-      radial-gradient(38% 28% at 86% 34%, rgba(126,102,226,.09), transparent 72%),
-      radial-gradient(42% 30% at 24% 62%, rgba(69,182,232,.07), transparent 72%),
-      radial-gradient(40% 30% at 78% 88%, rgba(95,201,141,.055), transparent 72%);
+      radial-gradient(46% 32% at 16% 8%,  color-mix(in srgb,var(--accent) 17%,transparent), transparent 70%),
+      radial-gradient(38% 28% at 86% 34%, color-mix(in srgb,var(--accent-2) 20%,transparent), transparent 72%),
+      radial-gradient(52% 40% at 50% 46%, color-mix(in srgb,var(--accent) 8%,transparent), transparent 74%),
+      radial-gradient(42% 30% at 24% 62%, color-mix(in srgb,var(--accent) 10%,transparent), transparent 72%),
+      radial-gradient(40% 30% at 78% 88%, color-mix(in srgb,var(--ok) 9%,transparent), transparent 72%);
   }
   .glass {
     position:relative; overflow:hidden;
@@ -134,7 +151,11 @@
   .btn:active { transform:scale(.985); }
   canvas.mark { display:block; }
   nav .brand { display:flex; align-items:center; gap:11px; text-decoration:none; }
-  nav .nav-icon { width:25px; height:25px; display:block; border-radius:6px; }
+  nav .nav-icon { width:25px; height:25px; display:block; }
+  .icon-def { position:absolute; width:0; height:0; overflow:hidden; }
+  #ocg .s1 { stop-color:var(--ic-1); } #ocg .s2 { stop-color:var(--ic-2); }
+  #ocg .s3 { stop-color:var(--ic-3); } #ocg .s4 { stop-color:var(--ic-4); }
+  #ocicon .pix { fill:#FFFFFF; fill-opacity:.96; }
   nav canvas.mark { height:14px; width:auto; }
   /* the two buttons read as one control group, closer than the bar gap */
   nav .navcta { display:flex; align-items:center; gap:9px; }
@@ -155,7 +176,7 @@
   header.hero { position:relative; padding:56px 0 var(--sect); overflow:hidden; }
   header.hero::before { content:""; position:absolute; left:50%; top:-190px; width:1400px; height:760px;
     transform:translateX(-50%); pointer-events:none; filter:blur(40px);
-    background:radial-gradient(42% 46% at 50% 46%,rgba(69,182,232,.17),transparent 70%); }
+    background:radial-gradient(42% 46% at 50% 46%,color-mix(in srgb,var(--accent) 17%,transparent),transparent 70%); }
   /* Flickering grid, hung off the very top edge of the page and faded out
      by a quarter of the way down the fold, so the headline sits on clean
      ground. Sized in vh so the falloff tracks the fold, not the header,
@@ -210,6 +231,10 @@
     --wbg:var(--oc-bg); --wfg:var(--oc-fg); --wtop:var(--oc-top); --wbot:var(--oc-bot);
     --wred:var(--oc-red); --wgrn:var(--oc-grn); --wyel:var(--oc-yel);
     --wblu:var(--oc-blu); --wacc:var(--oc-acc);
+    /* Semantic, and its own group in the app's theme file rather than three
+       of the ansi sixteen: a dot has to mean stop and go whatever the theme
+       does to red and green. */
+    --wsi:var(--oc-si); --wsr:var(--oc-sr); --wsg:var(--oc-sg); --wsf:var(--oc-sf);
     --wline:color-mix(in srgb,var(--wfg) 13%,transparent);
     --wdim:color-mix(in srgb,var(--wfg) 55%,transparent);
     --wground:var(--oc-ground); --wlit:var(--oc-lit); --wunlit:var(--oc-unlit);
@@ -220,21 +245,20 @@
     transform-origin:0 0; transform:scale(var(--fit,1));
     display:flex; flex-direction:column;
     background:var(--wbg); color:var(--wfg);
-    transition:background-color .5s ease,color .5s ease;
   }
   /* A real titlebar with nothing written in it, the way the app draws it: the
      sidebar carries the wordmark, so a title here would be the name twice. */
   .win-bar { height:34px; flex:none; display:flex; align-items:center; gap:7px; padding:0 14px;
-             background:var(--wground); transition:background-color .5s ease; }
+             background:var(--wground); }
   .tl { width:10px; height:10px; border-radius:50%; }
   .win-bar .name { display:none; }
 
   /* Four panels floating on the window's ground, with the same gap outside
      them as between them. Dividers are gone with the panes they divided. */
   .win-body { flex:1; display:flex; gap:10px; padding:10px; min-height:0;
-              background:var(--wground); transition:background-color .5s ease; }
+              background:var(--wground); }
   .card { background:var(--wbot); border:1px solid var(--wline); border-radius:12px;
-          transition:background-color .5s ease,border-color .5s ease; }
+          }
   /* One gradient cut in two, so the light falls across the whole column once.
      Mirroring the lower card was tried and is wrong in the other direction:
      the junction matched, but the column then got brighter on the way down,
@@ -244,23 +268,38 @@
 
   .side { width:230px; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; }
   .side .tabs { flex:1; min-height:0; display:flex; flex-direction:column; padding:11px 9px; gap:2px; overflow:hidden; }
-  .side .brand { padding:3px 9px 16px; font-size:13.5px; font-weight:600; letter-spacing:-.015em; }
+  /* The mark, not the word: the app draws OCARINA on the same dot-matrix
+     board the empty terminal and the token meter are drawn on. */
+  /* Width, not height: the sidebar is narrow enough to clamp a canvas set
+     the other way round, and a clamped canvas is a squashed wordmark. */
+  .side .sidemark { width:98px; height:auto; display:block; margin:4px 0 20px 8px; }
   .row { display:flex; align-items:center; gap:9px; padding:10px 9px; border-radius:9px;
          font-size:13px; color:var(--wdim); white-space:nowrap; overflow:hidden; }
-  .row .g { font-family:var(--mono); font-size:11px; width:12px; flex:none; text-align:center; opacity:.85; }
+  /* what the tab is running, when that is worth a picture. A shell at a
+     prompt gets none — every tab in this app is a terminal. */
+  .row .g { font-family:var(--mono); font-size:11px; width:14px; flex:none; text-align:center;
+            color:var(--tint,inherit); }
+  .row .g.cl { --tint:#D97857; }   /* Claude Code */
+  .row .g.gm { --tint:#7399F2; }   /* Gemini CLI */
+  .row .g.pl { --tint:inherit; font-weight:600; }
   .row .t { overflow:hidden; text-overflow:ellipsis; }
   /* The selected tab wears the theme's accent, fill and edge — it was a
      white-ish wash, which is the same grey rectangle in every theme. */
   .row.on { background:color-mix(in srgb,var(--wacc) 11%,transparent); color:var(--wfg);
             box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 34%,transparent); }
   .row .k { margin-left:auto; font-size:11px; opacity:.45; padding-left:8px; }
-  .dot { width:7px; height:7px; border-radius:50%; margin-left:auto; flex:none; background:var(--wdim); }
-  .dot.busy { background:var(--wyel); animation:pulse 1.5s ease-in-out infinite; }
-  .dot.bad { background:var(--wred); } .dot.ok { background:var(--wgrn); }
+  /* First in the row, so the whole column of dots can be read down the edge
+     without stopping at any of the names. */
+  .dot { width:7px; height:7px; border-radius:50%; flex:none; background:var(--wsi); }
+  .dot.run { background:var(--wsr); animation:pulse 1.5s ease-in-out infinite; }
+  .dot.bad { background:var(--wsf); } .dot.ok { background:var(--wsg); }
   @keyframes pulse { 50% { opacity:.22; } }
   .side .fill { flex:1; min-height:8px; }
   .side .foot { flex:none; padding:8px 9px; }
-  .side .foot .row { padding:6px 9px; }
+  .side .foot .row { padding:6px 9px; gap:7px; }
+  /* the same 9pt symbol column the app lines Theme, Feedback, Tasks and
+     Keep Awake up in */
+  .fi { width:11px; height:11px; flex:none; display:block; opacity:.9; }
   .sw { margin-left:auto; width:28px; height:16px; border-radius:9px; flex:none;
         background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
   .sw::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
@@ -296,14 +335,51 @@
             transition:translate .45s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
   .banner b { font-weight:500; color:var(--wred); }
   .banner .say { color:var(--wdim); }
-  .banner .go { margin-left:auto; border:1px solid var(--wred); border-radius:6px;
-                padding:5px 12px; color:var(--wred); white-space:nowrap; }
+  .banner .go { margin-left:auto; border:1px solid var(--wsf); border-radius:6px;
+                padding:5px 12px; color:var(--wsf); white-space:nowrap;
+                background:none; font:inherit; font-size:13.5px; pointer-events:none;
+                transition:background-color .18s ease,color .18s ease; }
+  /* Only the window in the section about it answers to a press. Everywhere
+     else this is a drawing of a window, and a drawing should not invite one. */
+  .win.live .banner .go { pointer-events:auto; cursor:pointer; }
+  .win.live .banner .go:hover { background:color-mix(in srgb,var(--wsf) 18%,transparent);
+                                color:var(--wfg); }
   .win.erred .banner { translate:0 0; opacity:1; }
   /* the failure line belongs to the scene that is about a failure; anywhere
      else it contradicts a prompt that is still waiting. Hidden, not removed,
      so the window keeps the height every scene is framed against. */
   .win:not(.erred) .shell .rd { visibility:hidden; }
   .win.erred .shell { padding-top:56px; }
+
+  /* The banner's answer. Same shape as the ⌘K drawer, because it is the
+     same kind of object: something the window puts in front of you and then
+     gets out of the way of. */
+  .sheet { position:absolute; left:50%; top:50%; z-index:5; width:78%; max-width:430px;
+           translate:-50% -44%; opacity:0; pointer-events:none; font-family:"Geist",sans-serif;
+           background:var(--wtop); border:1px solid color-mix(in srgb,var(--wsf) 34%,var(--wline));
+           border-radius:11px; box-shadow:0 30px 60px -18px rgba(0,0,0,.88); overflow:hidden;
+           transition:translate .4s cubic-bezier(.16,1,.3,1),opacity .28s ease; }
+  .win.explaining .sheet { translate:-50% -50%; opacity:1; pointer-events:auto; }
+  .sheet .sh-head { display:flex; align-items:center; gap:8px; padding:10px 13px;
+                    border-bottom:1px solid var(--wline);
+                    background:color-mix(in srgb,var(--wsf) 11%,transparent); }
+  .sheet .sh-head b { font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+                      font-weight:500; color:var(--wsf); }
+  .sheet .sh-x { margin-left:auto; border:0; background:none; padding:0; cursor:pointer;
+                 font-size:11px; line-height:1; color:var(--wdim); font-family:inherit; }
+  .sheet .sh-x:hover { color:var(--wfg); }
+  .sheet .sh-body { padding:12px 13px 4px; }
+  .sheet .sh-body p { margin:0 0 11px; font-size:12.5px; line-height:1.6; color:var(--wfg); }
+  .sheet .sh-next { color:var(--wdim) !important; }
+  .sheet .sh-next b { display:block; margin-bottom:2px; font-size:10px; letter-spacing:.14em;
+                      text-transform:uppercase; font-weight:500; opacity:.85; }
+  .sheet .sh-foot { display:flex; align-items:center; gap:10px; padding:10px 13px 12px;
+                    border-top:1px solid var(--wline); }
+  .sheet .sh-cta { border:0; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:500;
+                   padding:6px 15px; border-radius:7px; background:var(--wacc); color:#F2F7FB;
+                   transition:filter .18s ease; }
+  .sheet .sh-cta:hover { filter:brightness(1.18); }
+  .sheet .sh-note { font-size:11px; color:var(--wdim); }
 
   .drawer { position:absolute; left:50%; top:50%; z-index:4; width:74%; max-width:420px;
             translate:-50% -46%; opacity:0; pointer-events:none; font-family:"Geist",sans-serif;
@@ -322,16 +398,23 @@
   .win.tasked .right { width:230px; }
   .panel { flex:1; min-height:0; overflow:hidden; }
   .panel .inner { width:230px; padding:12px; }
-  .panel h4 { margin:0 0 3px; font-size:13.5px; font-weight:500; font-family:"Geist",sans-serif; }
-  .panel .note { margin:0 0 12px; font-size:11.5px; color:var(--wdim); font-family:"Geist",sans-serif; line-height:1.55; }
-  .task { display:flex; gap:9px; align-items:flex-start; padding:4.5px 0; font-size:12.5px;
-          font-family:"Geist",sans-serif; color:var(--wdim); line-height:1.5; }
-  .task .bx { flex:none; width:11px; height:11px; margin-top:3.5px; border-radius:3px;
-              border:1.5px solid var(--wdim); position:relative; }
-  .task.done { color:var(--wfg); }
-  .task.done .bx { background:var(--wfg); border-color:var(--wfg); }
-  .task.done .bx::after { content:""; position:absolute; left:3px; top:.5px; width:3px; height:6px;
-                          border:solid var(--wbot); border-width:0 1.6px 1.6px 0; rotate:42deg; }
+  .panel .phead { display:flex; align-items:baseline; gap:6px; padding:2px 4px 11px;
+                  font-family:"Geist",sans-serif; }
+  .panel .phead b { font-size:13.5px; font-weight:600; }
+  .panel .phead .cnt { font-size:11px; color:var(--wdim); }
+  /* the word, not a control drawn around it: the one action on a list you
+     read should be findable and otherwise unnoticed */
+  .panel .phead .clr { margin-left:auto; font-size:11px; font-weight:500; color:var(--wdim); }
+  .panel .prule { height:1px; margin:0 -12px 9px;
+                  background:color-mix(in srgb,var(--wfg) 12%,transparent); }
+  .task { display:flex; gap:8px; align-items:flex-start; padding:5px 4px; font-size:12px;
+          font-family:"Geist",sans-serif; color:var(--wfg); line-height:1.5; }
+  /* A green tick pulls the eye to what is already dealt with, which is the
+     opposite of what a list like this is for. The tick is quiet; the open
+     item is an empty box waiting to be filled. */
+  .task .tk { flex:none; width:12px; text-align:center; font-size:10px; color:var(--wdim); }
+  .task .tk.sq { height:10px; margin-top:3px; border:1px solid var(--wdim); border-radius:2px; }
+  .task.done { color:var(--wdim); }
 
   /* The token card: what the five-hour window has cost, and how much of it is
      left. The meter is lamps on a dot-matrix board, the same alphabet as the
@@ -346,6 +429,50 @@
              background:color-mix(in srgb,var(--wfg) 14%,transparent); }
   .lamps i.on { background:var(--wlit); box-shadow:0 0 3px var(--wlit); }
   .tokencard .rem { font-size:10px; color:var(--wdim); font-variant-numeric:tabular-nums; }
+
+  /* ── the theme picker ─────────────────────────────────
+     A strip of chips, one colour each — the lamp the theme lights its board
+     with. It was a circle cut in half on a hard diagonal, which read as a
+     chart rather than a colour; one colour, lit from the top edge, is what
+     a swatch is. */
+  .swatches { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:28px auto 0; }
+  .swatch { width:38px; height:24px; padding:0; border:0; cursor:pointer; border-radius:7px;
+            position:relative;
+            background:linear-gradient(160deg,
+                       color-mix(in srgb,var(--sw-c) 62%,#FFFFFF) 0%,
+                       var(--sw-c) 52%,
+                       color-mix(in srgb,var(--sw-c) 66%,#000000) 100%);
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.34),
+                       0 3px 10px -4px color-mix(in srgb,var(--sw-c) 60%,transparent);
+            transition:transform .24s cubic-bezier(.16,1,.3,1), box-shadow .24s ease; }
+  .swatch:hover { transform:translateY(-3px);
+                  box-shadow:inset 0 1px 0 rgba(255,255,255,.44),
+                             0 7px 18px -5px color-mix(in srgb,var(--sw-c) 80%,transparent); }
+  /* The press answers in the same frame it happens in. Taking the picture of
+     the page costs the browser a frame before the wipe can start, and a
+     control that sits perfectly still for that frame reads as a stutter
+     rather than as a wait. Transform only, so it never touches the layout. */
+  .swatch:active { transform:translateY(-1px) scale(.9); transition-duration:.06s; }
+  /* drawn outside the chip, so picking one does not resize it */
+  .swatch.on::after { content:""; position:absolute; inset:-5px; border-radius:11px;
+                      border:1.5px solid color-mix(in srgb,var(--sw-c) 62%,transparent); }
+  .swatch:focus-visible { outline:2px solid var(--sw-c); outline-offset:5px; }
+  @media (max-width:560px) { .swatches { gap:7px; } .swatch { width:32px; height:21px; } }
+
+  /* ── the colour arriving ──────────────────────────────
+     Not a glow over the page: the page itself, in the new theme, wiped in
+     along the edge of a circle growing out of the chip you pressed. What is
+     inside the circle has already changed and what is outside has not, so
+     the colour changes on the front's path rather than washing over it.
+     Two snapshots and a clip-path — the browser holds the old page still
+     underneath while the new one is revealed on top of it. */
+  ::view-transition-old(root) { animation:none; z-index:1; }
+  ::view-transition-new(root) {
+    animation:none; z-index:2;
+    /* the state the script's animation starts from, declared here so it is
+       already true on the first frame the snapshot exists */
+    clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%));
+  }
 
   .stage { position:relative; aspect-ratio:16/8.6; border-radius:var(--r); overflow:hidden;
            border:1px solid var(--line-2); background:var(--raise);
@@ -379,14 +506,16 @@
   .mini:nth-child(1) { left:0;   top:0;   z-index:1; }
   .mini:nth-child(2) { left:11%; top:64px; z-index:2; }
   .mini:nth-child(3) { left:22%; top:128px; z-index:3; }
-  .one { border-radius:9px; overflow:hidden; border:1px solid rgba(255,255,255,.16); background:var(--oc-bg); }
+  .one { --wsi:var(--oc-si); --wsr:var(--oc-sr); --wsg:var(--oc-sg); --wsf:var(--oc-sf);
+         --wdim:color-mix(in srgb,var(--oc-fg) 55%,transparent);
+         border-radius:9px; overflow:hidden; border:1px solid rgba(255,255,255,.16); background:var(--oc-bg); }
   .one .mb { height:26px; display:flex; align-items:center; gap:6px; padding:0 10px; background:var(--oc-top); }
   .one .mb i { width:8px; height:8px; border-radius:50%; display:block; }
   .one .mb span { margin-left:7px; font-size:11px; color:rgba(201,212,224,.5); }
   .one .ob { display:flex; min-height:262px; }
   .one .os { width:196px; flex:none; background:var(--oc-bot); border-right:1px solid rgba(201,212,224,.11);
              padding:9px 7px; display:flex; flex-direction:column; gap:2px; }
-  .one .os .b { padding:2px 8px 9px; font-size:12px; font-weight:600; color:#EAF1F8; }
+  .one .os .osmark { width:84px; height:auto; display:block; margin:3px 0 14px 7px; }
   .one .os .row { font-size:11.5px; padding:6px 7px; gap:6px; }
   .one .om { flex:1; padding:12px 14px; font-family:var(--mono); font-size:11.5px;
              line-height:2; color:rgba(201,212,224,.62); }
@@ -399,6 +528,22 @@
     .vs .stack { min-height:250px; }
     .mini .mc { font-size:9.5px; }
   }
+  /* Copy on the left, the window on the right, so the sentence and the
+     thing it is about are on screen together — and so the window is framed
+     against a column rather than the whole rail, which is what keeps a
+     close-up on one panel at a size you read rather than one you squint at. */
+  .feat { display:grid; grid-template-columns:minmax(250px,31%) 1fr;
+          gap:20px 34px; align-items:start; margin-top:36px; }
+  .feat-say { display:grid; gap:18px; align-content:start; }
+  .feat-say .sub, .feat-say .takeaway { margin:0; max-width:46ch; }
+  @media (max-width:920px) {
+    .feat { grid-template-columns:1fr; gap:22px; margin-top:28px; }
+    .feat-say .sub, .feat-say .takeaway { max-width:66ch; }
+  }
+  .try { margin:0; font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+         text-transform:uppercase; color:var(--accent); }
+  .try span { color:var(--ink); }
+  @media (max-width:920px) { .try { display:none; } }
   .takeaway { margin:26px 0 0; font-size:17px; color:var(--muted); max-width:62ch; }
   .takeaway b { color:var(--ink); font-weight:500; }
 
@@ -491,57 +636,6 @@
   .akrow .sw.on { background:var(--sacc); }
   .akrow .sw.on::after { translate:13px 0; background:#0B1218; }
 
-  /* ── tour ─────────────────────────────────────────────── */
-  /* Picker on the left, window on the right, so the four moments are
-     visible at the same time as the thing they change. Stacked under the
-     stage they read as a footnote nobody scrolls to. */
-  .tour-grid { display:grid; grid-template-columns:minmax(250px,29%) 1fr;
-               grid-template-rows:auto 1fr; gap:20px 34px;
-               align-content:start; margin-top:40px; }
-  .tour-grid > .tour-chips { grid-column:1; grid-row:1; }
-  .tour-grid > .tour-say   { grid-column:1; grid-row:2; }
-  .tour-grid > .stage      { grid-column:2; grid-row:1 / span 2; align-self:start; }
-  .tour-chips { display:grid; gap:8px; align-content:start; }
-  .tour-chips button { cursor:pointer; font:inherit; font-size:13.5px; padding:11px 15px; border-radius:var(--r-sm);
-                       border:1px solid var(--line); background:transparent; color:var(--muted);
-                       text-align:left; width:100%;
-                       transition:color .2s,border-color .2s,background-color .2s; }
-  .tour-chips button:hover { color:var(--ink); border-color:var(--line-2); }
-  .tour-chips button.on { color:#0A0E13; background:var(--ink); border-color:var(--ink); }
-  .tour-say { margin:0; align-self:start; min-height:56px; color:var(--muted);
-              font-size:15.5px; max-width:66ch; line-height:1.6; }
-  .tour-say b { color:var(--ink); font-weight:500; }
-  @media (max-width:920px) {
-    .tour-grid { grid-template-columns:1fr; gap:22px; margin-top:30px; }
-    /* Source order puts the picker first, so it is still the first thing
-       you meet on a phone. */
-    .tour-grid > .tour-chips, .tour-grid > .tour-say, .tour-grid > .stage {
-      grid-column:1; grid-row:auto; }
-    .tour-chips { grid-template-columns:1fr 1fr; }
-    .tour-say { font-size:16px; }
-  }
-  @media (max-width:520px) { .tour-chips { grid-template-columns:1fr; } }
-
-  /* ── themes ───────────────────────────────────────────── */
-  .theme-grid { display:grid; grid-template-columns:1.18fr .82fr; gap:34px; align-items:stretch; margin-top:40px; }
-  @media (max-width:920px) { .theme-grid { grid-template-columns:1fr; gap:24px; align-items:start; } }
-  .tprev { position:relative; aspect-ratio:1180/634; border-radius:var(--r); overflow:hidden;
-           border:1px solid var(--line-2); box-shadow:0 34px 74px -38px rgba(0,0,0,.95); }
-  /* Seven rows sharing the window's height, so the two columns of this
-     section end on the same line. */
-  .chips { display:grid; grid-template-columns:repeat(2,1fr); grid-auto-rows:1fr; gap:8px; }
-  @media (max-width:920px) { .chips { grid-auto-rows:auto; } }
-  @media (max-width:520px) { .chips { grid-template-columns:1fr; } }
-  .chip { display:block; width:100%; text-align:left; cursor:pointer; padding:0; overflow:hidden;
-          border:1px solid var(--line); border-radius:var(--r-sm); background:var(--tbg);
-          transition:border-color .2s,transform .2s cubic-bezier(.16,1,.3,1); }
-  .chip:hover { transform:translateY(-2px); }
-  .chip.on { border-color:var(--accent); }
-  .chip .top { display:flex; align-items:center; height:100%; gap:6px; padding:10px 11px; }
-  .chip .nm { font-family:var(--mono); font-size:11.5px; color:var(--tfg); }
-  .chip .bars { display:flex; gap:2px; margin-left:auto; }
-  .chip .bars i { width:7px; height:7px; border-radius:1.5px; display:block; }
-
   /* ── footer ───────────────────────────────────────────── */
   .closing { border-radius:26px; padding:72px 40px; text-align:center; }
   .close-icon { width:92px; height:92px; display:block; margin:0 auto 26px;
@@ -559,7 +653,7 @@
   .btn-soon i { width:7px; height:7px; border-radius:50%; background:var(--accent);
                 display:block; flex:none; animation:pulse 1.9s ease-in-out infinite; }
   .btn-sm { padding:8px 13px; font-size:13.5px; }
-  @media (max-width:960px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
+  @media (max-width:1200px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
 
   .coffee-card { margin-top:20px; border-radius:var(--r); padding:24px 28px;
                  display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
@@ -583,7 +677,7 @@
   .btn-soon i { width:7px; height:7px; border-radius:50%; background:var(--accent);
                 display:block; flex:none; animation:pulse 1.9s ease-in-out infinite; }
   .btn-sm { padding:8px 13px; font-size:13.5px; }
-  @media (max-width:960px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
+  @media (max-width:1200px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
 
   .specs { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:52px;
            border-top:1px solid var(--line); padding-top:32px; }
@@ -619,19 +713,38 @@
 <div class="progress" aria-hidden="true"></div>
 
 <canvas class="flicker" id="flicker" aria-hidden="true"></canvas>
+
+<!-- The app icon as vector, drawn once and used wherever it appears. It was
+     a PNG, which is a picture of one theme: this one is four gradient stops
+     derived from the accent, so the icon turns with the rest of the page. -->
+<svg class="icon-def" aria-hidden="true" focusable="false">
+  <radialGradient id="ocg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+    gradientTransform="matrix(171.702 -165.957 166.013 157.999 -63.1915 178.723)">
+    <stop class="s1"/><stop class="s2" offset=".32"/>
+    <stop class="s3" offset=".62"/><stop class="s4" offset="1"/>
+  </radialGradient>
+  <symbol id="ocicon" viewBox="0 0 120 120">
+    <rect width="120" height="120" rx="28" fill="url(#ocg)"/>
+    <g class="pix">
+<path d="M28.7996 84.6003C32.4447 84.6003 35.4002 87.5549 35.4002 91.2C35.4002 94.845 32.4447 97.7996 28.7996 97.7996C25.1547 97.7993 22.2 94.8449 22.2 91.2C22.2 87.555 25.1547 84.6006 28.7996 84.6003ZM91.2 84.6003C94.8451 84.6003 97.7996 87.5549 97.7996 91.2C97.7996 94.845 94.8451 97.7996 91.2 97.7996C87.5549 97.7996 84.6004 94.845 84.6004 91.2C84.6004 87.5549 87.5549 84.6003 91.2 84.6003ZM44.4002 68.9998C48.0452 68.9999 50.9998 71.9553 50.9998 75.6003C50.9996 79.2452 48.0451 82.1998 44.4002 82.2C40.7552 82.2 37.7998 79.2453 37.7996 75.6003C37.7996 71.9553 40.7551 68.9998 44.4002 68.9998ZM59.9998 68.9998C63.6449 68.9998 66.6004 71.9553 66.6004 75.6003C66.6002 79.2453 63.6448 82.2 59.9998 82.2C56.3549 82.1998 53.4004 79.2452 53.4002 75.6003C53.4002 71.9553 56.3548 68.9999 59.9998 68.9998ZM75.6004 68.9998C79.2453 69 82.2 71.9554 82.2 75.6003C82.1998 79.2451 79.2452 82.1997 75.6004 82.2C71.9554 82.2 69 79.2453 68.9998 75.6003C68.9998 71.9553 71.9553 68.9998 75.6004 68.9998ZM44.4002 53.4001C48.0451 53.4002 50.9997 56.3549 50.9998 59.9998C50.9998 63.6448 48.0452 66.6002 44.4002 66.6003C40.7551 66.6003 37.7996 63.6448 37.7996 59.9998C37.7998 56.3548 40.7552 53.4001 44.4002 53.4001ZM59.9998 53.4001C63.6448 53.4001 66.6003 56.3548 66.6004 59.9998C66.6004 63.6448 63.6449 66.6003 59.9998 66.6003C56.3548 66.6002 53.4002 63.6448 53.4002 59.9998C53.4004 56.3549 56.3549 53.4003 59.9998 53.4001ZM75.6004 53.4001C79.2452 53.4004 82.1999 56.3549 82.2 59.9998C82.2 63.6447 79.2453 66.6001 75.6004 66.6003C71.9553 66.6003 68.9998 63.6448 68.9998 59.9998C69 56.3548 71.9554 53.4001 75.6004 53.4001ZM44.4002 37.8005C48.0452 37.8006 50.9998 40.7551 50.9998 44.4001C50.9998 48.0451 48.0452 50.9997 44.4002 50.9998C40.7552 50.9998 37.7997 48.0452 37.7996 44.4001C37.7996 40.7551 40.7551 37.8005 44.4002 37.8005ZM59.9998 37.8005C63.6449 37.8005 66.6004 40.7551 66.6004 44.4001C66.6004 48.0452 63.6449 50.9998 59.9998 50.9998C56.3549 50.9997 53.4003 48.0451 53.4002 44.4001C53.4002 40.7551 56.3548 37.8006 59.9998 37.8005ZM75.6004 37.8005C79.2453 37.8007 82.2 40.7552 82.2 44.4001C82.2 48.0451 79.2453 50.9995 75.6004 50.9998C71.9554 50.9998 68.9999 48.0452 68.9998 44.4001C68.9998 40.7551 71.9553 37.8005 75.6004 37.8005ZM28.7996 22.2C32.4446 22.2 35.4 25.1547 35.4002 28.7996C35.4002 32.4446 32.4447 35.4001 28.7996 35.4001C25.1547 35.3999 22.2 32.4445 22.2 28.7996C22.2002 25.1548 25.1549 22.2002 28.7996 22.2ZM91.2 22.2C94.845 22.2 97.7994 25.1547 97.7996 28.7996C97.7996 32.4446 94.8451 35.4001 91.2 35.4001C87.5549 35.4001 84.6004 32.4446 84.6004 28.7996C84.6006 25.1547 87.5551 22.2 91.2 22.2Z" fill-opacity="0.23"/>
+<path d="M44.4002 84.6003C48.0452 84.6004 50.9998 87.5549 50.9998 91.2C50.9998 94.845 48.0452 97.7995 44.4002 97.7996C40.7551 97.7996 37.7996 94.845 37.7996 91.2C37.7996 87.5549 40.7551 84.6003 44.4002 84.6003ZM59.9998 84.6003C63.6449 84.6003 66.6004 87.5549 66.6004 91.2C66.6004 94.845 63.6449 97.7996 59.9998 97.7996C56.3548 97.7995 53.4002 94.845 53.4002 91.2C53.4002 87.5549 56.3548 84.6004 59.9998 84.6003ZM75.6004 84.6003C79.2453 84.6006 82.2 87.555 82.2 91.2C82.2 94.8449 79.2453 97.7994 75.6004 97.7996C71.9553 97.7996 68.9998 94.845 68.9998 91.2C68.9998 87.5549 71.9553 84.6003 75.6004 84.6003ZM28.7996 68.9998C32.4447 68.9998 35.4002 71.9553 35.4002 75.6003C35.4 79.2453 32.4446 82.2 28.7996 82.2C25.1548 82.1997 22.2002 79.2451 22.2 75.6003C22.2 71.9554 25.1547 69 28.7996 68.9998ZM91.2 68.9998C94.8451 68.9998 97.7996 71.9553 97.7996 75.6003C97.7994 79.2453 94.845 82.2 91.2 82.2C87.5551 82.1999 84.6006 79.2453 84.6004 75.6003C84.6004 71.9553 87.5549 68.9998 91.2 68.9998ZM28.7996 53.4001C32.4446 53.4001 35.4001 56.3548 35.4002 59.9998C35.4002 63.6448 32.4447 66.6003 28.7996 66.6003C25.1547 66.6001 22.2 63.6447 22.2 59.9998C22.2002 56.3549 25.1548 53.4004 28.7996 53.4001ZM91.2 53.4001C94.845 53.4001 97.7995 56.3548 97.7996 59.9998C97.7996 63.6448 94.8451 66.6003 91.2 66.6003C87.5549 66.6003 84.6004 63.6448 84.6004 59.9998C84.6005 56.3548 87.555 53.4002 91.2 53.4001ZM28.7996 37.8005C32.4447 37.8005 35.4002 40.7551 35.4002 44.4001C35.4002 48.0452 32.4447 50.9998 28.7996 50.9998C25.1548 50.9995 22.2001 48.0451 22.2 44.4001C22.2 40.7552 25.1547 37.8007 28.7996 37.8005ZM91.2 37.8005C94.8451 37.8005 97.7996 40.7551 97.7996 44.4001C97.7996 48.0452 94.8451 50.9998 91.2 50.9998C87.555 50.9998 84.6005 48.0452 84.6004 44.4001C84.6004 40.7551 87.5549 37.8005 91.2 37.8005ZM44.4002 22.2C48.0451 22.2001 50.9996 25.1547 50.9998 28.7996C50.9998 32.4446 48.0452 35.4 44.4002 35.4001C40.7551 35.4001 37.7996 32.4446 37.7996 28.7996C37.7998 25.1547 40.7553 22.2 44.4002 22.2ZM59.9998 22.2C63.6448 22.2 66.6002 25.1547 66.6004 28.7996C66.6004 32.4446 63.6449 35.4001 59.9998 35.4001C56.3548 35.4 53.4002 32.4446 53.4002 28.7996C53.4004 25.1547 56.355 22.2001 59.9998 22.2ZM75.6004 22.2C79.2452 22.2002 82.1998 25.1548 82.2 28.7996C82.2 32.4445 79.2453 35.3999 75.6004 35.4001C71.9553 35.4001 68.9998 32.4446 68.9998 28.7996C69 25.1547 71.9555 22.2 75.6004 22.2Z"/>
+    </g>
+  </symbol>
+</svg>
+
 <nav>
   <div class="bar glass">
     <a class="brand" href="#home" aria-label="Ocarina, home">
-      <img class="nav-icon" src="icon-64.png" alt="" width="64" height="64">
+      <svg class="nav-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
       <canvas class="mark" id="navMark" role="img" aria-label="Ocarina"></canvas>
     </a>
     <span class="spacer"></span>
     <span class="navlinks">
       <a class="link" href="#one">One window</a>
       <a class="link" href="#awake">Keep awake</a>
-      <a class="link" href="#install">Install an agent</a>
-      <a class="link" href="#tour">While it works</a>
-      <a class="link" href="#themes">Make it yours</a>
+      <a class="link" href="#kit">&#8984;K menu</a>
+      <a class="link" href="#errors">Explain this</a>
+      <a class="link" href="#tasks">Your tasks</a>
     </span>
     <span class="navcta">
       <a class="btn btn-ghost btn-sm" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg><span class="lbl">Buy me a coffee</span></a>
@@ -643,7 +756,7 @@
 <header class="hero" id="home">
   <div class="wrap hero-inner">
     <div class="lockup">
-      <img class="app-icon" src="icon.png" alt="" width="360" height="360">
+      <svg class="app-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
       <canvas class="mark hero-mark" id="heroMark" role="img" aria-label="Ocarina"></canvas>
     </div>
     <h1>A terminal<br><span class="soft">you don't have to learn.</span></h1>
@@ -661,6 +774,9 @@
   </div>
 
   <div class="wrap">
+    <!-- Fourteen dots under the window they repaint. A section further down
+         had to say "and the whole page follows"; here you press one and the
+         page has already followed, which is a shorter way of saying it. -->
     <div class="stage hero-stage rise" id="heroStage">
       <div class="zoom">
         <div class="win shelled tasked" id="win">
@@ -673,22 +789,22 @@
           <div class="win-body">
             <div class="side" id="side">
               <div class="card up tabs">
-                <div class="brand">Ocarina</div>
+                <canvas class="mark sidemark" aria-hidden="true"></canvas>
                 <div id="tablist">
-                  <div class="row on"><span class="g">&#10043;</span><span class="t">Fix the checkout page</span><span class="dot busy"></span></div>
-                  <div class="row"><span class="g">&#10043;</span><span class="t">Write the sign-up tests</span><span class="dot busy"></span></div>
-                  <div class="row"><span class="g">&#9671;</span><span class="t">Rename the theme files</span><span class="dot bad"></span></div>
-                  <div class="row"><span class="g">&#10043;</span><span class="t">Add a dark mode toggle</span><span class="dot ok"></span></div>
-                  <div class="row"><span class="g">$</span><span class="t">portfolio-site</span><span class="dot"></span></div>
-                  <div class="row"><span class="g">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
+                  <div class="row on"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Fix the checkout page</span></div>
+                  <div class="row"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Write the sign-up tests</span></div>
+                  <div class="row"><span class="dot bad"></span><span class="g gm">&#9671;</span><span class="t">Rename the theme files</span></div>
+                  <div class="row"><span class="dot ok"></span><span class="g cl">&#10043;</span><span class="t">Add a dark mode toggle</span></div>
+                  <div class="row"><span class="dot"></span><span class="t">portfolio-site</span></div>
+                  <div class="row"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
                 </div>
                 <div class="fill"></div>
               </div>
               <div class="card down foot">
-                <div class="row">Theme</div>
-                <div class="row">Share feedback</div>
-                <div class="row">Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
-                <div class="row" id="awakeRow">Keep awake<span class="sw on"></span></div>
+                <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 1 0 0 17.6c1 0 1.7-.75 1.7-1.6 0-.4-.16-.78-.42-1.05-.27-.28-.43-.64-.43-1.05 0-.85.72-1.55 1.6-1.55h1.85A4.9 4.9 0 0 0 21 10.6c0-4.1-4-7.4-9-7.4Z"/><circle cx="7.6" cy="11.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="11" cy="7.7" r="1.05" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.8" r="1.05" fill="currentColor" stroke="none"/></svg>Theme</div>
+                <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.1c0 3.5-3.4 6.4-7.6 6.4-.9 0-1.8-.13-2.6-.37L5.2 20.4l1.4-3.5c-1.1-1.15-1.8-2.6-1.8-4.8 0-3.53 3.4-6.4 7.6-6.4s8 2.87 8 6.4Z"/></svg>Share Feedback</div>
+                <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 6.9l1.8 1.8 3-3"/><path d="M11 7.4h9.4"/><path d="M3.6 15.9l1.8 1.8 3-3"/><path d="M11 16.4h9.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
+                <div class="row" id="awakeRow"><svg class="fi cupfi" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.2 17.4h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Keep Awake<span class="sw on"></span></div>
               </div>
             </div>
 
@@ -699,7 +815,8 @@
                 <div class="keys">&#8984;K&nbsp;&nbsp;QUICK ACTIONS<br>&#8984;&#8679;P&nbsp;&nbsp;COMMAND PALETTE</div>
               </div>
               <div class="shell" id="shell">
-                <span class="l"><span class="pr">~ &rsaquo;</span> <span class="cmd" id="cmd">claude</span></span>
+                <span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>
+                <span class="l"><span class="pr">&#10095;</span> <span class="cmd" id="cmd">claude</span></span>
                 <span class="l">&nbsp;</span>
                 <span class="l dimtx">&gt; Fix the checkout page. The total doesn't change</span>
                 <span class="l dimtx">&gt; when someone picks a different quantity.</span>
@@ -712,12 +829,32 @@
                 <span class="l">&nbsp;</span>
                 <span class="l"><span class="gr">&#10003;</span> The total now updates when the quantity changes.</span>
                 <span class="l">&nbsp;</span>
-                <span class="l"><span class="pr">~ &rsaquo;</span> <span class="caret"></span></span>
+                <span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>
+                <span class="l"><span class="pr">&#10095;</span> <span class="caret"></span></span>
               </div>
               <div class="banner">
+                <span class="dot bad"></span>
                 <b>That didn't work.</b>
-                <span class="say">The tests stopped with an error.</span>
-                <span class="go">Explain this</span>
+                <span class="say">The last command stopped with an error (code 1).</span>
+                <button type="button" class="go">Explain this</button>
+              </div>
+              <!-- What the button gets you. In the app the answer arrives in
+                   the terminal, because the thing answering is the agent in
+                   the tab; here it is a sheet, so the answer and the command
+                   that acts on it are on screen at the same time. -->
+              <div class="sheet">
+                <div class="sh-head">
+                  <b>What went wrong</b>
+                  <button type="button" class="sh-x" aria-label="Close">&#10005;</button>
+                </div>
+                <div class="sh-body">
+                  <p>One of the fourteen tests expected the cart total to change when the quantity does. It still reads the old total, so the run stopped there.</p>
+                  <p class="sh-next"><b>What to try next</b>Have the quantity box tell the total when it changes, then run the tests again.</p>
+                </div>
+                <div class="sh-foot">
+                  <button type="button" class="sh-cta">Fix it</button>
+                  <span class="sh-note">writes the ask at your prompt</span>
+                </div>
               </div>
               <div class="drawer">
                 <div class="q">What do you want to do?</div>
@@ -734,13 +871,15 @@
             <div class="right">
               <div class="card up panel">
                 <div class="inner">
-                  <h4>Tasks</h4>
-                  <p class="note">Read from your agent's own transcript. Works with any agent you run here.</p>
-                  <div class="task done"><span class="bx"></span>Install Claude Code</div>
-                  <div class="task done"><span class="bx"></span>Set up the project folder</div>
-                  <div class="task done"><span class="bx"></span>Add a dark mode toggle</div>
-                  <div class="task"><span class="bx"></span>Fix the checkout page</div>
-                  <div class="task"><span class="bx"></span>Write the sign-up tests</div>
+                  <div class="phead"><b>Tasks</b><span class="cnt">3/5</span><span class="clr">Clear</span></div>
+                  <div class="prule"></div>
+                  <!-- newest first, the way the panel reads it off the transcript,
+                       so the one still running is the one at the top -->
+                  <div class="task"><span class="tk sq"></span>Write the sign-up tests</div>
+                  <div class="task"><span class="tk sq"></span>Fix the checkout page</div>
+                  <div class="task done"><span class="tk">&#10003;</span>Add a dark mode toggle</div>
+                  <div class="task done"><span class="tk">&#10003;</span>Set up the project folder</div>
+                  <div class="task done"><span class="tk">&#10003;</span>Install Claude Code</div>
                 </div>
               </div>
               <div class="card down tokencard">
@@ -755,13 +894,22 @@
         </div>
       </div>
     </div>
+    <!-- Fourteen dots under the window they repaint. This was a section of
+         its own further down, which had to say "and the whole page follows";
+         under the window you press one and the page has already followed,
+         which is a shorter way of saying it. -->
+    <div class="swatches rise d1" id="swatches" role="radiogroup" aria-label="Theme"></div>
   </div>
 </header>
+<!-- The colour arriving. One circle, grown from the dot that was pressed
+     until it has covered the page, over the top of everything and catching
+     no clicks; the theme itself is applied at the moment it is let go. -->
+
 
 <section id="one">
   <div class="wrap">
-    <h2 class="rise">One window, <span class="soft">a tab for every agent.</span></h2>
-    <p class="sub rise">Open everything in the same window and the sidebar names each tab after what you asked for — nothing to juggle, nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>. The name is taken from the ask that opened the conversation, so it holds still instead of changing under you every time you type.</p>
+    <h2 class="rise">All your terminals <span class="soft">in a single place.</span></h2>
+    <p class="sub rise">Every agent in one window, each tab named after the ask that opened it. Nothing to juggle, nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
 
     <div class="versus">
       <div class="vs glass rise d1">
@@ -788,11 +936,11 @@
           <div class="mb"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span>Ocarina</span></div>
           <div class="ob">
             <div class="os">
-              <div class="b">Ocarina</div>
-              <div class="row on"><span class="t">Fix the checkout page</span><span class="dot busy" style="background:#E5B25A"></span></div>
-              <div class="row"><span class="t">Write the sign-up tests</span><span class="dot" style="background:#E5B25A"></span></div>
-              <div class="row"><span class="t">Rename the theme files</span><span class="dot" style="background:#F06C6C"></span></div>
-              <div class="row newtab"><span class="t">+&nbsp;&nbsp;New Tab</span><span class="k">&#8984;T</span></div>
+              <canvas class="mark osmark" aria-hidden="true"></canvas>
+              <div class="row on"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Fix the checkout page</span></div>
+              <div class="row"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Write the sign-up tests</span></div>
+              <div class="row"><span class="dot bad"></span><span class="g gm">&#9671;</span><span class="t">Rename the theme files</span></div>
+              <div class="row newtab"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
             </div>
             <div class="om">
               &gt; fix the checkout page<br>
@@ -805,7 +953,7 @@
       </div>
     </div>
 
-    <p class="takeaway rise">One window, one list, <b>each tab named after what you asked for.</b> The dot says working, waiting, or stopped — read from the agent&rsquo;s own transcript, so it goes green when the work stops rather than blinking at work that finished ten minutes ago.</p>
+    <p class="takeaway rise">The dot says working, done or stopped — <b>read from the agent&rsquo;s own transcript</b>, so it goes green when the work stops rather than blinking at work that finished ten minutes ago.</p>
   </div>
 </section>
 
@@ -813,7 +961,7 @@
 <section id="awake">
   <div class="wrap">
     <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-    <p class="sub rise">Ocarina holds the display awake for as long as a run is going, so a long task finishes instead of stopping when the screen does. Same task, same machine, side by side.</p>
+    <p class="sub rise">The display stays on while a run is going, so a long task finishes instead of stopping when the screen does.</p>
   </div>
 
   <div class="wrap awake-pair">
@@ -865,46 +1013,53 @@
   </div>
 </section>
 
-<section id="install">
+<!-- Four features, four sections. They were two, each holding a pair of
+     them behind a chip you had to press: a feature that lives behind a tab
+     is a feature most people never find. Each window below is the same one
+     window, framed on the one part the section is about. -->
+<section id="kit">
   <div class="wrap">
     <h2 class="rise">The install command, <span class="soft">already in the app.</span></h2>
-    <p class="sub rise">&#8984;K keeps the commands that get an agent running, and writes the one you pick at your prompt.</p>
-    <div class="tour-grid">
-      <div class="tour-chips rise d1" id="kitChips" role="tablist" aria-label="Getting an agent running"></div>
-      <p class="tour-say rise d2" id="kitSay"></p>
+    <p class="sub rise">&#8984;K keeps the install command for Claude Code, Gemini CLI and Codex, next to the Homebrew and Node they assume.</p>
+    <div class="feat">
+      <div class="feat-say">
+      <p class="takeaway rise">One menu, in the terminal itself, with <b>the command for every agent it runs</b> &mdash; and the two things those commands expect to be on the machine already.</p>
+      </div>
       <div class="stage rise d1" id="kitStage"></div>
     </div>
   </div>
 </section>
 
-<section id="tour">
+<section id="errors">
   <div class="wrap">
-    <h2 class="rise">Errors in plain English, <span class="soft">and a list of what you asked for.</span></h2>
-    <p class="sub rise">Both read out of the session you are already running.</p>
-    <div class="tour-grid">
-      <div class="tour-chips rise d1" id="tourChips" role="tablist" aria-label="While the agent works"></div>
-      <p class="tour-say rise d2" id="tourSay"></p>
-      <div class="stage rise d1" id="tourStage"></div>
+    <h2 class="rise">When a command fails, <span class="soft">it says so in English.</span></h2>
+    <p class="sub rise">A failed command puts <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">Explain this</span> at the top of the window. One click turns the red output into a sentence.</p>
+    <div class="feat">
+      <div class="feat-say">
+      <p class="takeaway rise">What broke, and what to try next, <b>read out of the run you just did</b> &mdash; not looked up somewhere that assumed you already knew.</p>
+      <p class="try rise">Press <span>Explain this</span> in the window &rarr;</p>
+      </div>
+      <div class="stage rise d1" id="errStage"></div>
     </div>
   </div>
 </section>
 
-<section id="themes">
+<section id="tasks">
   <div class="wrap">
-    <h2 class="rise">Make the terminal <span class="soft">your own.</span></h2>
-    <p class="sub rise">Fourteen looks. Pick one and the whole window follows.</p>
-
-    <div class="theme-grid">
-      <div class="tprev rise d1" id="tprev"></div>
-      <div class="chips rise d2" id="chips"></div>
+    <h2 class="rise">All your prompted tasks <span class="soft">in a single place.</span></h2>
+    <p class="sub rise">Every ask you make in this window, in one list, ticked off when the agent stops working on it.</p>
+    <div class="feat">
+      <div class="feat-say">
+      <p class="takeaway rise">Read from <b>your agent&rsquo;s own transcript</b>, so any agent you run here fills it &mdash; and the list outlives the scrollback it came from.</p>
+      </div>
+      <div class="stage rise d1" id="taskStage"></div>
     </div>
-
   </div>
 </section>
 
 <div class="wrap band">
   <div class="closing glass rise">
-    <img class="close-icon" src="icon.png" alt="" width="360" height="360">
+    <svg class="close-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
     <h2>Open it and <span class="soft">start typing.</span></h2>
     <p class="sub">Free, open source, small enough to read in an afternoon.</p>
     <div class="cta">
@@ -1028,15 +1183,44 @@
     });
   }
 
-  var BLUE = "#45B6E8";
+  var BLUE = "#64B2D8";   // the Ocarina board's lit lamp; a theme replaces it
   var MO = cells("OCARINA");
-  paint(document.getElementById("navMark"), MO, { pitch: 4, color: "#EEF3F8" });
-  paint(document.getElementById("footMark"), MO, { pitch: 3.4, color: "#8A96A3" });
-  paint(document.getElementById("closeMark"), MO, { pitch: 7, color: BLUE, showOff: true });
+
+  /* Every dot-matrix canvas on the page, and how each one is drawn, so a
+     theme change can repaint the lot. `role` is which of the theme's colours
+     the mark takes: the board's lamp, or one of the two chrome text weights. */
+  var MARKS = [];
+  function mark(el, opts, role, defer) {
+    if (!el) return opts;
+    MARKS.push({ el: el, opts: opts, role: role || "lit", defer: !!defer });
+    paint(el, MO, opts);
+    return opts;
+  }
+  /* Every mark is a canvas redrawn cell by cell. Inside a theme swap that
+     work lands in the one frame the browser is also capturing two pictures
+     of the page in, so the marks that are off screen — and therefore in
+     neither picture — are set aside and caught up when the frames are free.
+     `defer` collects them; passing a list repaints just that list. */
+  var cold = [];
+  function repaintMarks(t, only) {
+    var list = only || MARKS;
+    for (var i = 0; i < list.length; i++) {
+      var m = list[i];
+      m.opts.color = m.role === "chrome" ? t.t1 : m.role === "quiet" ? t.t2 : t.lit;
+      if (!only && m.defer) {
+        var r = m.el.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > innerHeight + 200) { cold.push(m); continue; }
+      }
+      paint(m.el, MO, m.opts);
+    }
+  }
+
+  mark(document.getElementById("navMark"), { pitch: 4, color: "#D9DBDE" }, "chrome");
+  mark(document.getElementById("footMark"), { pitch: 3.4, color: "#999FA9" }, "quiet");
+  mark(document.getElementById("closeMark"), { pitch: 7, color: BLUE, showOff: true });
 
   var hero = document.getElementById("heroMark");
-  var heroOpts = { pitch: 9, color: BLUE, showOff: true, progress: 0 };
-  paint(hero, MO, heroOpts);
+  var heroOpts = mark(hero, { pitch: 9, color: BLUE, showOff: true, progress: 0 });
   if (reduce) {
     heroOpts.progress = 1; paint(hero, MO, heroOpts);
   } else {
@@ -1050,7 +1234,9 @@
       else chase(hero, MO, heroOpts);
     });
   }
-  paint(document.getElementById("boardMark"), MO, { pitch: 7, color: "#38C2FF" });
+  mark(document.getElementById("boardMark"), { pitch: 7, color: "#64B2D8" });
+  mark(document.querySelector("#win .sidemark"), { pitch: 3.2, color: "#64B2D8" });
+  mark(document.querySelector(".one .osmark"), { pitch: 3, color: "#64B2D8" });
 
   /* One line at a time, rolling up. No width changes, so nothing jitters. */
   var FLIP = [
@@ -1253,9 +1439,8 @@
   }
   function fitAll() {
     fit(document.querySelector("#heroStage .win"), narrow.matches ? 620 : 1180, 634);
-    fit(document.querySelector("#kitStage .win"), 1180, 634);
-    fit(document.querySelector("#tourStage .win"), 1180, 634);
-    fit(document.querySelector("#tprev .win"), 1180, 634);
+    Array.prototype.forEach.call(document.querySelectorAll(".stage .win"),
+      function (el) { fit(el, 1180, 634); });
     fit(document.querySelector(".awin"), 520, 300);
     fit(document.querySelector(".twin"), 520, 300);
   }
@@ -1267,7 +1452,8 @@
   function makeWindow() {
     var c = win.cloneNode(true);
     Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (n) { n.removeAttribute("id"); });
-    paint(c.querySelector(".board canvas"), MO, { pitch: 7, color: "#38C2FF" });
+    mark(c.querySelector(".board canvas"), { pitch: 7, color: "#64B2D8" }, "lit", true);
+    mark(c.querySelector(".sidemark"), { pitch: 3.2, color: "#64B2D8" }, "lit", true);
     return c;
   }
 
@@ -1304,7 +1490,8 @@
 
   var CMD = "curl -fsSL https://claude.ai/install.sh | bash";
   var SHELL =
-    '<span class="l"><span class="pr">~ &rsaquo;</span> <span class="cmd"></span><span class="caret"></span></span>' +
+    '<span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>' +
+    '<span class="l"><span class="pr">&#10095;</span> <span class="cmd"></span><span class="caret"></span></span>' +
     '<span class="l">&nbsp;</span>' +
     '<span class="l dimtx">This downloads an installer from claude.ai and runs it. It puts</span>' +
     '<span class="l dimtx">a claude command on your Mac and keeps it up to date after that.</span>' +
@@ -1313,170 +1500,289 @@
     '<span class="l">&nbsp;</span>' +
     '<span class="l rd">The tests failed. 1 of 14 did not pass.</span>';
 
-  /* Getting an agent running: the command you would have gone looking for. */
-  var KIT = [
-    { chip: "Installing an agent", cls: "drawn", sel: ".drawer", pad: 30, max: 1.75,
-      say: "Claude Code, Gemini CLI and Codex each install with a command you have to go and find. <b>&#8984;K</b> keeps all three in the app, next to Homebrew and Node, which those installs assume you already have." },
-    { chip: "It types, you decide", cls: "shelled", rect: [18, 4, 46, 28], max: 1.9, type: true,
-      say: "Picking one writes the command at your prompt, with a plain sentence underneath saying what it does. Then it stops. <b>Nothing here runs until you press Return.</b>" }
-  ];
-
-  /* And once it is running: the two things the window keeps track of for you. */
-  var HELP = [
-    { chip: "Errors in plain English", cls: "shelled erred", rect: [18, 0, 82, 32], max: 1.9,
-      say: "When a command fails, Ocarina puts <b>Explain this</b> at the top of the window. One click turns the red output into a sentence saying what went wrong, and what to try next." },
-    { chip: "What you asked for", cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1,
-      say: "The side panel keeps the running list of everything you have asked for and <b>ticks each one off when the agent stops working on it.</b> It reads your agent\'s own transcript, so it works with any agent you run here." }
-  ];
+  /* One scene per section: which part of the window it is about, and what
+     the window has to be showing for that part to exist. */
+  var SCENES = {
+    kitStage:    { cls: "drawn", sel: ".drawer", pad: 30, max: 1.75 },
+    errStage:    { cls: "shelled erred", rect: [18, 0, 82, 32], max: 1.9, live: true },
+    taskStage:   { cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1 }
+  };
 
   /* Both sections are the same machine: one drawn window, framed on a different
      part of itself per step. Built twice rather than written twice. */
-  function buildTour(stage, chips, sayEl, SCENES) {
-    if (!stage) return;
-    var tZoom = document.createElement("div"); tZoom.className = "zoom";
-    var tWin = makeWindow();
-    tZoom.appendChild(tWin); stage.appendChild(tZoom);
+  /* One drawn window per section, framed on the one part that section is
+     about and then left alone. No chips and no timer: what a section shows
+     is what it is about, and it is on screen the moment you arrive. */
+  function buildScene(id) {
+    var stage = document.getElementById(id);
+    var sc = SCENES[id];
+    if (!stage || !sc) return;
+    var zoom = document.createElement("div"); zoom.className = "zoom";
+    var w = makeWindow();
+    zoom.appendChild(w); stage.appendChild(zoom);
     fitAll();
-    tWin.querySelector(".shell").innerHTML = SHELL;
-    var tCmd = tWin.querySelector(".cmd");
-    var scene = -1, timer = null, typing = null;
+    w.querySelector(".shell").innerHTML = SHELL;
+    w.className = "win " + sc.cls;
+    w.querySelector(".cmd").textContent = CMD;
 
-    SCENES.forEach(function (s, i) {
-      var b = document.createElement("button");
-      b.type = "button"; b.textContent = s.chip; b.setAttribute("role", "tab");
-      b.addEventListener("click", function () { show(i); arm(); });
-      chips.appendChild(b);
-    });
+    var at = sc;
+    function place(animate, to) {
+      at = to || at;
+      fitAll();
+      var f = frameFor(w, zoom, at);
+      var keep = zoom.style.transition;
+      if (!animate) zoom.style.transition = "none";
+      zoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
+      if (!animate) { void zoom.offsetWidth; zoom.style.transition = keep; }
+    }
+    place(false);
 
-    function show(i) {
-      scene = i;
-      var s = SCENES[i];
-      tWin.className = "win " + s.cls;
-      sayEl.innerHTML = s.say;
-      Array.prototype.forEach.call(chips.children, function (c, j) { c.classList.toggle("on", j === i); });
-      if (typing) { clearTimeout(typing); typing = null; }
-      tCmd.textContent = s.type ? "" : CMD;
-      var f = frameFor(tWin, tZoom, s);
-      tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
-      if (s.type && !reduce) {
+    /* The one window on the page you can press. "Explain this" is the whole
+       claim of its section, and a claim you can try is worth more than a
+       claim you can read: the button opens the answer, and the answer's one
+       button does what the app does with it — writes the ask at the prompt. */
+    if (sc.live) {
+      w.classList.add("live");
+      var SHEET = { sel: ".sheet", pad: 58, max: 1.55 };
+      var PROMPT = { rect: [18, 4, 46, 28], max: 1.9 };
+      var ASK = 'claude "make the quantity box update the total, then run the tests"';
+      var shell = w.querySelector(".shell"), cmd = w.querySelector(".cmd");
+      var typing = null;
+
+      function open() {
+        shell.innerHTML = SHELL;
+        w.querySelector(".cmd").textContent = CMD;
+        w.classList.add("explaining");
+        place(true, SHEET);
+      }
+      function shut() { w.classList.remove("explaining"); place(true, sc); }
+
+      w.querySelector(".banner .go").addEventListener("click", function () {
+        w.classList.contains("explaining") ? shut() : open();
+      });
+      w.querySelector(".sh-x").addEventListener("click", shut);
+      w.querySelector(".sh-cta").addEventListener("click", function () {
+        w.classList.remove("explaining");
+        place(true, PROMPT);
+        // a fresh prompt with the ask sitting on it, and nothing under it:
+        // the app writes the command and stops, so neither does this
+        shell.innerHTML =
+          '<span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>' +
+          '<span class="l"><span class="pr">&#10095;</span> <span class="cmd"></span><span class="caret"></span></span>';
+        cmd = w.querySelector(".cmd");
+        clearTimeout(typing);
+        if (reduce) { cmd.textContent = ASK; return; }
+        cmd.textContent = "";
         var k = 0;
         (function key() {
-          tCmd.textContent = CMD.slice(0, ++k);
-          if (k < CMD.length) typing = setTimeout(key, 19 + Math.random() * 26);
+          cmd.textContent = ASK.slice(0, ++k);
+          if (k < ASK.length) typing = setTimeout(key, 17 + Math.random() * 22);
         })();
-      } else if (s.type) { tCmd.textContent = CMD; }
+      });
     }
-    function arm() {
-      if (timer) clearTimeout(timer);
-      if (reduce) return;
-      timer = setTimeout(function () { show((scene + 1) % SCENES.length); arm(); }, 6800);
-    }
-    function halt() { if (timer) { clearTimeout(timer); timer = null; } }
 
-    show(0);
-    if (!reduce && "IntersectionObserver" in window) {
-      new IntersectionObserver(function (e) { e[0].isIntersecting ? arm() : halt(); }, { threshold: 0.3 })
-        .observe(stage);
-      stage.addEventListener("pointerenter", halt);
-      stage.addEventListener("pointerleave", arm);
-    }
     var rt;
-    function reframe() {
-      fitAll();
-      clearTimeout(rt);
-      rt = setTimeout(function () {
-        var f = frameFor(tWin, tZoom, SCENES[scene]);
-        var keep = tZoom.style.transition; tZoom.style.transition = "none";
-        tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
-        void tZoom.offsetWidth; tZoom.style.transition = keep;
-      }, 180);
-    }
-    narrow.addEventListener("change", function () { fitAll(); show(scene); });
+    function reframe() { clearTimeout(rt); rt = setTimeout(function () { place(false); }, 180); }
+    narrow.addEventListener("change", reframe);
     addEventListener("resize", reframe);
-    // The stage can change size without the window doing so: a late font, or
-    // the copy beside it in the left column reflowing. The frame is computed
-    // from the stage's measurements, so it has to be recomputed when they move.
+    // The stage can change size without the window doing so — a late font,
+    // or the copy above it reflowing — and the frame is measured off it.
     if ("ResizeObserver" in window) new ResizeObserver(reframe).observe(stage);
   }
 
-  buildTour(document.getElementById("kitStage"), document.getElementById("kitChips"),
-            document.getElementById("kitSay"), KIT);
-  buildTour(document.getElementById("tourStage"), document.getElementById("tourChips"),
-            document.getElementById("tourSay"), HELP);
+  ["kitStage", "errStage", "taskStage"].forEach(buildScene);
 
-  /* ── themes, from the app's own JSON ─────────────────────── */
+  /* ── themes, straight out of the app's own JSON ───────────
+     Twenty-one colours per theme because that is what the app's theme file
+     holds: the terminal's own two, the four panels are built from, four of
+     the ansi sixteen, the accent, the board's two lamp states, three weights
+     of chrome text, and the status group — which is a group of its own in
+     the app precisely so a dot still means stop and go after a theme has
+     had its way with red and green. */
   var THEMES = {
-    "ocarina":        ["Ocarina", "#060B10", "#C9D4E0", "#101721", "#0B1019", "#F06C86", "#5FC9A2", "#E5CE5A", "#5A96F0", "#31789B"],
-    "sakura":         ["Sakura", "#12070C", "#EBD3DF", "#231119", "#1A0C12", "#FF80AE", "#7FD894", "#EFAB7A", "#9FA6F0", "#B34268"],
-    "matrix":         ["Matrix", "#040C06", "#8CF5A3", "#091A0E", "#051008", "#7ADF95", "#5CFF87", "#A8F5BD", "#66E387", "#24893C"],
-    "ember":          ["Ember", "#120906", "#EDDCCB", "#22150F", "#190E0A", "#FF976B", "#9ED48A", "#F0A263", "#8FA4E8", "#9F572D"],
-    "blueprint":      ["Blueprint", "#070D13", "#CFE1EF", "#0F1A23", "#0A121A", "#F0889F", "#71D3BA", "#E2D776", "#6FB4F0", "#3186A5"],
-    "lavender":       ["Lavender", "#0B0712", "#D9D3EC", "#191223", "#120C1B", "#F080A5", "#7ED6B6", "#E4AA77", "#8F9AF2", "#7345B0"],
-    "matcha":         ["Matcha", "#060E08", "#CFDCC9", "#101F13", "#0A160D", "#EE9472", "#7FD690", "#DBDB6A", "#79CDE0", "#398452"],
-    "ocean":          ["Ocean", "#060F11", "#CFE0E4", "#0E1E22", "#091618", "#F07F93", "#6FD3B8", "#DFD472", "#74CEEC", "#31838C"],
-    "mocha":          ["Mocha", "#110C07", "#E4D7CB", "#221912", "#1A120C", "#EEA27E", "#8DCF8A", "#E0A979", "#94A5DE", "#8F633D"],
-    "midnight":       ["Midnight", "#070811", "#D3D7E4", "#0F1322", "#0A0D19", "#EE88A8", "#77D3B6", "#DFAF7C", "#8A9DE8", "#4253B3"],
-    "steel":          ["Steel", "#080D10", "#D5DBE0", "#141A1F", "#0D1317", "#EE8FA2", "#84D2B2", "#DFD783", "#8FBCDE", "#507C95"],
-    "superman":       ["Superman", "#060913", "#DCE4F7", "#0E1426", "#090E1C", "#FF7A95", "#6FD7AF", "#F2E73C", "#6F93F5", "#9B313A"],
-    "mono":           ["Mono", "#0E0C0A", "#D2D2D4", "#1B1A19", "#151311", "#9A9A9E", "#B4B4B8", "#C2C2C6", "#8E8E92", "#877D6E"],
-    "high-contrast":  ["High Contrast", "#000000", "#FFFFFF", "#141414", "#0A0A0A", "#FF8A80", "#69F0AE", "#FFE14D", "#82B9FF", "#4DD8F0"]
+    "ocarina": { name:"Ocarina",
+      bg:"#060B10", fg:"#C9D4E0", top:"#101721", bot:"#0B1019", bed:"#04070B",
+      red:"#F06C86", grn:"#5FC9A2", yel:"#E5CE5A", blu:"#5A96F0", acc:"#31789B",
+      lit:"#64B2D8", unlit:"#0A0E14", bd:"#97A9C4",
+      t1:"#D9DBDE", t2:"#999FA9", t3:"#68717E",
+      si:"#87C7FF", sr:"#5CA8FF", sg:"#4CC773", sf:"#F25959" },
+    "sakura": { name:"Sakura",
+      bg:"#12070C", fg:"#EBD3DF", top:"#231119", bot:"#1A0C12", bed:"#0C0408",
+      red:"#FF80AE", grn:"#7FD894", yel:"#EFAB7A", blu:"#9FA6F0", acc:"#B34268",
+      lit:"#DC89A5", unlit:"#150A0F", bd:"#C695AC",
+      t1:"#DED9DB", t2:"#A998A0", t3:"#7E6772",
+      si:"#D79BB4", sr:"#FF8FB8", sg:"#7FD8A6", sf:"#FF8095" },
+    "matrix": { name:"Matrix",
+      bg:"#040C06", fg:"#8CF5A3", top:"#091A0E", bot:"#051008", bed:"#020703",
+      red:"#7ADF95", grn:"#5CFF87", yel:"#A8F5BD", blu:"#66E387", acc:"#24893C",
+      lit:"#44D967", unlit:"#040B06", bd:"#8BD09D",
+      t1:"#D8DFDA", t2:"#95AD9B", t3:"#62836B",
+      si:"#5FA872", sr:"#5CFF8A", sg:"#8CF5A3", sf:"#F57A7A" },
+    "ember": { name:"Ember",
+      bg:"#120906", fg:"#EDDCCB", top:"#22150F", bot:"#190E0A", bed:"#0B0604",
+      red:"#FF976B", grn:"#9ED48A", yel:"#F0A263", blu:"#8FA4E8", acc:"#9F572D",
+      lit:"#DC8E60", unlit:"#140C09", bd:"#C7A394",
+      t1:"#DEDAD9", t2:"#A99D98", t3:"#7F6E67",
+      si:"#D9A277", sr:"#FFA35C", sg:"#8FD48A", sf:"#FF8A6B" },
+    "blueprint": { name:"Blueprint",
+      bg:"#070D13", fg:"#CFE1EF", top:"#0F1A23", bot:"#0A121A", bed:"#04080C",
+      red:"#F0889F", grn:"#71D3BA", yel:"#E2D776", blu:"#6FB4F0", acc:"#3186A5",
+      lit:"#6ABEDC", unlit:"#090F15", bd:"#93AFC8",
+      t1:"#D9DBDE", t2:"#98A1AA", t3:"#66747F",
+      si:"#8FBBD6", sr:"#6FC6F5", sg:"#71D3A6", sf:"#F0888A" },
+    "lavender": { name:"Lavender",
+      bg:"#0B0712", fg:"#D9D3EC", top:"#191223", bot:"#120C1B", bed:"#08050C",
+      red:"#F080A5", grn:"#7ED6B6", yel:"#E4AA77", blu:"#8F9AF2", acc:"#7345B0",
+      lit:"#AD8BDA", unlit:"#0F0B16", bd:"#A895C6",
+      t1:"#DBD9DE", t2:"#9F98A9", t3:"#70677E",
+      si:"#A99BE0", sr:"#B79BFF", sg:"#7ED6A4", sf:"#F0808F" },
+    "matcha": { name:"Matcha",
+      bg:"#060E08", fg:"#CFDCC9", top:"#101F13", bot:"#0A160D", bed:"#040A05",
+      red:"#EE9472", grn:"#7FD690", yel:"#DBDB6A", blu:"#79CDE0", acc:"#398452",
+      lit:"#65C886", unlit:"#09110B", bd:"#97C3A0",
+      t1:"#D9DEDA", t2:"#99A89C", t3:"#687D6C",
+      si:"#9FD6A6", sr:"#7FD68A", sg:"#68C77A", sf:"#EE7B72" },
+    "ocean": { name:"Ocean",
+      bg:"#060F11", fg:"#CFE0E4", top:"#0E1E22", bot:"#091618", bed:"#040A0B",
+      red:"#F07F93", grn:"#6FD3B8", yel:"#DFD472", blu:"#74CEEC", acc:"#31838C",
+      lit:"#5CC6D1", unlit:"#081113", bd:"#93BEC8",
+      t1:"#D9DDDE", t2:"#98A6AA", t3:"#667B7F",
+      si:"#8FC9D2", sr:"#5FD6E0", sg:"#6FD3A4", sf:"#F0827F" },
+    "mocha": { name:"Mocha",
+      bg:"#110C07", fg:"#E4D7CB", top:"#221912", bot:"#1A120C", bed:"#0C0805",
+      red:"#EEA27E", grn:"#8DCF8A", yel:"#E0A979", blu:"#94A5DE", acc:"#8F633D",
+      lit:"#CD9B6F", unlit:"#150F0B", bd:"#C3AA97",
+      t1:"#DEDBD9", t2:"#A8A099", t3:"#7D7168",
+      si:"#C1A188", sr:"#D3A47A", sg:"#8ACF95", sf:"#EE8C7E" },
+    "midnight": { name:"Midnight",
+      bg:"#070811", fg:"#D3D7E4", top:"#0F1322", bot:"#0A0D19", bed:"#04050B",
+      red:"#EE88A8", grn:"#77D3B6", yel:"#DFAF7C", blu:"#8A9DE8", acc:"#4253B3",
+      lit:"#8996DC", unlit:"#090B14", bd:"#959FC6",
+      t1:"#D9DADE", t2:"#989CA9", t3:"#676C7E",
+      si:"#9099C6", sr:"#8AAEE8", sg:"#77D3A4", sf:"#EE8894" },
+    "steel": { name:"Steel",
+      bg:"#080D10", fg:"#D5DBE0", top:"#141A1F", bot:"#0D1317", bed:"#05090B",
+      red:"#EE8FA2", grn:"#84D2B2", yel:"#DFD783", blu:"#8FBCDE", acc:"#507C95",
+      lit:"#8AB3CB", unlit:"#0C1013", bd:"#9DB0BE",
+      t1:"#DADCDD", t2:"#9BA1A6", t3:"#6B747B",
+      si:"#9FB4C4", sr:"#8FB6DE", sg:"#84D2A2", sf:"#EE8F8F" },
+    "superman": { name:"Superman",
+      bg:"#060913", fg:"#DCE4F7", top:"#0E1426", bot:"#090E1C", bed:"#03060D",
+      red:"#FF7A95", grn:"#6FD7AF", yel:"#F2E73C", blu:"#6F93F5", acc:"#9B313A",
+      lit:"#D8646E", unlit:"#090C17", bd:"#92A0C9",
+      t1:"#D8DADE", t2:"#979CAA", t3:"#656D80",
+      si:"#8FA8E0", sr:"#F2C33C", sg:"#6FD79A", sf:"#FF7A7A" },
+    "mono": { name:"Mono",
+      bg:"#0E0C0A", fg:"#D2D2D4", top:"#1B1A19", bot:"#151311", bed:"#090806",
+      red:"#9A9A9E", grn:"#B4B4B8", yel:"#C2C2C6", blu:"#8E8E92", acc:"#877D6E",
+      lit:"#C0B5A5", unlit:"#11100F", bd:"#B1AEA9",
+      t1:"#DCDBDB", t2:"#A2A19F", t3:"#757371",
+      si:"#9A9A9E", sr:"#D2D2D4", sg:"#B4B4B8", sf:"#EFEFF1" },
+    "high-contrast": { name:"High Contrast",
+      bg:"#000000", fg:"#FFFFFF", top:"#141414", bot:"#0A0A0A", bed:"#000000",
+      red:"#FF8A80", grn:"#69F0AE", yel:"#FFE14D", blu:"#82B9FF", acc:"#4DD8F0",
+      lit:"#5CE8E8", unlit:"#1A1A1A", bd:"#FFFFFF",
+      t1:"#FFFFFF", t2:"#D0D0D0", t3:"#A8A8A8",
+      si:"#82B9FF", sr:"#FFE14D", sg:"#69F0AE", sf:"#FF8A80" }
   };
   var ORDER = Object.keys(THEMES);
-  var VARS = ["--wbg","--wfg","--wtop","--wbot","--wred","--wgrn","--wyel","--wblu","--wacc"];
 
-  /* The window's ground and the board's two lamp states are derived rather
-     than listed, the same way the app derives them — so a theme added to the
-     table above needs nine colours, not twelve. */
-  function scale(hex, f) {
-    var n = parseInt(hex.slice(1), 16), out = "#";
-    for (var i = 16; i >= 0; i -= 8) {
-      var c = Math.min(255, Math.round(((n >> i) & 255) * f)).toString(16);
-      out += c.length < 2 ? "0" + c : c;
-    }
-    return out;
+  /* The whole page, not the preview window. Every colour the site paints
+     with resolves through a custom property on :root; this rewrites them,
+     so picking Sakura turns the headings, the wash, the grid, the icon and
+     all seven drawn windows pink in one go. */
+  var ROOT = document.documentElement.style;
+  /* `bg` and not `bed`: the board's backdrop is the darkest colour a theme
+     owns, and fourteen near-blacks wiping over one another is a wipe you
+     cannot see. The terminal's own background carries the hue. */
+  var PAGE = { ground:"bg", raise:"bot", "raise-2":"top", ink:"t1", muted:"t2",
+               ghost:"t3", bd:"bd", accent:"lit", "accent-2":"acc",
+               ok:"sg", warn:"yel", bad:"sf" };
+  var WIN  = { bg:"bg", fg:"fg", top:"top", bot:"bot", ground:"bed",
+               red:"red", grn:"grn", yel:"yel", blu:"blu", acc:"acc",
+               lit:"lit", unlit:"unlit", si:"si", sr:"sr", sg:"sg", sf:"sf" };
+  var themeNow = null;
+  function applyTheme(id) {
+    var t = THEMES[id];
+    if (!t || t === themeNow) return;
+    themeNow = t;
+    for (var k in PAGE) ROOT.setProperty("--" + k, t[PAGE[k]]);
+    for (var w in WIN)  ROOT.setProperty("--oc-" + w, t[WIN[w]]);
+    repaintMarks(t);
+    // the flickering grid draws to a canvas and cannot read a custom property
+    document.dispatchEvent(new CustomEvent("ocarina:theme", { detail: t }));
   }
 
-  var preview = makeWindow();
-  preview.className = "win shelled tasked";
-  document.getElementById("tprev").appendChild(preview);
-  fitAll();
-  var pBoard = preview.querySelector(".board canvas");
-  var chips = document.getElementById("chips");
-  var touched = false, drift = null;
+  /* ── the picker ────────────────────────────────────────────
+     Fourteen dots under the hero window. Pressing one grows a circle of that
+     theme's ground out of the dot itself; the palette is swapped while the
+     circle is over the page, so the colour that arrives is the one already
+     spreading rather than a cut you catch mid-blink. */
+  var swatches = document.getElementById("swatches");
+  var current = null;
 
-  function pick(id) {
-    var t = THEMES[id];
-    for (var i = 0; i < VARS.length; i++) preview.style.setProperty(VARS[i], t[i + 1]);
-    preview.style.setProperty("--wground", scale(t[4], 0.62));
-    preview.style.setProperty("--wlit", t[9]);
-    preview.style.setProperty("--wunlit", t[3]);
-    paint(pBoard, MO, { pitch: 7, color: t[9] });
-    Array.prototype.forEach.call(chips.children, function (c) {
-      c.classList.toggle("on", c.getAttribute("data-id") === id);
+  function light(id) {
+    Array.prototype.forEach.call(swatches.children, function (b) {
+      var on = b.getAttribute("data-id") === id;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-checked", on ? "true" : "false");
     });
   }
+
+  /* Growing the new page out of the chip you pressed.
+     The browser takes a picture of the page as it is, lets the palette be
+     rewritten, takes a second picture, and holds the first still while the
+     second is revealed through a circle opening from the chip. Nothing is
+     drawn over the page: the colour changes at the edge of that circle as it
+     travels. Where the API is missing, the palette simply changes. */
+  var VT = typeof document.startViewTransition === "function";
+  function pick(id, from) {
+    if (id === current) return;
+    current = id;
+    light(id);
+    if (!VT || reduce || !from) { applyTheme(id); return; }
+
+    var x = from.left + from.width / 2, y = from.top + from.height / 2;
+    // the far corner from wherever the chip is, so the front leaves no gap
+    var reach = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    var root = document.documentElement;
+    // where the stylesheet holds the snapshot shut until the animation lands
+    root.style.setProperty("--vt-x", x + "px");
+    root.style.setProperty("--vt-y", y + "px");
+    document.dispatchEvent(new CustomEvent("ocarina:swap", { detail: true }));
+
+    var t = document.startViewTransition(function () { applyTheme(id); });
+    t.ready.then(function () {
+      root.animate(
+        { clipPath: ["circle(0px at " + x + "px " + y + "px)",
+                     "circle(" + reach + "px at " + x + "px " + y + "px)"] },
+        { duration: 560, easing: "cubic-bezier(.16,1,.3,1)",
+          pseudoElement: "::view-transition-new(root)" }
+      );
+    });
+    t.finished.finally(function () {
+      document.dispatchEvent(new CustomEvent("ocarina:swap", { detail: false }));
+      // the marks nobody could see are caught up once the frames are free
+      if (cold.length) { repaintMarks(THEMES[current], cold); cold.length = 0; }
+    });
+  }
+
   ORDER.forEach(function (id) {
     var t = THEMES[id];
     var b = document.createElement("button");
-    b.className = "chip"; b.type = "button"; b.setAttribute("data-id", id);
-    b.style.setProperty("--tbg", t[1]); b.style.setProperty("--tfg", t[2]);
-    b.innerHTML = '<span class="top"><span class="nm">' + t[0] + '</span><span class="bars">' +
-      [5,6,7,8,9].map(function (k) { return '<i style="background:' + t[k] + '"></i>'; }).join("") +
-      '</span></span>';
-    ["mouseenter","focus","click"].forEach(function (ev) {
-      b.addEventListener(ev, function () { touched = true; if (drift) { clearInterval(drift); drift = null; } pick(id); });
-    });
-    chips.appendChild(b);
+    b.type = "button"; b.className = "swatch"; b.setAttribute("data-id", id);
+    b.setAttribute("role", "radio");
+    b.setAttribute("aria-label", t.name);
+    b.title = t.name;
+    // one colour: the lamp this theme lights its board with
+    b.style.setProperty("--sw-c", t.lit);
+    b.addEventListener("click", function () { pick(id, b.getBoundingClientRect()); });
+    swatches.appendChild(b);
   });
-  pick("ocarina");
-  if (!reduce && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) {
-      if (e[0].isIntersecting && !drift && !touched) {
-        var n = 0;
-        drift = setInterval(function () { pick(ORDER[++n % ORDER.length]); }, 2100);
-      } else if (!e[0].isIntersecting && drift) { clearInterval(drift); drift = null; }
-    }, { threshold: 0.3 }).observe(document.getElementById("tprev"));
-  }
+  applyTheme("ocarina");
+  current = "ocarina";
+  light("ocarina");
+
 })();
 </script>
 
@@ -1492,7 +1798,18 @@
 
   var SIZE = 4, GAP = 6, STEP = SIZE + GAP;
   var CHANCE = 0.32, MAX = 0.34;
-  var RGBA = "rgba(69,182,232,";
+  var RGBA = "rgba(100,178,216,";
+  /* A canvas cannot read a custom property, so the picker says it out loud
+     and the grid listens. */
+  document.addEventListener("ocarina:theme", function (e) {
+    var n = parseInt(e.detail.lit.slice(1), 16);
+    RGBA = "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + ",";
+    // Once, here, and not on the next frame: a theme change is captured as a
+    // picture the moment it is applied, and the grid is held still for the
+    // wipe. Left to the animation loop it would be the old colour in that
+    // picture and snap to the new one when the picture came down.
+    if (cells) draw();
+  });
   var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var cols = 0, rows = 0, cells = null, dpr = 1, live = false, raf = 0, last = 0;
@@ -1536,10 +1853,21 @@
   }
 
   function start() {
-    if (raf || still) return;
+    if (raf || still || held) return;
     last = 0;
     raf = requestAnimationFrame(frame);
   }
+
+  /* Held still while a theme is being wiped in. The grid is a full-viewport
+     canvas redrawn every frame, and it is behind two snapshots for the whole
+     of that half second — every one of those frames is spent on something
+     nobody can see, and they are the frames the wipe wants. */
+  var held = false;
+  document.addEventListener("ocarina:swap", function (e) {
+    held = e.detail;
+    if (held) { cancelAnimationFrame(raf); raf = 0; }
+    else if (live) start();
+  });
 
   if (!measure()) return;
   draw();
