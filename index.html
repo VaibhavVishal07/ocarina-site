@@ -440,21 +440,22 @@
   .btn-bmc { background:#FFDD00; color:#0B0B0B; font-weight:600; }
   .btn-bmc:hover { background:#FFE84D; }
   .btn-bmc .cup, .btn-ghost .cup { width:17px; height:17px; display:block; flex:none; }
-  .btn-lg { padding:14px 24px; font-size:16px; border-radius:12px; }
-  .btn-lg .cup { width:20px; height:20px; }
   .btn-sm { padding:8px 13px; font-size:13.5px; }
   @media (max-width:960px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
 
-  .ledger { margin-top:40px; }
-  .ledger > div { display:grid; grid-template-columns:0.3fr 1fr; gap:30px;
-                  padding:26px 0; border-top:1px solid var(--line); }
-  @media (max-width:760px) { .ledger > div { grid-template-columns:1fr; gap:8px; } }
-  .ledger .amt { font-family:var(--mono); font-size:13.5px; color:var(--accent); letter-spacing:.01em; }
-  .ledger h3 { margin:0 0 6px; font-size:17px; font-weight:500; letter-spacing:-.015em; }
-  .ledger p { margin:0; color:var(--muted); font-size:15px; line-height:1.6; max-width:58ch; }
+  .coffee-card { margin-top:20px; border-radius:var(--r); padding:24px 28px;
+                 display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+  .coffee-card h3 { margin:0 0 3px; font-size:17px; font-weight:500; letter-spacing:-.015em; }
+  .coffee-card p { margin:0; font-size:14.5px; color:var(--faint); }
 
-  .support-cta { margin-top:44px; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
-  .support-cta .fine { margin:0; font-size:14.5px; color:var(--faint); max-width:44ch; line-height:1.55; }
+  /* Buy Me a Coffee's own yellow. This is the one place a second colour is
+     allowed on the page: it is a third party's brand, and the recognition is
+     the point of using it rather than the site's blue. */
+  .btn-bmc { background:#FFDD00; color:#0B0B0B; font-weight:600; }
+  .btn-bmc:hover { background:#FFE84D; }
+  .btn-bmc .cup, .btn-ghost .cup { width:17px; height:17px; display:block; flex:none; }
+  .btn-sm { padding:8px 13px; font-size:13.5px; }
+  @media (max-width:960px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
 
   .specs { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:52px;
            border-top:1px solid var(--line); padding-top:32px; }
@@ -741,29 +742,6 @@
   </div>
 </section>
 
-<section id="support">
-  <div class="wrap narrow">
-    <h2 class="rise">Did it save you <span class="soft">an afternoon?</span></h2>
-    <p class="sub rise">Ocarina is free and nothing is held back for a paid tier. But if any of this happened to you, the button is there.</p>
-
-    <div class="ledger">
-      <div class="rise"><div class="amt">The command</div>
-        <div><p>It was already in the app, so you did not have to go and find it, read a page about it, and hope you copied the right line.</p></div></div>
-      <div class="rise"><div class="amt">The error</div>
-        <div><p>It told you what went wrong in a sentence, instead of leaving you with a red wall and an exit code.</p></div></div>
-      <div class="rise"><div class="amt">The run</div>
-        <div><p>Your Mac stayed awake, so you came back to a finished job rather than one that died at the six minute mark.</p></div></div>
-      <div class="rise"><div class="amt">The paste</div>
-        <div><p>It read the risky one back to you before it ran, and you decided rather than found out.</p></div></div>
-    </div>
-
-    <div class="support-cta rise">
-      <a class="btn btn-bmc btn-lg" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
-      <p class="fine">No pressure, and no nagging inside the app. It stays free either way.</p>
-    </div>
-  </div>
-</section>
-
 <div class="wrap">
   <div class="closing glass rise">
     <img class="close-icon" src="icon.png" alt="" width="360" height="360">
@@ -773,6 +751,14 @@
       <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Download for macOS</a>
       <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Read the source</a>
     </div>
+  </div>
+
+  <div class="coffee-card glass rise">
+    <div>
+      <h3>Saved you an afternoon?</h3>
+      <p>Ocarina stays free either way.</p>
+    </div>
+    <a class="btn btn-bmc" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
   </div>
 
   <dl class="specs">
