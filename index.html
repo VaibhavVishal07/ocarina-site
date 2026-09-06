@@ -35,8 +35,17 @@
     /* One rail for the whole page. Every block on the page — the nav pill,
        every section, the footer — is this wide and starts at this x. */
     --rail:1180px; --gutter:30px;
+    /* One vertical step. Every band on the page pays it top and bottom, so
+       the space between any two of them is the same 2 x --sect. */
+    --sect:96px;
+    /* Ocarina, straight out of the app's own theme file. Every window drawn
+       on this page that is meant to be Ocarina reads its colours from here,
+       so the site and the app cannot drift apart. */
+    --oc-bg:#12171E; --oc-fg:#C9D4E0; --oc-top:#202224; --oc-bot:#141517;
+    --oc-red:#F06C6C; --oc-grn:#5FC98D; --oc-yel:#E5B25A; --oc-blu:#5AA9F0;
+    --oc-acc:#38C2FF;
   }
-  @media (max-width:760px) { :root { --gutter:22px; } }
+  @media (max-width:760px) { :root { --gutter:22px; --sect:64px; } }
   @media (max-width:420px) { :root { --gutter:18px; } }
   * { box-sizing:border-box; }
   html { background:var(--ground); }
@@ -58,10 +67,14 @@
 
   .wrap { width:100%; max-width:calc(var(--rail) + var(--gutter) * 2);
           margin:0 auto; padding:0 var(--gutter); }
-  /* One rhythm: 96 between sections, 14 under a heading, 40 before the
-     visual it introduces, 26 after it. */
-  section { padding:96px 0; }
-  @media (max-width:760px) { section { padding:64px 0; } }
+  /* One rhythm: --sect above and below every band, 14 under a heading,
+     40 before the visual it introduces, 26 after it. */
+  section { padding:var(--sect) 0; }
+  /* The hero and the closing block are not <section>s, and were paying
+     nothing at the bottom and top respectively — which is why the window
+     ran into "Three agents" and the theme picker ran into the closing
+     card at half the gap every other seam gets. */
+  .band { padding-top:var(--sect); }
   h1,h2,h3 { text-wrap:balance; }
   h2 { font-size:clamp(30px,3.9vw,44px); font-weight:500; letter-spacing:-.032em;
        line-height:1.1; margin:0 0 14px; max-width:21ch; }
@@ -121,7 +134,7 @@
   nav canvas.mark { height:14px; width:auto; }
 
   /* ── hero ─────────────────────────────────────────────── */
-  header.hero { position:relative; padding:56px 0 0; overflow:hidden; }
+  header.hero { position:relative; padding:56px 0 var(--sect); overflow:hidden; }
   header.hero::before { content:""; position:absolute; left:50%; top:-190px; width:1400px; height:760px;
     transform:translateX(-50%); pointer-events:none; filter:blur(40px);
     background:radial-gradient(42% 46% at 50% 46%,rgba(69,182,232,.17),transparent 70%); }
@@ -176,8 +189,9 @@
 <style>
   /* ══ the window, drawn, at a size you can actually read ══ */
   .win {
-    --wbg:#12171E; --wfg:#C9D4E0; --wtop:#202224; --wbot:#141517;
-    --wred:#F06C6C; --wgrn:#5FC98D; --wyel:#E5B25A; --wblu:#5AA9F0; --wacc:#38C2FF;
+    --wbg:var(--oc-bg); --wfg:var(--oc-fg); --wtop:var(--oc-top); --wbot:var(--oc-bot);
+    --wred:var(--oc-red); --wgrn:var(--oc-grn); --wyel:var(--oc-yel);
+    --wblu:var(--oc-blu); --wacc:var(--oc-acc);
     --wline:color-mix(in srgb,var(--wfg) 13%,transparent);
     --wdim:color-mix(in srgb,var(--wfg) 55%,transparent);
     /* Fixed design size, scaled to whatever the stage is. Reflowing a
@@ -308,12 +322,12 @@
   .mini:nth-child(1) { left:0;   top:0;   z-index:1; }
   .mini:nth-child(2) { left:11%; top:64px; z-index:2; }
   .mini:nth-child(3) { left:22%; top:128px; z-index:3; }
-  .one { border-radius:9px; overflow:hidden; border:1px solid rgba(255,255,255,.16); background:#12171E; }
-  .one .mb { height:26px; display:flex; align-items:center; gap:6px; padding:0 10px; background:#202224; }
+  .one { border-radius:9px; overflow:hidden; border:1px solid rgba(255,255,255,.16); background:var(--oc-bg); }
+  .one .mb { height:26px; display:flex; align-items:center; gap:6px; padding:0 10px; background:var(--oc-top); }
   .one .mb i { width:8px; height:8px; border-radius:50%; display:block; }
   .one .mb span { margin-left:7px; font-size:11px; color:rgba(201,212,224,.5); }
   .one .ob { display:flex; min-height:262px; }
-  .one .os { width:196px; flex:none; background:#141517; border-right:1px solid rgba(201,212,224,.11);
+  .one .os { width:196px; flex:none; background:var(--oc-bot); border-right:1px solid rgba(201,212,224,.11);
              padding:9px 7px; display:flex; flex-direction:column; gap:2px; }
   .one .os .b { padding:2px 8px 9px; font-size:12px; font-weight:600; color:#EAF1F8; }
   .one .os .row { font-size:11.5px; padding:6px 7px; gap:6px; }
@@ -328,7 +342,7 @@
     .vs .stack { min-height:250px; }
     .mini .mc { font-size:9.5px; }
   }
-  .takeaway { margin-top:26px; font-size:17px; color:var(--muted); max-width:62ch; }
+  .takeaway { margin:26px 0 0; font-size:17px; color:var(--muted); max-width:62ch; }
   .takeaway b { color:var(--ink); font-weight:500; }
 
   /* ── keep awake ───────────────────────────────────────── */
@@ -336,7 +350,7 @@
   @media (max-width:900px) { .awake { grid-template-columns:1fr; gap:32px; } }
   /* Two machines, same task, side by side. A toggle made the reader do the
      work of imagining the other case; this just shows both. */
-  .awake-pair { display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:44px; align-items:start; }
+  .awake-pair { display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:40px; align-items:start; }
   @media (max-width:900px) { .awake-pair { grid-template-columns:1fr; gap:44px; } }
   .acol .cap { font-family:var(--mono); font-size:11.5px; letter-spacing:.13em;
                color:var(--ghost); margin-bottom:18px; }
@@ -373,11 +387,12 @@
   .twin .dim b { color:#C9CFD4; font-weight:400; }
   .twin .caret { background:#C9CFD4; width:8px; }
 
-  /* Sakura, straight out of the app's own theme file. It makes the point
-     that this window is yours to change, and it reads as a different machine
-     next to Apple's black default. */
-  .awin { --sbg:#1A1016; --sfg:#EBD3DF; --spanel:#251722; --sfoot:#180E14;
-          --sacc:#FF9EC4; --sdim:rgba(235,211,223,.55); --sline:rgba(235,211,223,.13);
+  /* Ocarina, the same window the rest of the page draws. This used to be
+     Sakura to read as a different machine next to Apple's black default;
+     the status bar and the cyan toggle already do that, and one brand
+     colour across every window on the page is worth more. */
+  .awin { --sbg:var(--oc-bg); --sfg:var(--oc-fg); --spanel:var(--oc-top); --sfoot:var(--oc-bot);
+          --sacc:var(--oc-acc); --sdim:rgba(201,212,224,.55); --sline:rgba(201,212,224,.13);
           position:absolute; top:0; left:0; width:520px; height:300px;
           transform-origin:0 0; transform:scale(var(--fit,1));
           display:flex; flex-direction:column;
@@ -395,25 +410,26 @@
            padding:0 14px 0 20px; border-top:1px solid var(--sline);
            background:var(--sfoot); font-size:13px; color:var(--sdim); }
   .astat .run { display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12.5px; }
-  .astat .run i { width:7px; height:7px; border-radius:50%; background:#EFC27A; display:block;
+  .astat .run i { width:7px; height:7px; border-radius:50%; background:var(--oc-yel); display:block;
                   animation:pulse 1.5s ease-in-out infinite; }
   .astat .run b { color:var(--sfg); font-weight:400; }
   .akrow { margin-left:auto; display:flex; align-items:center; gap:10px;
            font-family:inherit; font-size:13px; color:var(--sfg);
-           background:rgba(235,211,223,.08); border:1px solid rgba(255,158,196,.5);
+           background:rgba(201,212,224,.08); border:1px solid rgba(56,194,255,.5);
            border-radius:9px; padding:7px 11px; position:relative; }
   .akrow .sw { width:30px; height:17px; border-radius:9px; flex:none; position:relative;
-               background:rgba(235,211,223,.2); }
+               background:rgba(201,212,224,.2); }
   .akrow .sw::after { content:""; position:absolute; top:2px; left:2px; width:13px; height:13px;
                       border-radius:50%; background:var(--sfg); }
   .akrow .sw.on { background:var(--sacc); }
-  .akrow .sw.on::after { translate:13px 0; background:#2A1119; }
+  .akrow .sw.on::after { translate:13px 0; background:#0B1218; }
 
   /* ── tour ─────────────────────────────────────────────── */
   /* Picker on the left, window on the right, so the four moments are
      visible at the same time as the thing they change. Stacked under the
      stage they read as a footnote nobody scrolls to. */
-  .tour-grid { display:grid; grid-template-columns:minmax(250px,29%) 1fr; gap:20px 34px;
+  .tour-grid { display:grid; grid-template-columns:minmax(250px,29%) 1fr;
+               grid-template-rows:auto 1fr; gap:20px 34px;
                align-content:start; margin-top:40px; }
   .tour-grid > .tour-chips { grid-column:1; grid-row:1; }
   .tour-grid > .tour-say   { grid-column:1; grid-row:2; }
@@ -425,7 +441,8 @@
                        transition:color .2s,border-color .2s,background-color .2s; }
   .tour-chips button:hover { color:var(--ink); border-color:var(--line-2); }
   .tour-chips button.on { color:#0A0E13; background:var(--ink); border-color:var(--ink); }
-  .tour-say { margin:0; min-height:56px; color:var(--muted); font-size:15.5px; max-width:66ch; line-height:1.6; }
+  .tour-say { margin:0; align-self:start; min-height:56px; color:var(--muted);
+              font-size:15.5px; max-width:66ch; line-height:1.6; }
   .tour-say b { color:var(--ink); font-weight:500; }
   @media (max-width:920px) {
     .tour-grid { grid-template-columns:1fr; gap:22px; margin-top:30px; }
@@ -439,18 +456,21 @@
   @media (max-width:520px) { .tour-chips { grid-template-columns:1fr; } }
 
   /* ── themes ───────────────────────────────────────────── */
-  .theme-grid { display:grid; grid-template-columns:1.18fr .82fr; gap:34px; align-items:start; margin-top:40px; }
-  @media (max-width:920px) { .theme-grid { grid-template-columns:1fr; gap:24px; } }
+  .theme-grid { display:grid; grid-template-columns:1.18fr .82fr; gap:34px; align-items:stretch; margin-top:40px; }
+  @media (max-width:920px) { .theme-grid { grid-template-columns:1fr; gap:24px; align-items:start; } }
   .tprev { position:relative; aspect-ratio:1180/634; border-radius:var(--r); overflow:hidden;
            border:1px solid var(--line-2); box-shadow:0 34px 74px -38px rgba(0,0,0,.95); }
-  .chips { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  /* Seven rows sharing the window's height, so the two columns of this
+     section end on the same line. */
+  .chips { display:grid; grid-template-columns:repeat(2,1fr); grid-auto-rows:1fr; gap:8px; }
+  @media (max-width:920px) { .chips { grid-auto-rows:auto; } }
   @media (max-width:520px) { .chips { grid-template-columns:1fr; } }
   .chip { display:block; width:100%; text-align:left; cursor:pointer; padding:0; overflow:hidden;
           border:1px solid var(--line); border-radius:var(--r-sm); background:var(--tbg);
           transition:border-color .2s,transform .2s cubic-bezier(.16,1,.3,1); }
   .chip:hover { transform:translateY(-2px); }
   .chip.on { border-color:var(--accent); }
-  .chip .top { display:flex; align-items:center; gap:6px; padding:10px 11px; }
+  .chip .top { display:flex; align-items:center; height:100%; gap:6px; padding:10px 11px; }
   .chip .nm { font-family:var(--mono); font-size:11.5px; color:var(--tfg); }
   .chip .bars { display:flex; gap:2px; margin-left:auto; }
   .chip .bars i { width:7px; height:7px; border-radius:1.5px; display:block; }
@@ -785,7 +805,7 @@
   </div>
 </section>
 
-<div class="wrap">
+<div class="wrap band">
   <div class="closing glass rise">
     <img class="close-icon" src="icon.png" alt="" width="360" height="360">
     <h2>Open it and <span class="soft">start typing.</span></h2>
