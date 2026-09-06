@@ -4,64 +4,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ocarina</title>
-<meta name="description" content="The first time I opened a terminal, I closed it. Ocarina is the one I needed then: a macOS terminal that tells you what it wants.">
+<meta name="description" content="A macOS terminal with tabs down the side, like a browser. Each one named for the work it is doing, and your Mac stays awake while your agents run.">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Ocarina">
-<meta property="og:description" content="The first time I opened a terminal, I closed it. This is the one I needed then.">
+<meta property="og:description" content="A terminal with tabs, like your browser. Built for running several coding agents at once.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;450;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-  /* Dark only, and that is a decision rather than an omission: every theme
-     the app ships is dark, so a light page would picture a product that
-     does not exist. Nothing is inherited from the host. */
   :root {
     --ground:#07090C; --raise:#0D1218; --raise-2:#121A22;
-    --line:rgba(200,222,242,.085); --line-2:rgba(200,222,242,.15);
+    --line:rgba(200,222,242,.085); --line-2:rgba(200,222,242,.16);
     --accent:#45B6E8; --accent-2:#2C7EA8;
-    --ink:#EEF3F8; --muted:#8A96A3; --ghost:#66727E; --faint:#59636E;
+    --ink:#EEF3F8; --muted:#8A96A3; --ghost:#68737F; --faint:#59636E;
+    --ok:#5FC98D; --warn:#E5B25A; --bad:#F06C6C;
     --r:14px; --r-sm:8px;
     --mono:"Geist Mono",ui-monospace,Menlo,monospace;
   }
   * { box-sizing:border-box; }
-  html { background:var(--ground); scroll-behavior:smooth; }
+  html { background:var(--ground); }
   body {
     margin:0; background:var(--ground); color:var(--ink);
     font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     font-size:16.5px; line-height:1.62; -webkit-font-smoothing:antialiased;
     overflow-x:clip;
   }
-  .grain {
-    position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.032;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-  .progress {
-    position:fixed; inset:0 0 auto; height:2px; z-index:55; transform:scaleX(0);
+  .grain { position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .progress { position:fixed; inset:0 0 auto; height:2px; z-index:55; transform:scaleX(0);
     transform-origin:0 50%; pointer-events:none;
-    background:linear-gradient(90deg,var(--accent-2),var(--accent));
-  }
+    background:linear-gradient(90deg,var(--accent-2),var(--accent)); }
   @supports (animation-timeline:scroll()) { @media (prefers-reduced-motion:no-preference) {
     .progress { animation:prog linear both; animation-timeline:scroll(root block); }
-    @keyframes prog { to { transform:scaleX(1); } }
-  }}
-  .wrap { max-width:1140px; margin:0 auto; padding:0 30px; }
-  h1,h2,h3 { text-wrap:balance; }
-  h2 { font-size:clamp(29px,3.9vw,44px); font-weight:500; letter-spacing:-.032em;
-       line-height:1.1; margin:0 0 16px; max-width:19ch; }
-  .sub { color:var(--muted); font-size:17px; margin:0; max-width:52ch; }
-  a { color:inherit; }
-  a:focus-visible,button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+    @keyframes prog { to { transform:scaleX(1); } } }}
 
-  /* ── nav ─────────────────────────────────────────────── */
+  .wrap { max-width:1240px; margin:0 auto; padding:0 30px; }
+  .narrow { max-width:1000px; }
+  section { padding:104px 0; }
+  @media (max-width:760px) { section { padding:68px 0; } }
+  h1,h2,h3 { text-wrap:balance; }
+  h2 { font-size:clamp(29px,3.8vw,43px); font-weight:500; letter-spacing:-.032em;
+       line-height:1.1; margin:0 0 16px; max-width:20ch; }
+  .sub { color:var(--muted); font-size:17px; margin:0; max-width:56ch; }
+  a { color:inherit; }
+  a:focus-visible,button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:5px; }
+
   nav { position:sticky; top:0; z-index:40; height:64px; display:flex; align-items:center;
-        background:rgba(7,9,12,.8); backdrop-filter:blur(14px);
+        background:rgba(7,9,12,.82); backdrop-filter:blur(14px);
         border-bottom:1px solid transparent; transition:border-color .3s ease; }
   nav.stuck { border-bottom-color:var(--line); }
   nav .wrap { display:flex; align-items:center; gap:24px; width:100%; }
   nav .spacer { flex:1; }
   nav a.link { color:var(--muted); text-decoration:none; font-size:14.5px; }
   nav a.link:hover { color:var(--ink); }
-  @media (max-width:680px) { nav a.link { display:none; } }
+  @media (max-width:720px) { nav a.link { display:none; } }
   .btn { display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:450;
          padding:9px 17px; border-radius:var(--r-sm); text-decoration:none; white-space:nowrap;
          transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .2s,border-color .2s; }
@@ -70,301 +66,235 @@
   .btn-ghost { border:1px solid var(--line-2); }
   .btn-ghost:hover { border-color:var(--accent); }
   .btn:active { transform:scale(.985); }
-
-  /* ── the mark ─────────────────────────────────────────
-     The app's empty state is a dot matrix board, so the wordmark is drawn
-     the same way rather than set in a typeface. Canvas, not a hand-written
-     SVG path: it is generated from a 5x7 bitmap at whatever size it needs. */
-  .mark { display:block; image-rendering:auto; }
+  .mark { display:block; }
   nav .mark { height:15px; width:auto; }
 
   /* ── hero ─────────────────────────────────────────────── */
-  header.hero { position:relative; padding:78px 0 96px; overflow:hidden; }
-  header.hero::before {
-    content:""; position:absolute; left:50%; top:-140px; width:1180px; height:680px;
-    transform:translateX(-50%); pointer-events:none; filter:blur(34px);
-    background:radial-gradient(44% 48% at 50% 42%,rgba(69,182,232,.17),transparent 70%),
-               radial-gradient(30% 40% at 24% 66%,rgba(69,182,232,.06),transparent 72%);
-  }
-  .dots {
-    position:absolute; inset:0; pointer-events:none; opacity:.28;
+  header.hero { position:relative; padding:70px 0 0; overflow:hidden; }
+  header.hero::before { content:""; position:absolute; left:50%; top:-160px; width:1300px; height:700px;
+    transform:translateX(-50%); pointer-events:none; filter:blur(36px);
+    background:radial-gradient(42% 46% at 50% 44%,rgba(69,182,232,.16),transparent 70%); }
+  .dots { position:absolute; inset:0; pointer-events:none; opacity:.26;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17'%3E%3Ccircle cx='1.1' cy='1.1' r='1.1' fill='%2345B6E8'/%3E%3C/svg%3E");
-    -webkit-mask-image:radial-gradient(48% 54% at 50% 40%,#000,transparent 72%);
-            mask-image:radial-gradient(48% 54% at 50% 40%,#000,transparent 72%);
-  }
+    -webkit-mask-image:radial-gradient(46% 50% at 50% 36%,#000,transparent 72%);
+            mask-image:radial-gradient(46% 50% at 50% 36%,#000,transparent 72%); }
   .hero-inner { position:relative; text-align:center; }
-  .hero-mark { margin:0 auto 10px; height:78px; width:auto; max-width:100%; }
-  .hero-tag { margin:0 auto 54px; height:17px; width:auto; max-width:88%; opacity:.85; }
-  h1 { font-size:clamp(36px,5.2vw,60px); font-weight:500; letter-spacing:-.042em;
-       line-height:1.06; margin:0 auto 18px; max-width:17ch; }
+  .hero-mark { margin:0 auto 34px; height:62px; width:auto; max-width:88%; }
+  h1 { font-size:clamp(36px,5.4vw,62px); font-weight:500; letter-spacing:-.042em;
+       line-height:1.05; margin:0 auto 18px; max-width:16ch; }
   h1 .dim { color:var(--ghost); }
-  .hero-sub { color:var(--muted); font-size:18px; max-width:44ch; margin:0 auto 30px; }
+  .hero-sub { color:var(--muted); font-size:18.5px; max-width:50ch; margin:0 auto 30px; }
   .cta { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
-
-  /* ── act one: the fear ────────────────────────────────── */
-  .fear { padding:20px 0 118px; }
-  .fear-grid { display:grid; grid-template-columns:1fr 1.08fr; gap:56px; align-items:center; }
-  @media (max-width:880px) { .fear-grid { grid-template-columns:1fr; gap:32px; } }
-  .fear p { color:var(--muted); margin:0; max-width:40ch; }
-  .stock {
-    border-radius:var(--r); border:1px solid var(--line-2); background:#000;
-    font-family:var(--mono); font-size:12.5px; line-height:1.85; color:#C9C9C9;
-    padding:24px 22px; min-height:230px; overflow:hidden;
-    box-shadow:0 30px 64px -34px rgba(0,0,0,.95);
-  }
-  .stock .fail { color:#FF6B6B; }
-  .stock .fline { display:block; opacity:0; }
-  .stock .fline.on { opacity:1; }
-  @media (prefers-reduced-motion:no-preference) {
-    .stock .fline { transform:translateY(-3px); }
-    .stock .fline.on { transform:none; transition:opacity .26s ease,transform .26s ease; }
-  }
-  .caret { display:inline-block; width:7px; height:1.02em; vertical-align:-2px;
-           background:currentColor; animation:blink 1.1s steps(1) infinite; }
-  @keyframes blink { 50% { opacity:0; } }
+  .under { margin:16px auto 0; font-family:var(--mono); font-size:12px; color:var(--faint); letter-spacing:.02em; }
 </style>
 <style>
-  /* ══ the window ═══════════════════════════════════════════
-     Built here rather than photographed, so it can be zoomed into and
-     driven through a sequence. Every colour comes from a custom property,
-     which is the whole reason a theme switch is one line of JS. */
+  /* ══ the window, drawn ════════════════════════════════════
+     Every colour is a custom property, which is why re-theming it is one
+     line, and why the theme picker further down can drive a live copy. */
   .win {
     --wbg:#12171E; --wfg:#C9D4E0; --wtop:#202224; --wbot:#141517;
     --wred:#F06C6C; --wgrn:#5FC98D; --wyel:#E5B25A; --wblu:#5AA9F0; --wacc:#38C2FF;
     --wline:color-mix(in srgb,var(--wfg) 13%,transparent);
-    --wdim:color-mix(in srgb,var(--wfg) 52%,transparent);
+    --wdim:color-mix(in srgb,var(--wfg) 54%,transparent);
     position:absolute; inset:0; display:flex; flex-direction:column;
-    background:var(--wbg); font-size:8.2px; color:var(--wfg);
-    transition:background-color .55s ease,color .55s ease;
+    background:var(--wbg); color:var(--wfg); font-size:11px;
+    transition:background-color .5s ease,color .5s ease;
   }
-  .win-bar {
-    display:flex; align-items:center; gap:5px; padding:0 9px; height:23px; flex:none;
-    background:var(--wtop); border-bottom:1px solid var(--wline);
-    transition:background-color .55s ease;
-  }
-  .tl { width:6.5px; height:6.5px; border-radius:50%; }
-  .win-bar .name { margin-left:6px; font-size:7.4px; color:var(--wdim); letter-spacing:.02em; }
+  .win-bar { display:flex; align-items:center; gap:6px; padding:0 12px; height:30px; flex:none;
+             background:var(--wtop); border-bottom:1px solid var(--wline); transition:background-color .5s ease; }
+  .tl { width:9px; height:9px; border-radius:50%; }
+  .win-bar .name { margin-left:8px; font-size:10.5px; color:var(--wdim); }
   .win-body { flex:1; display:flex; min-height:0; }
 
-  .side { width:112px; flex:none; background:var(--wbot); border-right:1px solid var(--wline);
-          display:flex; flex-direction:column; padding:7px 6px; gap:2px;
-          transition:background-color .55s ease; }
-  .side .brand { padding:1px 5px 7px; }
-  .side .brand { font-family:"Geist",sans-serif; font-size:8.4px; font-weight:600;
-                 letter-spacing:-.01em; color:var(--wfg); }
-  .row { display:flex; align-items:center; gap:5px; padding:4px 6px; border-radius:4px;
-         font-size:7.6px; color:var(--wdim); }
+  .side { width:206px; flex:none; background:var(--wbot); border-right:1px solid var(--wline);
+          display:flex; flex-direction:column; padding:9px 7px; gap:1px; transition:background-color .5s ease; }
+  .side .brand { padding:2px 7px 9px; font-size:11.5px; font-weight:600; letter-spacing:-.012em; }
+  .row { display:flex; align-items:center; gap:6px; padding:5px 7px; border-radius:5px;
+         font-size:10.2px; color:var(--wdim); white-space:nowrap; overflow:hidden; }
+  .row .g { font-family:var(--mono); font-size:9px; width:9px; flex:none; text-align:center; opacity:.85; }
+  .row .t { overflow:hidden; text-overflow:ellipsis; }
   .row.on { background:color-mix(in srgb,var(--wfg) 9%,transparent); color:var(--wfg); }
-  .row .k { margin-left:auto; font-size:6.6px; opacity:.55; }
-  .dot { width:4px; height:4px; border-radius:50%; background:var(--wdim); flex:none; }
-  .dot.busy { background:var(--wyel); animation:pulse 1.4s ease-in-out infinite; }
+  .row .k { margin-left:auto; font-size:9px; opacity:.5; padding-left:6px; }
+  .dot { width:5px; height:5px; border-radius:50%; margin-left:auto; flex:none; background:var(--wdim); }
+  .dot.busy { background:var(--wyel); animation:pulse 1.5s ease-in-out infinite; }
   .dot.bad  { background:var(--wred); }
-  @keyframes pulse { 50% { opacity:.25; } }
-  .side .fill { flex:1; }
-  .side .foot { border-top:1px solid var(--wline); padding-top:5px; margin-top:5px; }
-  .sw { margin-left:auto; width:15px; height:8.5px; border-radius:5px; background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
-  .sw::after { content:""; position:absolute; top:1.2px; left:1.2px; width:6px; height:6px;
+  .dot.ok   { background:var(--wgrn); }
+  @keyframes pulse { 50% { opacity:.22; } }
+  .side .fill { flex:1; min-height:8px; }
+  .side .foot { border-top:1px solid var(--wline); padding-top:6px; margin-top:6px; }
+  .sw { margin-left:auto; width:20px; height:11px; border-radius:6px; flex:none;
+        background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
+  .sw::after { content:""; position:absolute; top:1.5px; left:1.5px; width:8px; height:8px;
                border-radius:50%; background:var(--wfg); transition:translate .3s ease; }
   .sw.on { background:var(--wacc); }
-  .sw.on::after { translate:6.4px 0; }
+  .sw.on::after { translate:9px 0; background:#0B1015; }
 
   .main { flex:1; position:relative; min-width:0; overflow:hidden;
-          font-family:var(--mono); font-size:7.8px; line-height:1.9; }
-  .board { position:absolute; inset:0; display:flex; flex-direction:column;
-           align-items:center; justify-content:center; gap:7px; transition:opacity .45s ease; }
-  .board canvas { height:19px; width:auto; }
-  .board .tagline { font-size:6.2px; letter-spacing:.34em; color:var(--wdim); }
-  .board .newbtn { margin-top:5px; border:1px solid var(--wacc); border-radius:4px;
-                   padding:4px 12px; font-size:8px; color:var(--wacc); letter-spacing:.1em; }
-  .board .keys { margin-top:6px; font-size:6.4px; color:var(--wdim); line-height:2.1; text-align:center; }
+          font-family:var(--mono); font-size:10.4px; line-height:1.95; }
+  .board { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+           justify-content:center; gap:9px; transition:opacity .4s ease; }
+  .board canvas { height:26px; width:auto; }
+  .board .newbtn { margin-top:8px; border:1px solid var(--wacc); border-radius:5px;
+                   padding:6px 16px; font-family:var(--mono); font-size:10.5px; color:var(--wacc); letter-spacing:.1em; }
+  .board .keys { margin-top:6px; font-family:var(--mono); font-size:9px; color:var(--wdim); line-height:2.1; text-align:center; }
+  .win.shelled .board { opacity:0; visibility:hidden; }
 
-  .shell { position:absolute; inset:0; padding:9px 11px; opacity:0; transition:opacity .45s ease; }
+  .shell { position:absolute; inset:0; padding:12px 14px; opacity:0; visibility:hidden;
+           transition:opacity .4s ease; }
+  .win.shelled .shell { opacity:1; visibility:visible; }
   .shell .l { display:block; white-space:pre-wrap; word-break:break-all; }
-  .pr { color:var(--wacc); }
-  .dimtx { color:var(--wdim); }
-  .rd { color:var(--wred); }
-  .gr { color:var(--wgrn); }
+  .pr { color:var(--wacc); } .dimtx { color:var(--wdim); }
+  .rd { color:var(--wred); } .gr { color:var(--wgrn); }
+  .caret { display:inline-block; width:8px; height:1.02em; vertical-align:-2px;
+           background:currentColor; animation:blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
 
-  /* the error banner, the paste sheet and the drawer all sit over the shell */
-  .banner {
-    position:absolute; left:0; right:0; top:0; z-index:3; display:flex; align-items:center; gap:7px;
-    padding:6px 9px; font-family:"Geist",sans-serif; font-size:7.4px;
-    background:color-mix(in srgb,var(--wred) 15%,var(--wbg));
-    border-bottom:1px solid color-mix(in srgb,var(--wred) 40%,transparent);
-    translate:0 -100%; opacity:0; transition:translate .45s cubic-bezier(.16,1,.3,1),opacity .35s ease;
-  }
+  .banner { position:absolute; left:0; right:0; top:0; z-index:3; display:flex; align-items:center; gap:9px;
+            padding:8px 12px; font-family:"Geist",sans-serif; font-size:10.2px;
+            background:color-mix(in srgb,var(--wred) 15%,var(--wbg));
+            border-bottom:1px solid color-mix(in srgb,var(--wred) 42%,transparent);
+            translate:0 -100%; opacity:0;
+            transition:translate .45s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
   .banner b { font-weight:500; color:var(--wred); }
   .banner .say { color:var(--wdim); }
-  .banner .go { margin-left:auto; border:1px solid var(--wred); border-radius:3px;
-                padding:2.5px 7px; color:var(--wred); white-space:nowrap; }
+  .banner .go { margin-left:auto; border:1px solid var(--wred); border-radius:4px;
+                padding:3px 9px; color:var(--wred); white-space:nowrap; }
+  .win.erred .banner { translate:0 0; opacity:1; }
+  .win.erred .shell { padding-top:44px; }
 
-  .drawer {
-    position:absolute; left:50%; top:50%; z-index:4; width:82%; max-width:250px;
-    translate:-50% -46%; opacity:0; pointer-events:none;
-    background:var(--wtop); border:1px solid var(--wline); border-radius:6px;
-    box-shadow:0 18px 40px -14px rgba(0,0,0,.8); overflow:hidden;
-    font-family:"Geist",sans-serif;
-    transition:translate .45s cubic-bezier(.16,1,.3,1),opacity .35s ease;
-  }
-  .drawer .q { padding:6px 9px; border-bottom:1px solid var(--wline); font-size:7.6px; color:var(--wdim); }
-  .drawer .grp { padding:5px 9px 2px; font-size:6.2px; letter-spacing:.16em; color:var(--wdim); opacity:.8; }
-  .drawer .it { display:flex; align-items:baseline; gap:5px; padding:4px 9px; font-size:7.6px; }
-  .drawer .it.sel { background:color-mix(in srgb,var(--wacc) 16%,transparent); }
-  .drawer .it .b { color:var(--wdim); font-size:6.8px; }
+  .drawer { position:absolute; left:50%; top:50%; z-index:4; width:78%; max-width:330px;
+            translate:-50% -46%; opacity:0; pointer-events:none; font-family:"Geist",sans-serif;
+            background:var(--wtop); border:1px solid var(--wline); border-radius:8px;
+            box-shadow:0 22px 48px -16px rgba(0,0,0,.82); overflow:hidden;
+            transition:translate .4s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
+  .win.drawn .drawer { translate:-50% -50%; opacity:1; }
+  .drawer .q { padding:9px 12px; border-bottom:1px solid var(--wline); font-size:10.4px; color:var(--wdim); }
+  .drawer .grp { padding:7px 12px 3px; font-size:8.4px; letter-spacing:.16em; color:var(--wdim); opacity:.8; }
+  .drawer .it { display:flex; align-items:baseline; gap:7px; padding:5px 12px; font-size:10.4px; }
+  .drawer .it.sel { background:color-mix(in srgb,var(--wacc) 17%,transparent); }
+  .drawer .it .b { color:var(--wdim); font-size:9.2px; }
 
-  .panel { width:0; flex:none; background:var(--wbot); overflow:hidden;
-           border-left:1px solid transparent; transition:width .5s cubic-bezier(.16,1,.3,1),
-           border-color .5s ease,background-color .55s ease; }
-  .panel .inner { width:132px; padding:8px 9px; }
-  .panel h4 { margin:0 0 1px; font-size:7.6px; font-weight:500; font-family:"Geist",sans-serif; }
-  .panel .note { margin:0 0 7px; font-size:6.3px; color:var(--wdim); font-family:"Geist",sans-serif; line-height:1.5; }
-  .task { display:flex; gap:5px; align-items:flex-start; padding:2.6px 0; font-size:7px;
+  .panel { width:0; flex:none; background:var(--wbot); overflow:hidden; border-left:1px solid transparent;
+           transition:width .5s cubic-bezier(.16,1,.3,1),border-color .5s ease,background-color .5s ease; }
+  .win.tasked .panel { width:186px; border-left-color:var(--wline); }
+  .panel .inner { width:186px; padding:11px 12px; }
+  .panel h4 { margin:0 0 2px; font-size:10.6px; font-weight:500; font-family:"Geist",sans-serif; }
+  .panel .note { margin:0 0 9px; font-size:8.8px; color:var(--wdim); font-family:"Geist",sans-serif; line-height:1.55; }
+  .task { display:flex; gap:7px; align-items:flex-start; padding:3.4px 0; font-size:9.6px;
           font-family:"Geist",sans-serif; color:var(--wdim); line-height:1.45; }
-  .task .bx { flex:none; width:6px; height:6px; margin-top:2px; border-radius:1.5px;
-              border:1px solid var(--wdim); }
+  .task .bx { flex:none; width:8px; height:8px; margin-top:3px; border-radius:2px; border:1px solid var(--wdim); position:relative; }
   .task.done { color:var(--wfg); }
-  .task.done .bx { border-color:var(--wfg); background:var(--wfg);
-                   -webkit-mask:none; position:relative; }
-  .task.done .bx::after { content:""; position:absolute; left:1.5px; top:.4px; width:2px; height:3.6px;
-                          border:solid var(--wbot); border-width:0 1.1px 1.1px 0; rotate:42deg; }
-
-  /* window states, driven by the beat you have scrolled to */
-  .win.b3 .board,.win.b4 .board,.win.b5 .board,.win.b6 .board { opacity:0; }
-  .win.b3 .shell,.win.b4 .shell,.win.b5 .shell,.win.b6 .shell { opacity:1; }
-  .win.b2 .drawer { translate:-50% -50%; opacity:1; }
-  .win.b4 .banner,.win.b5 .banner,.win.b6 .banner { translate:0 0; opacity:1; }
-  .win.b4 .shell,.win.b5 .shell,.win.b6 .shell { padding-top:33px; }
-  .win.b5 .panel,.win.b6 .panel { width:132px; border-left-color:var(--wline); }
-
-  /* ══ the story: one window, zoomed ════════════════════════
-     A sticky stage with the beats scrolling past it. Each beat names a
-     rectangle of the window and the stage flies to it, which is the only
-     way to show detail this small without cutting to another picture. */
-  .story { padding:0 0 40px; }
-  .story-grid { display:grid; grid-template-columns:1.32fr .68fr; gap:52px; align-items:start; }
-  @media (max-width:980px) { .story-grid { grid-template-columns:1fr; gap:0; } }
-  .stage-col { position:sticky; top:96px; }
-  .stage {
-    position:relative; aspect-ratio:16/10; border-radius:var(--r); overflow:hidden;
-    border:1px solid var(--line-2); background:var(--raise);
-    box-shadow:0 40px 90px -40px rgba(0,0,0,.95);
-  }
-  .zoom { position:absolute; inset:0; transform-origin:50% 50%;
-          transition:transform 1.15s cubic-bezier(.62,.02,.24,1); will-change:transform; }
-  .chapters { display:flex; gap:6px; margin-top:14px; }
-  .chapters button {
-    flex:1; height:3px; border:0; padding:0; border-radius:2px; cursor:pointer;
-    background:var(--line-2); transition:background-color .3s ease;
-  }
-  .chapters button.on { background:var(--accent); }
-  .beats { padding-top:8px; }
-  .beat { min-height:78vh; display:flex; flex-direction:column; justify-content:center; }
-  @media (max-width:980px) { .beat { min-height:0; padding:26px 0 0; }
-                             .beats { padding-top:26px; }
-                             .stage-col { top:64px; } }
-  .beat h3 { font-size:23px; font-weight:500; letter-spacing:-.022em; margin:0 0 8px;
-             line-height:1.18; max-width:17ch;
-             opacity:.32; transition:opacity .5s ease; }
-  .beat p { margin:0; color:var(--muted); font-size:15.5px; max-width:34ch;
-            opacity:.2; transition:opacity .5s ease; }
-  .beat.live h3, .beat.live p { opacity:1; }
-  .beat.live p { color:var(--muted); }
+  .task.done .bx { border-color:var(--wfg); background:var(--wfg); }
+  .task.done .bx::after { content:""; position:absolute; left:2.2px; top:.6px; width:2.4px; height:4.6px;
+                          border:solid var(--wbot); border-width:0 1.3px 1.3px 0; rotate:42deg; }
 </style>
 <style>
-  /* ══ themes: shown, not described ═════════════════════════ */
-  .themes { padding:112px 0 118px; }
-  .theme-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:40px; align-items:start; margin-top:40px; }
-  @media (max-width:900px) { .theme-grid { grid-template-columns:1fr; gap:26px; } }
-  .tprev {
-    position:relative; aspect-ratio:16/9.6; border-radius:var(--r); overflow:hidden;
-    border:1px solid var(--line-2); box-shadow:0 34px 74px -38px rgba(0,0,0,.95);
-  }
-  .tprev .win { font-size:9.4px; }
-  .tprev .win .main { font-size:9px; }
-  .chips { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
+  /* ── the frame the window sits in ─────────────────────── */
+  .stage { position:relative; aspect-ratio:16/8.2; border-radius:var(--r); overflow:hidden;
+           border:1px solid var(--line-2); background:var(--raise);
+           box-shadow:0 46px 96px -44px rgba(0,0,0,.95); }
+  .zoom { position:absolute; inset:0; transform-origin:50% 50%;
+          transition:transform 1s cubic-bezier(.5,.02,.2,1); }
+  .hero-stage { margin-top:56px; }
+
+  /* ── the two tab strips, side by side ─────────────────── */
+  .versus { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:40px; }
+  @media (max-width:820px) { .versus { grid-template-columns:1fr; } }
+  .vs { border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:var(--raise); }
+  .vs > h3 { margin:0; padding:13px 16px; font-size:12.5px; font-weight:450; letter-spacing:.02em;
+             color:var(--ghost); border-bottom:1px solid var(--line); font-family:var(--mono); }
+  .vs.ours > h3 { color:var(--accent); }
+  .vs .body { padding:16px; background:#0A0E13; min-height:238px; }
+  .zsh-strip { display:flex; border-bottom:1px solid var(--line); }
+  .zsh-strip span { flex:1; text-align:center; padding:7px 0; font-family:var(--mono); font-size:11px;
+                    color:var(--faint); border-right:1px solid var(--line); }
+  .zsh-strip span:last-child { border-right:0; }
+  .zsh-strip span.act { color:var(--muted); background:rgba(255,255,255,.035); }
+  .zsh-body { padding:14px 2px; font-family:var(--mono); font-size:11px; color:var(--faint); line-height:2.1; }
+  .named { display:flex; flex-direction:column; gap:1px;
+           --wfg:#C9D4E0; --wdim:#68737F; --wyel:#E5B25A; --wred:#F06C6C; --wgrn:#5FC98D; }
+  .named .row { font-size:11.5px; padding:6px 8px; color:var(--muted); }
+  .named .row.on { background:rgba(255,255,255,.055); color:var(--ink); }
+  .named .row .g { color:var(--faint); }
+
+  /* ── the tour ─────────────────────────────────────────── */
+  .tour-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .tour-chips button { cursor:pointer; font:inherit; font-size:13.5px; padding:8px 14px;
+                       border-radius:var(--r-sm); border:1px solid var(--line);
+                       background:transparent; color:var(--muted);
+                       transition:color .2s,border-color .2s,background-color .2s; }
+  .tour-chips button:hover { color:var(--ink); border-color:var(--line-2); }
+  .tour-chips button.on { color:#0A0E13; background:var(--ink); border-color:var(--ink); }
+  .tour-say { margin:20px 0 0; min-height:52px; color:var(--muted); font-size:16px; max-width:62ch; }
+  .tour-say b { color:var(--ink); font-weight:500; }
+
+  /* ── keep awake ───────────────────────────────────────── */
+  .awake { display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:center; }
+  @media (max-width:900px) { .awake { grid-template-columns:1fr; gap:30px; } }
+  .term-blk { font-family:var(--mono); font-size:13px; line-height:2; color:var(--muted);
+              border:1px solid var(--line); border-radius:var(--r); padding:20px 22px; background:#05070A; }
+  .term-blk .pr { color:var(--accent); } .term-blk .ok { color:var(--ok); } .term-blk .no { color:var(--bad); }
+  .term-blk .c { color:var(--faint); }
+
+  /* ── themes ───────────────────────────────────────────── */
+  .theme-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:36px; align-items:start; margin-top:40px; }
+  @media (max-width:920px) { .theme-grid { grid-template-columns:1fr; gap:24px; } }
+  .tprev { position:relative; aspect-ratio:16/9.6; border-radius:var(--r); overflow:hidden;
+           border:1px solid var(--line-2); box-shadow:0 34px 74px -38px rgba(0,0,0,.95); }
+  .chips { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
   @media (max-width:520px) { .chips { grid-template-columns:1fr; } }
-  .chip {
-    display:block; width:100%; text-align:left; cursor:pointer; padding:0; overflow:hidden;
-    border:1px solid var(--line); border-radius:var(--r-sm); background:var(--tbg);
-    transition:border-color .25s ease,transform .25s cubic-bezier(.16,1,.3,1);
-  }
-  .chip:hover { transform:translateY(-2px); border-color:var(--line-2); }
+  .chip { display:block; width:100%; text-align:left; cursor:pointer; padding:0; overflow:hidden;
+          border:1px solid var(--line); border-radius:var(--r-sm); background:var(--tbg);
+          transition:border-color .2s ease,transform .2s cubic-bezier(.16,1,.3,1); }
+  .chip:hover { transform:translateY(-2px); }
   .chip.on { border-color:var(--accent); }
-  .chip .top { display:flex; align-items:center; gap:6px; padding:9px 10px 8px; }
-  .chip .nm { font-family:var(--mono); font-size:11px; color:var(--tfg); letter-spacing:.01em; }
+  .chip .top { display:flex; align-items:center; gap:6px; padding:9px 10px; }
+  .chip .nm { font-family:var(--mono); font-size:11px; color:var(--tfg); }
   .chip .bars { display:flex; gap:2px; margin-left:auto; }
   .chip .bars i { width:7px; height:7px; border-radius:1.5px; display:block; }
 
-  /* ══ bento ════════════════════════════════════════════════ */
-  .bento { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; margin-top:42px; }
-  .cell {
-    grid-column:span 2; position:relative; overflow:hidden; padding:22px;
-    border:1px solid var(--line); border-radius:var(--r);
-    background:linear-gradient(168deg,var(--raise),var(--ground) 78%);
-    display:flex; flex-direction:column; gap:16px; min-height:200px;
-  }
-  .cell.wide { grid-column:span 4; }
-  .cell.half { grid-column:span 2; }
-  @media (max-width:860px) { .bento { grid-template-columns:1fr; }
-                             .cell,.cell.wide,.cell.half { grid-column:span 1; } }
-  .cell::before {
-    content:""; position:absolute; inset:0; opacity:0; pointer-events:none;
-    transition:opacity .35s ease;
-    background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(69,182,232,.09),transparent 70%);
-  }
+  /* ── bento ────────────────────────────────────────────── */
+  .bento { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; margin-top:40px; }
+  .cell { grid-column:span 3; position:relative; overflow:hidden; padding:22px; min-height:196px;
+          border:1px solid var(--line); border-radius:var(--r); display:flex; flex-direction:column; gap:16px;
+          background:linear-gradient(168deg,var(--raise),var(--ground) 78%); }
+  .cell.wide { grid-column:span 4; } .cell.thin { grid-column:span 2; }
+  @media (max-width:880px) { .bento { grid-template-columns:1fr; }
+                             .cell,.cell.wide,.cell.thin { grid-column:span 1; } }
+  .cell::before { content:""; position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .35s ease;
+    background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(69,182,232,.09),transparent 70%); }
   .cell:hover::before { opacity:1; }
   .cell > * { position:relative; }
   .cell h4 { margin:0 0 5px; font-size:16px; font-weight:500; letter-spacing:-.014em; }
-  .cell p { margin:0; color:var(--muted); font-size:14.5px; line-height:1.5; max-width:34ch; }
+  .cell p { margin:0; color:var(--muted); font-size:14.5px; line-height:1.5; max-width:36ch; }
   .cell .art { margin-top:auto; }
-
-  .mini { font-family:var(--mono); font-size:11.5px; line-height:1.9; color:var(--ghost);
-          border:1px solid var(--line); border-radius:var(--r-sm); padding:12px 13px;
-          background:#05070A; }
-  .mini .pr { color:var(--accent); }
-  .mini .rd { color:#F06C6C; }
-  .mini .warn { color:#E5B25A; }
-
-  .tabs { display:flex; gap:7px; flex-wrap:wrap; }
-  .tab { display:flex; align-items:center; gap:7px; padding:7px 11px; border-radius:var(--r-sm);
-         border:1px solid var(--line); font-size:12.5px; color:var(--muted); background:#05070A; }
-  .tab i { width:5px; height:5px; border-radius:50%; display:block; }
-  .i-busy { background:#E5B25A; animation:pulse 1.4s ease-in-out infinite; }
-  .i-bad  { background:#F06C6C; }
-  .i-idle { background:#4A545F; }
-
+  .mini { font-family:var(--mono); font-size:11.5px; line-height:1.95; color:var(--ghost);
+          border:1px solid var(--line); border-radius:var(--r-sm); padding:12px 13px; background:#05070A; }
+  .mini .pr { color:var(--accent); } .mini .rd { color:var(--bad); } .mini .warn { color:var(--warn); }
+  .chart-cap { font-family:var(--mono); font-size:10px; color:var(--faint); text-align:right; margin-bottom:5px; }
   .bars-demo { position:relative; display:flex; gap:3px; align-items:flex-end; height:46px; }
   .bars-demo i { flex:1; border-radius:2px; display:block; min-height:3px; }
   .bars-demo .floor { position:absolute; left:0; right:0; height:0; border-top:1px dashed var(--line-2); }
-  .chart-cap { font-family:var(--mono); font-size:10px; color:var(--faint); letter-spacing:.04em;
-               text-align:right; margin-bottom:5px; }
 
-  /* ══ close ════════════════════════════════════════════════ */
-  .close { text-align:center; padding:118px 0 100px; position:relative; }
-  .close h2 { margin:0 auto 16px; max-width:17ch; }
+  .close { text-align:center; }
+  .close h2 { margin:0 auto 16px; max-width:18ch; }
   .close .sub { margin:0 auto 28px; }
   footer { border-top:1px solid var(--line); padding:28px 0 58px; display:flex; flex-wrap:wrap;
            gap:10px 26px; align-items:baseline; font-family:var(--mono); font-size:12.5px; color:var(--faint); }
   footer a { color:var(--accent); text-decoration:none; }
-  footer a:hover { text-decoration:underline; }
 
-  /* ══ motion ═══════════════════════════════════════════════
-     Reveals are entry only and run once. Everything that repeats is either
-     a caret or a status dot, both of which repeat in the real app too. */
   @media (prefers-reduced-motion:no-preference) {
-    .rise { opacity:0; transform:translateY(20px); filter:blur(7px); }
-    .rise.in { opacity:1; transform:none; filter:blur(0);
-               transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1),
-                          filter .7s cubic-bezier(.16,1,.3,1); }
-    .rise.d1.in { transition-delay:.07s; } .rise.d2.in { transition-delay:.14s; }
+    html.reveal .rise { opacity:0; transform:translateY(18px); filter:blur(6px); }
+    html.reveal .rise.in { opacity:1; transform:none; filter:blur(0);
+               transition:opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1),filter .65s cubic-bezier(.16,1,.3,1); }
+    html.reveal .rise.d1.in { transition-delay:.07s; }
+    html.reveal .rise.d2.in { transition-delay:.14s; }
   }
   @media (prefers-reduced-motion:reduce) {
-    html { scroll-behavior:auto; }
     .rise { opacity:1; transform:none; filter:none; }
-    .caret,.dot.busy,.i-busy { animation:none; }
-    .zoom { transition:none; }
+    .caret,.dot.busy { animation:none; }
+    .zoom,.panel,.banner,.drawer { transition:none; }
     .progress { display:none; }
-    .beat h3,.beat p { opacity:1; }
   }
 </style>
 </head>
@@ -372,151 +302,173 @@
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"></div>
 
-<nav id="nav">
-  <div class="wrap">
-    <canvas class="mark" id="navMark" aria-label="Ocarina" role="img"></canvas>
-    <span class="spacer"></span>
-    <a class="link" href="#story">How it works</a>
-    <a class="link" href="#themes">Themes</a>
-    <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">GitHub</a>
-  </div>
-</nav>
+<nav id="nav"><div class="wrap">
+  <canvas class="mark" id="navMark" role="img" aria-label="Ocarina"></canvas>
+  <span class="spacer"></span>
+  <a class="link" href="#tabs">Tabs</a>
+  <a class="link" href="#awake">Keep awake</a>
+  <a class="link" href="#tour">Everything else</a>
+  <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">GitHub</a>
+</div></nav>
 
 <header class="hero">
   <div class="dots" aria-hidden="true"></div>
   <div class="wrap hero-inner">
-    <canvas class="mark hero-mark" id="heroMark" aria-label="Ocarina" role="img"></canvas>
-    <canvas class="mark hero-tag" id="heroTag" aria-label="Song of a new terminal" role="img"></canvas>
-    <h1>The first time I opened a terminal, <span class="dim">I closed it.</span></h1>
-    <p class="hero-sub">This is the one I needed that day.</p>
+    <canvas class="mark hero-mark" id="heroMark" role="img" aria-label="Ocarina"></canvas>
+    <h1>A terminal with tabs. <span class="dim">Like your browser.</span></h1>
+    <p class="hero-sub">Run six coding agents at once and see, at a glance, what every one of them is doing.</p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Get Ocarina</a>
-      <a class="btn btn-ghost" href="#story">Watch it work</a>
+      <a class="btn btn-ghost" href="#tour">See it work</a>
     </div>
+    <p class="under">Free and open source &nbsp;&middot;&nbsp; macOS 14+ &nbsp;&middot;&nbsp; Swift</p>
   </div>
-</header>
-
-<section class="fear">
-  <div class="wrap fear-grid">
-    <div class="rise">
-      <h2>A black window that wants something from you</h2>
-      <p>It will not say what. Guess wrong and it answers in a language nobody has taught you yet.</p>
-    </div>
-    <div class="stock rise d1" id="stock"><span class="fline">Last login: Sat Sep 6 09:12 on ttys000</span><span class="fline">&nbsp;</span><span class="fline">~ % <span id="fearType"></span><span class="caret"></span></span><span class="fline">&nbsp;</span><span class="fline fail">zsh: command not found: install claude</span><span class="fline">&nbsp;</span><span class="fline">~ % </span></div>
-  </div>
-</section>
-
-<section class="story" id="story">
-  <div class="wrap story-grid">
-    <div class="stage-col">
-      <div class="stage">
-        <div class="zoom" id="zoom">
-          <div class="win b1" id="win">
-            <div class="win-bar">
-              <span class="tl" style="background:#FF5F57"></span>
-              <span class="tl" style="background:#FEBC2E"></span>
-              <span class="tl" style="background:#28C840"></span>
-              <span class="name">Ocarina</span>
+  <div class="wrap">
+    <div class="stage hero-stage rise" id="heroStage">
+      <div class="zoom">
+        <div class="win shelled tasked" id="win">
+          <div class="win-bar">
+            <span class="tl" style="background:#FF5F57"></span>
+            <span class="tl" style="background:#FEBC2E"></span>
+            <span class="tl" style="background:#28C840"></span>
+            <span class="name">Ocarina</span>
+          </div>
+          <div class="win-body">
+            <div class="side" id="side">
+              <div class="brand">Ocarina</div>
+              <div class="tablist" id="tablist">
+                <div class="row on"><span class="g">&#10043;</span><span class="t">Fix the checkout page</span><span class="dot busy"></span></div>
+                <div class="row"><span class="g">&#10043;</span><span class="t">Write the API tests</span><span class="dot busy"></span></div>
+                <div class="row"><span class="g">&#9671;</span><span class="t">Rename the theme files</span><span class="dot bad"></span></div>
+                <div class="row"><span class="g">&#10043;</span><span class="t">Add a dark mode toggle</span><span class="dot ok"></span></div>
+                <div class="row"><span class="g">&#8942;</span><span class="t">Compress the hero images</span><span class="dot busy"></span></div>
+                <div class="row"><span class="g">$</span><span class="t">portfolio-site</span><span class="dot"></span></div>
+                <div class="row"><span class="g">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
+              </div>
+              <div class="fill"></div>
+              <div class="foot" id="foot">
+                <div class="row">Tasks<span class="k">&#8984;L</span></div>
+                <div class="row">Theme<span class="k" id="themeName">Ocarina</span></div>
+                <div class="row" id="awakeRow">Keep awake<span class="sw on"></span></div>
+              </div>
             </div>
-            <div class="win-body">
-              <div class="side">
-                <div class="brand">Ocarina</div>
-                <div class="row on"><span class="dot busy"></span>Vaibhav<span class="k">1</span></div>
-                <div class="row"><span class="dot"></span>New Tab<span class="k">T</span></div>
-                <div class="fill"></div>
-                <div class="foot">
-                  <div class="row">Tasks<span class="k">L</span></div>
-                  <div class="row">Theme<span class="k">Ocarina</span></div>
-                  <div class="row">Keep awake<span class="sw on"></span></div>
-                </div>
+
+            <div class="main" id="mainPane">
+              <div class="board">
+                <canvas id="boardMark" aria-hidden="true"></canvas>
+                <div class="newbtn">NEW TERMINAL &nbsp;&#8984;T</div>
+                <div class="keys">&#8984;K&nbsp;&nbsp;QUICK ACTIONS<br>&#8984;&#8679;P&nbsp;&nbsp;COMMAND PALETTE</div>
               </div>
-
-              <div class="main">
-                <div class="board">
-                  <canvas id="boardMark" aria-hidden="true"></canvas>
-                  <div class="tagline">SONG OF A NEW TERMINAL</div>
-                  <div class="newbtn">NEW TERMINAL &nbsp;&#8984;T</div>
-                  <div class="keys">&#8984;K&nbsp;&nbsp;QUICK ACTIONS<br>&#8984;&#8679;P&nbsp;&nbsp;COMMAND PALETTE</div>
-                </div>
-
-                <div class="shell">
-                  <span class="l"><span class="pr">~ &rsaquo;</span> <span id="cmd"></span><span class="caret" id="cmdCaret"></span></span>
-                  <span class="l">&nbsp;</span>
-                  <span class="l dimtx">Downloads an installer from claude.ai and runs it. Puts a</span>
-                  <span class="l dimtx">claude command in ~/.local/bin, and keeps itself updated.</span>
-                  <span class="l">&nbsp;</span>
-                  <span class="l rd" id="errLine" style="opacity:0;transition:opacity .4s ease">curl: (6) Could not resolve host: claude.ai</span>
-                </div>
-
-                <div class="banner">
-                  <b>That didn't work.</b>
-                  <span class="say">curl stopped with code 6.</span>
-                  <span class="go">Explain this</span>
-                </div>
-
-                <div class="drawer">
-                  <div class="q">What do you want to do?</div>
-                  <div class="grp">INSTALL AN AI CODING AGENT</div>
-                  <div class="it sel">Claude Code <span class="b">Anthropic's coding agent</span></div>
-                  <div class="it">Gemini CLI <span class="b">Google's coding agent</span></div>
-                  <div class="it">Codex CLI <span class="b">OpenAI's coding agent</span></div>
-                  <div class="grp">THINGS THE AGENTS NEED</div>
-                  <div class="it">Homebrew <span class="b">Most Mac installs assume it</span></div>
-                  <div class="it">Node <span class="b">Needed by Gemini and Codex</span></div>
-                </div>
+              <div class="shell" id="shell">
+                <span class="l" id="cmdLine"><span class="pr">~ &rsaquo;</span> <span class="cmd" id="cmd">claude</span><span class="caret"></span></span>
+                <span class="l">&nbsp;</span>
+                <span class="l dimtx">&gt; Fix the checkout page so the total updates when</span>
+                <span class="l dimtx">&gt; someone changes the quantity.</span>
+                <span class="l">&nbsp;</span>
+                <span class="l">Reading <span class="pr">src/cart/Total.tsx</span></span>
+                <span class="l">Reading <span class="pr">src/cart/useCart.ts</span></span>
+                <span class="l dimtx">  the quantity input never notified the total</span>
+                <span class="l">Editing <span class="pr">src/cart/Total.tsx</span></span>
+                <span class="l">Editing <span class="pr">src/cart/useCart.ts</span></span>
+                <span class="l">Running <span class="pr">npm test -- cart</span></span>
+                <span class="l gr">&check; 14 passed</span>
+                <span class="l">&nbsp;</span>
+                <span class="l"><span class="gr">&check;</span> the total now recalculates when the quantity changes</span>
+                <span class="l">&nbsp;</span>
+                <span class="l"><span class="pr">~ &rsaquo;</span> <span class="caret"></span></span>
               </div>
+              <div class="banner">
+                <b>That didn't work.</b>
+                <span class="say">npm test stopped with code 1.</span>
+                <span class="go">Explain this</span>
+              </div>
+              <div class="drawer" id="drawer">
+                <div class="q">What do you want to do?</div>
+                <div class="grp">INSTALL AN AI CODING AGENT</div>
+                <div class="it sel">Claude Code <span class="b">Anthropic's coding agent</span></div>
+                <div class="it">Gemini CLI <span class="b">Google's coding agent</span></div>
+                <div class="it">Codex CLI <span class="b">OpenAI's coding agent</span></div>
+                <div class="grp">THINGS THE AGENTS NEED</div>
+                <div class="it">Homebrew <span class="b">Most Mac installs assume it</span></div>
+                <div class="it">Node <span class="b">Needed by Gemini and Codex</span></div>
+              </div>
+            </div>
 
-              <div class="panel">
-                <div class="inner">
-                  <h4>Tasks</h4>
-                  <p class="note">Read from your agent's own transcript. Works with any agent you run here.</p>
-                  <div class="task done"><span class="bx"></span>Install Claude Code</div>
-                  <div class="task done"><span class="bx"></span>Set up the project folder</div>
-                  <div class="task done"><span class="bx"></span>Fix the failing paste test</div>
-                  <div class="task"><span class="bx"></span>Rename the second tab</div>
-                  <div class="task"><span class="bx"></span>Add a theme with petals</div>
-                </div>
+            <div class="panel" id="panel">
+              <div class="inner">
+                <h4>Tasks</h4>
+                <p class="note">Read from your agent's own transcript. Works with any agent you run here.</p>
+                <div class="task done"><span class="bx"></span>Install Claude Code</div>
+                <div class="task done"><span class="bx"></span>Set up the project folder</div>
+                <div class="task done"><span class="bx"></span>Add a dark mode toggle</div>
+                <div class="task"><span class="bx"></span>Fix the checkout page</div>
+                <div class="task"><span class="bx"></span>Write the API tests</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="chapters" id="chapters" role="tablist" aria-label="Chapters"></div>
     </div>
+  </div>
+</header>
 
-    <div class="beats" id="beats">
-      <div class="beat" data-b="1" data-z="1,50,50">
-        <h3>It opens with a way in</h3>
-        <p>Not an empty prompt. A board that says what the two keys you need actually do.</p>
+<section id="tabs">
+  <div class="wrap narrow">
+    <h2 class="rise">Six agents running. Six tabs called zsh.</h2>
+    <p class="sub rise">Every other terminal names a tab after the shell inside it. That is fine for one. It is useless the moment you are running several agents at once, which is the whole way you work now.</p>
+    <div class="versus">
+      <div class="vs rise d1">
+        <h3>Every other terminal</h3>
+        <div class="body" style="padding:0">
+          <div class="zsh-strip"><span class="act">zsh</span><span>zsh</span><span>zsh</span><span>zsh</span><span>zsh</span><span>zsh</span></div>
+          <div class="zsh-body" style="padding:16px">Which one was the checkout fix?<br>Which one already failed?<br>Which one finished an hour ago?</div>
+        </div>
       </div>
-      <div class="beat" data-b="2" data-z="1.85,52,54">
-        <h3>Press &#8984;K when you don't have the words</h3>
-        <p>Every command a beginner needs first, already written and already checked.</p>
+      <div class="vs ours rise d2">
+        <h3>Ocarina</h3>
+        <div class="body">
+          <div class="named" id="namedDemo"></div>
+        </div>
       </div>
-      <div class="beat" data-b="3" data-z="2.3,36,22">
-        <h3>Choosing types it. It does not run it.</h3>
-        <p>The command arrives with the sentence that explains it, and then waits for you.</p>
-      </div>
-      <div class="beat" data-b="4" data-z="1.22,58,41">
-        <h3>When it breaks, it offers to explain</h3>
-        <p>A failure is where people stop. It is the one moment worth interrupting.</p>
-      </div>
-      <div class="beat" data-b="5" data-z="2.4,79,21">
-        <h3>It remembers what you asked for</h3>
-        <p>Ticked when the agent finished talking. Never "done", because that is all it can know.</p>
-      </div>
-      <div class="beat" data-b="6" data-z="1,50,50">
-        <h3>And it can look like anything</h3>
-        <p>Fourteen of them, each with its own colour, texture and weight.</p>
+    </div>
+    <p class="sub rise" style="margin-top:30px;max-width:64ch">Ocarina reads the transcript your agent already writes, on your machine, and shortens what you asked for into a few words. No model, no network: the titles are earned with plain string work. The dot beside each one is the shell reporting whether that tab is working, waiting, or has just failed.</p>
+  </div>
+</section>
+
+<section id="awake">
+  <div class="wrap narrow awake">
+    <div class="rise">
+      <h2>Your Mac sleeps. Your agent stops.</h2>
+      <p class="sub">Start a long run, walk away, come back to a display that went to sleep and a job that went with it. It is the most annoying way to lose twenty minutes of work.</p>
+      <p class="sub" style="margin-top:14px">Ocarina holds the same wake assertion <code style="font-family:var(--mono);font-size:14px;color:var(--ink)">caffeinate -d</code> holds, from the moment you open it. On by default, because the point is not having to remember.</p>
+    </div>
+    <div class="rise d1">
+      <div class="term-blk">
+        <span class="c"># a real assertion, and it names who holds it</span><br>
+        <span class="pr">~ &rsaquo;</span> pmset -g assertions<br>
+        &nbsp;&nbsp;PreventUserIdleDisplaySleep&nbsp;&nbsp;<span class="ok">1</span><br>
+        &nbsp;&nbsp;<span class="c">Ocarina is keeping this Mac awake</span><br>
+        <br>
+        <span class="c"># and if the system refuses, it says so</span><br>
+        &nbsp;&nbsp;Keep awake&nbsp;&nbsp;<span class="no">refused</span>
       </div>
     </div>
   </div>
 </section>
 
-<section class="themes" id="themes">
+<section id="tour">
   <div class="wrap">
-    <h2 class="rise">Pick one and the whole window follows</h2>
-    <p class="sub rise">Colour, texture and type move together. Every one is checked against a contrast floor first, because a palette that hides an error ends the session for the person who cannot read errors yet.</p>
+    <h2 class="rise">Everything else in the window</h2>
+    <div class="stage rise d1" id="tourStage" style="margin-top:30px"></div>
+    <div class="tour-chips rise" id="tourChips" role="tablist" aria-label="Features"></div>
+    <p class="tour-say rise" id="tourSay"></p>
+  </div>
+</section>
+
+<section id="themes">
+  <div class="wrap">
+    <h2 class="rise">Fourteen themes, and none can hide an error</h2>
+    <p class="sub rise">Colour, texture and type move together. Every one is measured against a contrast floor before it is offered, because a palette that hides red text is a palette that ends the session.</p>
     <div class="theme-grid">
       <div class="tprev rise d1" id="tprev"></div>
       <div class="chips rise d2" id="chips"></div>
@@ -526,30 +478,26 @@
 
 <section>
   <div class="wrap">
-    <h2 class="rise">The rest of it, quickly</h2>
+    <h2 class="rise">Small things that stop you getting stuck</h2>
     <div class="bento">
       <div class="cell wide rise">
-        <div><h4>A risky paste gets read to you first</h4>
-        <p>Ordinary commands paste silently. Only text that would run several things, or delete something, stops for a sentence.</p></div>
+        <div><h4>It reads a risky paste back to you</h4>
+        <p>You are following instructions you cannot check. Ordinary commands paste silently; only text that runs several things, or deletes something, stops for a sentence.</p></div>
         <div class="art mini">
           <span class="warn">&#9888;</span> This is 3 separate commands, not one.<br>
           <span class="rd">&#9888;</span> <span class="pr">rm -rf</span> deletes files permanently.<br>
           <span class="rd">&#9888;</span> <span class="pr">sudo</span> runs as administrator.
         </div>
       </div>
-      <div class="cell half rise d1">
-        <div><h4>Every tab says what it is doing</h4>
-        <p>Driven by the shell, so a silent job still reads as busy.</p></div>
-        <div class="art tabs">
-          <span class="tab"><i class="i-busy"></i>building</span>
-          <span class="tab"><i class="i-bad"></i>tests</span>
-          <span class="tab"><i class="i-idle"></i>notes</span>
-        </div>
+      <div class="cell thin rise d1">
+        <div><h4>Jump by what is running</h4>
+        <p>The palette lists tabs by their work, not their number.</p></div>
+        <div class="art mini"><span class="pr">&#8984;&#8679;P</span><br>checkout page&nbsp;&nbsp;<span style="color:var(--warn)">&#9679;</span><br>API tests&nbsp;&nbsp;<span style="color:var(--warn)">&#9679;</span><br>theme files&nbsp;&nbsp;<span style="color:var(--bad)">&#9679;</span></div>
       </div>
-      <div class="cell half rise">
-        <div><h4>A theme that hides an error is refused</h4>
-        <p>All sixteen colours are measured. A failing theme is listed as broken, never quietly shipped.</p></div>
-        <div class="art"><div class="chart-cap">contrast vs. background, 4.5:1 floor</div>
+      <div class="cell thin rise">
+        <div><h4>Contrast is enforced</h4>
+        <p>All sixteen colours measured. A theme that fails is listed as broken, not quietly shipped.</p></div>
+        <div class="art"><div class="chart-cap">contrast vs. background</div>
           <div class="bars-demo" id="barsDemo" aria-hidden="true"></div></div>
       </div>
       <div class="cell wide rise d1">
@@ -563,32 +511,26 @@
 
 <section class="close">
   <div class="wrap">
-    <h2 class="rise">You will not need to be brave to open it</h2>
-    <p class="sub rise">Free, public on GitHub, and small enough to read in an afternoon.</p>
-    <div class="cta rise d1" style="margin-top:26px;">
+    <h2 class="rise">Open it and start typing</h2>
+    <p class="sub rise">Free, open source, and small enough to read in an afternoon.</p>
+    <div class="cta rise d1" style="margin-top:26px">
       <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Get Ocarina</a>
     </div>
   </div>
 </section>
 
-<div class="wrap">
-  <footer>
-    <span>Ocarina, a macOS terminal written in Swift</span>
-    <span>macOS 14+</span>
-    <span><a href="https://github.com/VaibhavVishal07/Ocarina-Terminal">github.com/VaibhavVishal07/Ocarina-Terminal</a></span>
-  </footer>
-</div>
+<div class="wrap"><footer>
+  <span>Ocarina, a macOS terminal written in Swift</span>
+  <span>macOS 14+</span>
+  <span><a href="https://github.com/VaibhavVishal07/Ocarina-Terminal">github.com/VaibhavVishal07/Ocarina-Terminal</a></span>
+</footer></div>
 
 <script>
 (function () {
   "use strict";
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ── the mark ───────────────────────────────────────────────
-     A 5x7 bitmap font, painted to canvas. This is the app's own board
-     lettering, so the site is wearing the product's identity rather than
-     a typeface chosen for it. Generated, so it is crisp at any size and
-     there is no hand-written path data anywhere. */
+  /* ── the mark: the app's own board lettering, 5x7 to canvas ── */
   var F = {
     A:"01110,10001,10001,11111,10001,10001,10001", B:"11110,10001,10001,11110,10001,10001,11110",
     C:"01110,10001,10000,10000,10000,10001,01110", D:"11110,10001,10001,10001,10001,10001,11110",
@@ -604,43 +546,28 @@
     W:"10001,10001,10001,10101,10101,11011,10001", X:"10001,10001,01010,00100,01010,10001,10001",
     Y:"10001,10001,01010,00100,00100,00100,00100", Z:"11111,00001,00010,00100,01000,10000,11111"
   };
-  var CACHE = {};
-  function glyph(ch) {
-    if (CACHE[ch]) return CACHE[ch];
-    var g = F[ch] ? F[ch].split(",") : ["00000","00000","00000","00000","00000","00000","00000"];
-    return (CACHE[ch] = g);
-  }
-  function widthOf(t) {
-    var c = 0;
-    for (var i = 0; i < t.length; i++) c += (t[i] === " " ? 2 : 5) + (i < t.length - 1 ? 1 : 0);
-    return c;
-  }
-
   function paint(cv, text, o) {
-    var pitch = o.pitch, cols = widthOf(text), dpr = 2;
-    cv.width = cols * pitch * dpr; cv.height = 7 * pitch * dpr;
+    if (!cv) return;
+    var pitch = o.pitch, cols = 0, i;
+    for (i = 0; i < text.length; i++) cols += (text[i] === " " ? 2 : 5) + (i < text.length - 1 ? 1 : 0);
+    cv.width = cols * pitch * 2; cv.height = 7 * pitch * 2;
     var g = cv.getContext("2d");
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.setTransform(2, 0, 0, 2, 0, 0);
     g.clearRect(0, 0, cols * pitch, 7 * pitch);
-    var r = o.r || pitch * 0.34, x = 0, lit = Math.round((o.progress == null ? 1 : o.progress) * cols);
-    for (var i = 0; i < text.length; i++) {
-      var ch = text[i], w = ch === " " ? 2 : 5, rows = glyph(ch);
-      for (var cx = 0; cx < w; cx++) {
-        for (var cy = 0; cy < 7; cy++) {
-          var on = ch !== " " && rows[cy][cx] === "1";
-          if (!on && !o.showOff) continue;
-          var shown = on && (x + cx) < lit;
-          g.fillStyle = shown ? o.color : (o.off || "rgba(255,255,255,.07)");
-          g.beginPath();
-          g.arc((x + cx) * pitch + pitch / 2, cy * pitch + pitch / 2, r, 0, 6.2832);
-          g.fill();
-        }
+    var r = pitch * 0.34, x = 0, lit = Math.round((o.progress == null ? 1 : o.progress) * cols);
+    for (i = 0; i < text.length; i++) {
+      var ch = text[i], w = ch === " " ? 2 : 5;
+      var rows = F[ch] ? F[ch].split(",") : ["00000","00000","00000","00000","00000","00000","00000"];
+      for (var cx = 0; cx < w; cx++) for (var cy = 0; cy < 7; cy++) {
+        var on = ch !== " " && rows[cy][cx] === "1";
+        if (!on && !o.showOff) continue;
+        g.fillStyle = (on && (x + cx) < lit) ? o.color : (o.off || "rgba(255,255,255,.07)");
+        g.beginPath(); g.arc((x + cx) * pitch + pitch / 2, cy * pitch + pitch / 2, r, 0, 6.2832); g.fill();
       }
       x += w + 1;
     }
   }
-
-  function reveal(cv, text, o, ms) {
+  function revealMark(cv, text, o, ms) {
     if (reduce) { paint(cv, text, o); return; }
     var t0 = 0;
     requestAnimationFrame(function step(t) {
@@ -651,65 +578,189 @@
       if (p < 1) requestAnimationFrame(step);
     });
   }
-
   var BLUE = "#45B6E8";
   paint(document.getElementById("navMark"), "OCARINA", { pitch: 4, color: "#EEF3F8" });
   var hm = document.getElementById("heroMark");
-  var ht = document.getElementById("heroTag");
-  paint(hm, "OCARINA", { pitch: 11, color: BLUE, showOff: true, progress: 0 });
-  paint(ht, "SONG OF A NEW TERMINAL", { pitch: 4, color: "#7E8B98", progress: 0 });
-  reveal(hm, "OCARINA", { pitch: 11, color: BLUE, showOff: true }, 1000);
-  setTimeout(function () { reveal(ht, "SONG OF A NEW TERMINAL", { pitch: 4, color: "#7E8B98" }, 700); }, 620);
+  paint(hm, "OCARINA", { pitch: 9, color: BLUE, showOff: true, progress: 0 });
+  revealMark(hm, "OCARINA", { pitch: 9, color: BLUE, showOff: true }, 950);
+  paint(document.getElementById("boardMark"), "OCARINA", { pitch: 6, color: "#38C2FF" });
 
   /* ── reveals ─────────────────────────────────────────────── */
-  var io = null;
-  var rises = document.querySelectorAll(".rise");
-  if (reduce || !("IntersectionObserver" in window)) {
-    Array.prototype.forEach.call(rises, function (e) { e.classList.add("in"); });
+  var rises = Array.prototype.slice.call(document.querySelectorAll(".rise"));
+  if (!reduce && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("reveal");
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      sweep();
+    }, { threshold: 0.14, rootMargin: "0px 0px -6% 0px" });
+    rises.forEach(function (e) { io.observe(e); });
+    // The observer is the fast path, not the guarantee. A tab that was never
+    // painted delivers no entries at all, and a section parked at opacity 0
+    // waiting on one is a section nobody ever sees. This catches up anything
+    // already on screen, whatever the observer did or did not do.
+    addEventListener("visibilitychange", sweep);
+    addEventListener("resize", sweep);
+    // scrollend fires once per gesture, not once per frame, so it is a safety
+    // net rather than the scroll handler this deliberately does not have
+    addEventListener("scrollend", sweep);
+    sweep(); setTimeout(sweep, 400); setTimeout(sweep, 1600);
   } else {
-    io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        e.target.classList.add("in"); io.unobserve(e.target);
-      });
-    }, { threshold: 0.16, rootMargin: "0px 0px -8% 0px" });
-    Array.prototype.forEach.call(rises, function (e) { io.observe(e); });
+    rises.forEach(function (e) { e.classList.add("in"); });
+  }
+  function sweep() {
+    for (var i = rises.length - 1; i >= 0; i--) {
+      var e = rises[i];
+      if (e.classList.contains("in")) { rises.splice(i, 1); continue; }
+      if (e.getBoundingClientRect().top < innerHeight * 0.94) { e.classList.add("in"); rises.splice(i, 1); }
+    }
   }
 
-  function typeInto(el, text, done) {
-    if (reduce) { el.textContent = text; if (done) done(); return; }
-    var i = 0;
-    (function k() {
-      el.textContent = text.slice(0, ++i);
-      if (i < text.length) setTimeout(k, 20 + Math.random() * 30);
-      else if (done) setTimeout(done, 420);
-    })();
+  var win = document.getElementById("win");
+
+  /* the same tab column, lifted into the comparison */
+  var named = document.getElementById("namedDemo");
+  var srcRows = document.querySelectorAll("#tablist .row");
+  for (var n = 0; n < 6; n++) named.appendChild(srcRows[n].cloneNode(true));
+
+  /* ══ the tour ═════════════════════════════════════════════
+     The last version drove this from scroll position and hard-coded the
+     zoom rectangles as percentages. Both were wrong: the state desynced
+     from the scrollbar, and the rectangles let the window's own edge into
+     frame. This one plays itself, and every rectangle is measured from
+     real geometry then clamped so the window always covers the stage. */
+  function makeWindow() {
+    var c = win.cloneNode(true);
+    Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (n) { n.removeAttribute("id"); });
+    paint(c.querySelector(".board canvas"), "OCARINA", { pitch: 6, color: "#38C2FF" });
+    return c;
   }
 
-  /* ── act one ─────────────────────────────────────────────── */
-  var stock = document.getElementById("stock");
-  if (stock) {
-    var flines = stock.querySelectorAll(".fline"), ftype = document.getElementById("fearType");
-    new IntersectionObserver(function (e, ob) {
-      if (!e[0].isIntersecting) return;
-      ob.disconnect();
-      if (reduce) {
-        ftype.textContent = "install claude";
-        Array.prototype.forEach.call(flines, function (l) { l.classList.add("on"); });
-        return;
-      }
-      var i = 0;
-      (function next() {
-        if (i >= flines.length) return;
-        var l = flines[i++];
-        l.classList.add("on");
-        if (l.contains(ftype)) typeInto(ftype, "install claude", next);
-        else setTimeout(next, l.textContent.trim() ? 300 : 110);
+  // scale about the centre after walking the target's centre to the centre,
+  // with the centre clamped so no part of the stage falls outside the window
+  function frameFor(winEl, zoomEl, sc) {
+    var wr, box;
+    if (sc.rect) {
+      wr = winEl.getBoundingClientRect();
+      box = { w: sc.rect[2] / 100 * wr.width, h: sc.rect[3] / 100 * wr.height,
+              cx: sc.rect[0] + sc.rect[2] / 2, cy: sc.rect[1] + sc.rect[3] / 2 };
+    } else {
+      var target = sc.sel ? winEl.querySelector(sc.sel) : null;
+      if (!target) return { s: 1, x: 0, y: 0 };
+      // measure untransformed, or every frame is computed from the last one
+      var keepT = zoomEl.style.transition, keep = zoomEl.style.transform;
+      zoomEl.style.transition = "none"; zoomEl.style.transform = "none";
+      void zoomEl.offsetWidth;
+      wr = winEl.getBoundingClientRect();
+      var tr = target.getBoundingClientRect();
+      zoomEl.style.transform = keep; zoomEl.style.transition = keepT;
+      if (!tr.width) return { s: 1, x: 0, y: 0 };
+      box = { w: tr.width, h: tr.height,
+              cx: (tr.left + tr.width / 2 - wr.left) / wr.width * 100,
+              cy: (tr.top + tr.height / 2 - wr.top) / wr.height * 100 };
+    }
+    if (!wr.width || !wr.height) return { s: 1, x: 0, y: 0 };
+    var pad = sc.pad || 0;
+    var s = Math.min(wr.width / (box.w + pad * 2), wr.height / (box.h + pad * 2), sc.max || 2.4);
+    s = Math.max(1, s);
+    // clamp the centre so the window still covers the stage on every side:
+    // without this the zoom lets the window's own edge into frame
+    var lim = 50 / s;
+    var cx = Math.min(Math.max(box.cx, lim), 100 - lim);
+    var cy = Math.min(Math.max(box.cy, lim), 100 - lim);
+    return { s: s, x: 50 - cx, y: 50 - cy };
+  }
+
+  var SCENES = [
+    { chip: "Quick Actions", cls: "drawn", sel: ".drawer", pad: 26, max: 1.9,
+      say: "<b>&#8984;K</b> lists the commands a first-time user needs, already written and already checked. Claude Code, Gemini CLI, Codex, then the things those need: Homebrew, Node, Git." },
+    { chip: "It types, you decide", cls: "shelled", rect: [16, 2, 46, 26], max: 2.1, type: true,
+      say: "Choosing one types it at your prompt with the sentence that explains what it does, and then stops. <b>Nothing here runs itself.</b>" },
+    { chip: "Explain this", cls: "shelled erred", rect: [16, 0, 84, 30], max: 2.0,
+      say: "A failed command is where people give up. Ocarina turns the exit code into a sentence and offers the next step, which is the one moment worth interrupting." },
+    { chip: "Tasks", cls: "shelled tasked", sel: ".panel .inner", pad: 22, max: 2.3,
+      say: "Everything you asked the agent for, read from the transcript it already writes, ticked when it stopped talking. It says <b>finished</b>, never done, because that is all it can honestly know." },
+    { chip: "Empty state", cls: "", sel: null, pad: 0, max: 1,
+      say: "Close every tab and you get a way back in rather than a bare prompt: the two keys that matter, on a board you cannot mistake for output." }
+  ];
+
+  var tourStage = document.getElementById("tourStage");
+  var tourChips = document.getElementById("tourChips");
+  var tourSay = document.getElementById("tourSay");
+  var tZoom = document.createElement("div");
+  tZoom.className = "zoom";
+  var tWin = makeWindow();
+  tZoom.appendChild(tWin); tourStage.appendChild(tZoom);
+  var tCmd;
+  var CMD = "curl -fsSL https://claude.ai/install.sh | bash";
+  tWin.querySelector(".shell").innerHTML =
+    '<span class="l"><span class="pr">~ &rsaquo;</span> <span class="cmd"></span><span class="caret"></span></span>' +
+    '<span class="l">&nbsp;</span>' +
+    '<span class="l dimtx">Downloads an installer from claude.ai and runs it. Puts a claude</span>' +
+    '<span class="l dimtx">command in ~/.local/bin, and keeps itself updated after that.</span>' +
+    '<span class="l">&nbsp;</span>' +
+    '<span class="l">Verified 5 September 2026 &middot; code.claude.com/docs</span>' +
+    '<span class="l">&nbsp;</span>' +
+    '<span class="l rd">npm ERR! Test failed. See above for more details.</span>';
+  tCmd = tWin.querySelector(".cmd");
+
+  var scene = -1, timer = null, typing = null;
+
+  SCENES.forEach(function (s, i) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = s.chip; b.setAttribute("role", "tab");
+    b.addEventListener("click", function () { show(i); arm(); });
+    tourChips.appendChild(b);
+  });
+
+  function show(i) {
+    scene = i;
+    var s = SCENES[i];
+    tWin.className = "win " + s.cls;
+    tourSay.innerHTML = s.say;
+    Array.prototype.forEach.call(tourChips.children, function (c, j) { c.classList.toggle("on", j === i); });
+
+    if (typing) { clearTimeout(typing); typing = null; }
+    tCmd.textContent = s.type ? "" : CMD;
+
+    var f = frameFor(tWin, tZoom, s);
+    tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
+
+    if (s.type && !reduce) {
+      var k = 0;
+      (function key() {
+        tCmd.textContent = CMD.slice(0, ++k);
+        if (k < CMD.length) typing = setTimeout(key, 19 + Math.random() * 26);
       })();
-    }, { threshold: 0.5 }).observe(stock);
+    } else if (s.type) { tCmd.textContent = CMD; }
   }
 
-  /* ── themes, straight out of the app's own JSON ──────────── */
+  function arm() {
+    if (timer) clearTimeout(timer);
+    if (reduce) return;
+    timer = setTimeout(function () { show((scene + 1) % SCENES.length); arm(); }, 6200);
+  }
+  function halt() { if (timer) { clearTimeout(timer); timer = null; } }
+
+  show(0);
+  if (!reduce && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (e) { e[0].isIntersecting ? arm() : halt(); }, { threshold: 0.3 })
+      .observe(tourStage);
+    tourStage.addEventListener("pointerenter", halt);
+    tourStage.addEventListener("pointerleave", arm);
+  }
+  var rt;
+  addEventListener("resize", function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      var s = SCENES[scene];
+      var f = frameFor(tWin, tZoom, s);
+      var keep = tZoom.style.transition; tZoom.style.transition = "none";
+      tZoom.style.transform = "scale(" + f.s + ") translate(" + f.x + "%," + f.y + "%)";
+      void tZoom.offsetWidth; tZoom.style.transition = keep;
+    }, 180);
+  });
+
+  /* ══ themes, straight out of the app's own JSON ═══════════ */
   var THEMES = {
     "ocarina":       ["Ocarina","#12171E","#C9D4E0","#202224","#141517","#F06C6C","#5FC98D","#E5B25A","#5AA9F0","#38C2FF"],
     "sakura":        ["Sakura","#1A1016","#EBD3DF","#251722","#180E14","#FF8095","#7FD8A6","#EFC27A","#9FB6F0","#FF9EC4"],
@@ -729,152 +780,72 @@
   var ORDER = Object.keys(THEMES);
   var VARS = ["--wbg","--wfg","--wtop","--wbot","--wred","--wgrn","--wyel","--wblu","--wacc"];
 
-  function dress(el, id) {
+  var preview = makeWindow();
+  preview.className = "win shelled tasked";
+  document.getElementById("tprev").appendChild(preview);
+  var pBoard = preview.querySelector(".board canvas");
+  var pName = preview.querySelector(".foot .row:nth-child(2) .k");
+  var chips = document.getElementById("chips");
+  var touched = false, drift = null;
+
+  function pick(id) {
     var t = THEMES[id];
-    for (var i = 0; i < VARS.length; i++) el.style.setProperty(VARS[i], t[i + 1]);
-    var label = el.querySelector(".foot .row:nth-child(2) .k");
-    if (label) label.textContent = t[0];
-  }
-
-  /* ── the story: one window, flown around ─────────────────── */
-  var win = document.getElementById("win"), zoom = document.getElementById("zoom");
-  var beats = Array.prototype.slice.call(document.querySelectorAll(".beat"));
-  var chapters = document.getElementById("chapters");
-  var cmd = document.getElementById("cmd"), errLine = document.getElementById("errLine");
-  var CMD = "curl -fsSL https://claude.ai/install.sh | bash";
-  var typedOnce = false, cycle = null, at = -1;
-
-  beats.forEach(function (b, i) {
-    var dot = document.createElement("button");
-    dot.setAttribute("role", "tab");
-    dot.setAttribute("aria-label", "Chapter " + (i + 1) + ": " + b.querySelector("h3").textContent);
-    dot.addEventListener("click", function () { b.scrollIntoView({ block: "center" }); });
-    chapters.appendChild(dot);
-  });
-  var dots = chapters.children;
-
-  function themeCycle(on) {
-    if (cycle) { clearInterval(cycle); cycle = null; }
-    if (!on || reduce) return;
-    var n = 0;
-    cycle = setInterval(function () { dress(win, ORDER[++n % ORDER.length]); }, 1500);
-  }
-
-  function go(i) {
-    if (i === at) return;
-    at = i;
-    var b = beats[i], z = b.getAttribute("data-z").split(",").map(Number);
-    win.className = "win b" + b.getAttribute("data-b");
-    // scale about the centre after walking the named point to the centre, so
-    // the named rectangle ends up filling the stage
-    zoom.style.transform = "scale(" + z[0] + ") translate(" + (50 - z[1]) + "%," + (50 - z[2]) + "%)";
-    beats.forEach(function (x, j) { x.classList.toggle("live", j === i); });
-    for (var d = 0; d < dots.length; d++) dots[d].classList.toggle("on", d <= i);
-
-    if (b.getAttribute("data-b") === "3" && !typedOnce) {
-      typedOnce = true; cmd.textContent = ""; typeInto(cmd, CMD);
-    }
-    if (+b.getAttribute("data-b") >= 3) cmd.textContent = cmd.textContent || CMD;
-    errLine.style.opacity = +b.getAttribute("data-b") >= 4 ? "1" : "0";
-    themeCycle(b.getAttribute("data-b") === "6");
-  }
-
-  if (reduce || !("IntersectionObserver" in window)) {
-    win.className = "win b5"; cmd.textContent = CMD; errLine.style.opacity = "1";
-    beats.forEach(function (b) { b.classList.add("live"); });
-  } else {
-    go(0);
-    var so = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) go(beats.indexOf(e.target)); });
-    }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 });
-    beats.forEach(function (b) { so.observe(b); });
-  }
-
-  paint(document.getElementById("boardMark"), "OCARINA", { pitch: 5, color: "#38C2FF" });
-
-  /* ── the theme picker, showing rather than describing ────── */
-  var tprev = document.getElementById("tprev"), chips = document.getElementById("chips");
-  var preview = win.cloneNode(true);
-  Array.prototype.forEach.call(preview.querySelectorAll("[id]"), function (n) { n.removeAttribute("id"); });
-  preview.className = "win b5";
-  preview.removeAttribute("style");
-  var d = preview.querySelector(".drawer"); if (d) d.remove();
-  preview.querySelector(".shell").innerHTML =
-    '<span class="l"><span class="pr">~ &rsaquo;</span> ' + CMD + '</span>' +
-    '<span class="l">&nbsp;</span>' +
-    '<span class="l dimtx">Downloads an installer from claude.ai and runs it.</span>' +
-    '<span class="l">&nbsp;</span>' +
-    '<span class="l rd">curl: (6) Could not resolve host: claude.ai</span>' +
-    '<span class="l">&nbsp;</span>' +
-    '<span class="l gr">&check; installed</span>';
-  tprev.appendChild(preview);
-  paint(preview.querySelector(".board canvas"), "OCARINA", { pitch: 6, color: "#38C2FF" });
-
-  var picked = null, drift = null, touched = false;
-  function pick(id, byHand) {
-    picked = id;
-    dress(preview, id);
-    var t = THEMES[id];
-    paint(preview.querySelector(".board canvas"), "OCARINA", { pitch: 6, color: t[9] });
-    Array.prototype.forEach.call(chips.children, function (c) { c.classList.toggle("on", c.getAttribute("data-id") === id); });
-    if (byHand && drift) { clearInterval(drift); drift = null; }
+    for (var i = 0; i < VARS.length; i++) preview.style.setProperty(VARS[i], t[i + 1]);
+    if (pName) pName.textContent = t[0];
+    paint(pBoard, "OCARINA", { pitch: 6, color: t[9] });
+    Array.prototype.forEach.call(chips.children, function (c) {
+      c.classList.toggle("on", c.getAttribute("data-id") === id);
+    });
   }
 
   ORDER.forEach(function (id) {
     var t = THEMES[id];
     var b = document.createElement("button");
-    b.className = "chip"; b.setAttribute("data-id", id); b.type = "button";
+    b.className = "chip"; b.type = "button"; b.setAttribute("data-id", id);
     b.style.setProperty("--tbg", t[1]); b.style.setProperty("--tfg", t[2]);
     b.innerHTML = '<span class="top"><span class="nm">' + t[0] + '</span><span class="bars">' +
-      '<i style="background:' + t[5] + '"></i><i style="background:' + t[6] + '"></i>' +
-      '<i style="background:' + t[7] + '"></i><i style="background:' + t[8] + '"></i>' +
-      '<i style="background:' + t[9] + '"></i></span></span>';
-    b.addEventListener("mouseenter", function () { pick(id, true); });
-    b.addEventListener("focus", function () { pick(id, true); });
-    b.addEventListener("click", function () { pick(id, true); });
+      [5,6,7,8,9].map(function (k) { return '<i style="background:' + t[k] + '"></i>'; }).join("") +
+      '</span></span>';
+    ["mouseenter","focus","click"].forEach(function (ev) {
+      b.addEventListener(ev, function () { touched = true; if (drift) { clearInterval(drift); drift = null; } pick(id); });
+    });
     chips.appendChild(b);
   });
   pick("ocarina");
 
-  if (!reduce) {
+  if (!reduce && "IntersectionObserver" in window) {
     new IntersectionObserver(function (e) {
-      if (e[0].isIntersecting && !drift && !picked_touched()) {
+      if (e[0].isIntersecting && !drift && !touched) {
         var n = 0;
-        drift = setInterval(function () { if (!picked_touched()) pick(ORDER[++n % ORDER.length]); }, 1900);
+        drift = setInterval(function () { pick(ORDER[++n % ORDER.length]); }, 2000);
       } else if (!e[0].isIntersecting && drift) { clearInterval(drift); drift = null; }
-    }, { threshold: 0.35 }).observe(tprev);
+    }, { threshold: 0.3 }).observe(document.getElementById("tprev"));
   }
-  chips.addEventListener("pointerenter", function () { touched = true; }, { once: true });
-  function picked_touched() { return touched; }
 
-  /* ── the contrast bars are real numbers ──────────────────────
-     Sixteen ANSI colours from the Ocarina theme, each bar the WCAG
-     contrast ratio against that theme's own background. */
+  /* ── the contrast bars are measured, not drawn to look right ── */
   var ANSI16 = ["#5A6675","#F06C6C","#5FC98D","#E5B25A","#5AA9F0","#C08CE8","#4FC0EC","#C9D4E0",
                 "#7A8798","#FF9090","#84E0AC","#F5CD84","#84C4F5","#D6AFF2","#84D8F5","#EDF2F7"];
   function lum(hex) {
-    var v = [1, 3, 5].map(function (i) {
+    var v = [1,3,5].map(function (i) {
       var c = parseInt(hex.substr(i, 2), 16) / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+    return 0.2126*v[0] + 0.7152*v[1] + 0.0722*v[2];
   }
-  var bg = lum("#12171E");
-  var bars = document.getElementById("barsDemo");
+  var bgL = lum("#12171E"), bars = document.getElementById("barsDemo");
   ANSI16.forEach(function (c) {
-    var ratio = (Math.max(lum(c), bg) + 0.05) / (Math.min(lum(c), bg) + 0.05);
+    var ratio = (Math.max(lum(c), bgL) + 0.05) / (Math.min(lum(c), bgL) + 0.05);
     var i = document.createElement("i");
     i.style.background = c;
     i.style.height = Math.max(6, Math.min(100, ((ratio - 1) / 11) * 100)) + "%";
-    i.title = c + " " + ratio.toFixed(1) + ":1";
+    i.title = c + "  " + ratio.toFixed(1) + ":1";
     bars.appendChild(i);
   });
   var floor = document.createElement("div");
-  floor.className = "floor";
-  floor.style.bottom = ((4.5 - 1) / 11) * 100 + "%";
+  floor.className = "floor"; floor.style.bottom = ((4.5 - 1) / 11) * 100 + "%";
   bars.appendChild(floor);
 
-  /* ── spotlight, and the nav hairline ─────────────────────── */
+  /* ── spotlight and the nav hairline ─────────────────────── */
   Array.prototype.forEach.call(document.querySelectorAll(".cell"), function (c) {
     c.addEventListener("pointermove", function (ev) {
       var r = c.getBoundingClientRect();
@@ -882,7 +853,6 @@
       c.style.setProperty("--my", (ev.clientY - r.top) + "px");
     });
   });
-
   var nav = document.getElementById("nav");
   var sent = document.createElement("div");
   sent.style.cssText = "position:absolute;top:0;height:1px;width:1px;";
