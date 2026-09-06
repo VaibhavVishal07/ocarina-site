@@ -1791,7 +1791,14 @@
         // An edge crossing the whole viewport, so it holds its speed through
         // the middle instead of covering the distance up front and crawling
         // home the way a bloom's curve does.
-        { duration: 520, easing: "cubic-bezier(.5,0,.2,1)",
+        /* `fill` is what stops the flash at the end. Without it the
+           animation stops holding its last frame the moment it is over, the
+           clip-path falls back to the shut value the stylesheet declares,
+           and the new page is covered again — so the old one underneath
+           shows through for the frame or two before the browser takes its
+           pictures down. Held forwards, the edge stays off the page until
+           there is a real page behind it. */
+        { duration: 520, easing: "cubic-bezier(.5,0,.2,1)", fill: "both",
           pseudoElement: "::view-transition-new(root)" }
       );
     });
