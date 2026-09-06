@@ -120,10 +120,14 @@
   header.hero::before { content:""; position:absolute; left:50%; top:-190px; width:1400px; height:760px;
     transform:translateX(-50%); pointer-events:none; filter:blur(40px);
     background:radial-gradient(42% 46% at 50% 46%,rgba(69,182,232,.17),transparent 70%); }
-  .dots { position:absolute; inset:0; pointer-events:none; opacity:.26;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17'%3E%3Ccircle cx='1.1' cy='1.1' r='1.1' fill='%2345B6E8'/%3E%3C/svg%3E");
-    -webkit-mask-image:radial-gradient(44% 48% at 50% 34%,#000,transparent 72%);
-            mask-image:radial-gradient(44% 48% at 50% 34%,#000,transparent 72%); }
+  /* Flickering grid, hung off the very top edge of the page and faded out
+     by a quarter of the way down the fold, so the headline sits on clean
+     ground. Sized in vh so the falloff tracks the fold, not the header,
+     which is much taller than one screen. */
+  .flicker { position:absolute; left:0; top:0; z-index:0; width:100%; height:34vh;
+    pointer-events:none; display:block;
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,rgba(0,0,0,.55) 11vh,transparent 25vh);
+            mask-image:linear-gradient(to bottom,#000 0,rgba(0,0,0,.55) 11vh,transparent 25vh); }
   .hero-inner { position:relative; text-align:center; }
   /* Icon and wordmark as one lockup, rather than stacking two dot-matrix
      marks on top of each other. */
@@ -498,6 +502,7 @@
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"></div>
 
+<canvas class="flicker" id="flicker" aria-hidden="true"></canvas>
 <nav>
   <div class="bar glass">
     <a class="brand" href="#home" aria-label="Ocarina, home">
@@ -515,7 +520,6 @@
 </nav>
 
 <header class="hero" id="home">
-  <div class="dots" aria-hidden="true"></div>
   <div class="wrap hero-inner">
     <div class="lockup">
       <img class="app-icon" src="icon.png" alt="" width="360" height="360">
@@ -1237,6 +1241,90 @@
         drift = setInterval(function () { pick(ORDER[++n % ORDER.length]); }, 2100);
       } else if (!e[0].isIntersecting && drift) { clearInterval(drift); drift = null; }
     }, { threshold: 0.3 }).observe(document.getElementById("tprev"));
+  }
+})();
+</script>
+
+<script>
+/* Flickering grid (after magicui's flickering-grid). A field of small squares
+   that each re-roll their own opacity at random, drawn on one canvas so the
+   cost stays flat no matter how many cells are on screen. */
+(function () {
+  var cv = document.getElementById("flicker");
+  if (!cv) return;
+  var ctx = cv.getContext("2d");
+  if (!ctx) return;
+
+  var SIZE = 4, GAP = 6, STEP = SIZE + GAP;
+  var CHANCE = 0.32, MAX = 0.34;
+  var RGBA = "rgba(69,182,232,";
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var cols = 0, rows = 0, cells = null, dpr = 1, live = false, raf = 0, last = 0;
+
+  function measure() {
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return false;
+    dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    cols = Math.ceil(w / STEP);
+    rows = Math.ceil(h / STEP);
+    var next = new Float32Array(cols * rows);
+    for (var i = 0; i < next.length; i++) next[i] = Math.random() * MAX;
+    cells = next;
+    return true;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    var s = SIZE * dpr, g = STEP * dpr;
+    for (var i = 0; i < cols; i++) {
+      var x = i * g;
+      for (var j = 0; j < rows; j++) {
+        ctx.fillStyle = RGBA + cells[i * rows + j].toFixed(3) + ")";
+        ctx.fillRect(x, j * g, s, s);
+      }
+    }
+  }
+
+  function frame(t) {
+    if (!live) { raf = 0; return; }
+    var dt = last ? Math.min((t - last) / 1000, 0.1) : 0;
+    last = t;
+    var odds = CHANCE * dt;
+    for (var i = 0; i < cells.length; i++) {
+      if (Math.random() < odds) cells[i] = Math.random() * MAX;
+    }
+    draw();
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (raf || still) return;
+    last = 0;
+    raf = requestAnimationFrame(frame);
+  }
+
+  if (!measure()) return;
+  draw();
+  if (still) return;
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (e) {
+      live = e[0].isIntersecting;
+      if (live) start();
+    }, { threshold: 0 }).observe(cv);
+  } else {
+    live = true; start();
+  }
+
+  if ("ResizeObserver" in window) {
+    var pending = 0;
+    new ResizeObserver(function () {
+      clearTimeout(pending);
+      pending = setTimeout(function () { if (measure()) draw(); }, 120);
+    }).observe(cv);
   }
 })();
 </script>
