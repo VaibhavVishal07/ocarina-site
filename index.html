@@ -23,8 +23,9 @@
   }
   * { box-sizing:border-box; }
   html { background:var(--ground); }
+  /* body stays transparent so the fixed aura shows through beneath content */
   body {
-    margin:0; background:var(--ground); color:var(--ink);
+    margin:0; background:transparent; color:var(--ink);
     font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     font-size:16.5px; line-height:1.62; -webkit-font-smoothing:antialiased;
     overflow-x:clip;
@@ -51,24 +52,29 @@
   a:focus-visible,button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
 
   /* ── glass ────────────────────────────────────────────────
-     One recipe, used by the nav, every card and the closing panel, so the
-     page reads as one material rather than a set of boxes. */
+     backdrop-filter over a flat black page blurs nothing, which is why the
+     first pass read as a hard bright rim and no material. Two fixes: an
+     ambient wash behind everything so there is something to refract, and a
+     surface that is lit from the top edge rather than ringed top and bottom. */
+  .aura {
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(46% 32% at 16% 8%,  rgba(69,182,232,.13), transparent 70%),
+      radial-gradient(38% 28% at 86% 34%, rgba(126,102,226,.09), transparent 72%),
+      radial-gradient(42% 30% at 24% 62%, rgba(69,182,232,.07), transparent 72%),
+      radial-gradient(40% 30% at 78% 88%, rgba(95,201,141,.055), transparent 72%);
+  }
   .glass {
     position:relative; overflow:hidden;
-    background:rgba(255,255,255,.018);
-    backdrop-filter:blur(14px) saturate(140%);
-    -webkit-backdrop-filter:blur(14px) saturate(140%);
-    box-shadow:inset 0 1px 1px rgba(255,255,255,.09), 0 24px 60px -34px rgba(0,0,0,.9);
-  }
-  .glass::before {
-    content:""; position:absolute; inset:0; border-radius:inherit; padding:1.3px;
     background:linear-gradient(180deg,
-      rgba(255,255,255,.40) 0%, rgba(255,255,255,.13) 22%,
-      rgba(255,255,255,0) 45%, rgba(255,255,255,0) 58%,
-      rgba(255,255,255,.13) 80%, rgba(255,255,255,.40) 100%);
-    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor; mask-composite:exclude;
-    pointer-events:none;
+      rgba(255,255,255,.062) 0%, rgba(255,255,255,.022) 42%, rgba(255,255,255,.014) 100%);
+    backdrop-filter:blur(22px) saturate(150%);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);
+    border:1px solid rgba(255,255,255,.085);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.17),
+      inset 0 -1px 0 rgba(255,255,255,.022),
+      0 22px 54px -32px rgba(0,0,0,.92);
   }
   .glass > * { position:relative; }
 
@@ -307,20 +313,50 @@
   .bars-demo .floor { position:absolute; left:0; right:0; height:0; border-top:1px dashed var(--line-2); }
   .chart-cap { font-family:var(--mono); font-size:10.5px; color:var(--faint); text-align:right; margin-bottom:6px; }
 
-  /* ── safety bento ─────────────────────────────────────── */
-  .bento { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-top:44px; }
-  .cell { grid-column:span 3; border-radius:var(--r); padding:24px; min-height:214px;
-          display:flex; flex-direction:column; gap:18px; }
-  .cell.wide { grid-column:span 4; } .cell.thin { grid-column:span 2; }
-  @media (max-width:880px) { .bento { grid-template-columns:1fr; }
-                             .cell,.cell.wide,.cell.thin { grid-column:span 1; } }
-  .cell h3 { margin:0 0 6px; font-size:17px; font-weight:500; letter-spacing:-.015em; }
-  .cell p { margin:0; color:var(--muted); font-size:14.5px; line-height:1.55; max-width:38ch; }
-  .cell .art { margin-top:auto; }
+  /* ── bento, ported from magicuidesign/magicui ─────────────
+     Their card is React + Tailwind; the signature is the inset glow rising
+     off the bottom edge, a hairline border, and the body sliding up on hover
+     to let a link in underneath. */
+  .bento { display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:22rem; gap:16px; margin-top:44px; }
+  @media (max-width:1000px) { .bento { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:700px) { .bento { grid-template-columns:1fr; grid-auto-rows:20rem; } }
+  .bcard {
+    position:relative; display:flex; flex-direction:column; justify-content:space-between;
+    overflow:hidden; border-radius:14px; transform:translateZ(0);
+    background:var(--ground);
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 -20px 80px -20px rgba(255,255,255,.12) inset;
+  }
+  .bcard.w2 { grid-column:span 2; }
+  @media (max-width:700px) { .bcard.w2 { grid-column:span 1; } }
+  .bcard .bg { position:absolute; inset:0; pointer-events:none;
+               -webkit-mask-image:linear-gradient(180deg,#000 20%,transparent 78%);
+                       mask-image:linear-gradient(180deg,#000 20%,transparent 78%); }
+  .bcard .body { position:relative; z-index:10; padding:24px; pointer-events:none;
+                 display:flex; flex-direction:column; gap:5px; margin-top:auto;
+                 transition:transform .3s cubic-bezier(.16,1,.3,1); }
+  .bcard .ic { width:40px; height:40px; margin-bottom:8px; transform-origin:left;
+               color:var(--ghost); transition:transform .3s ease, color .3s ease; }
+  .bcard h3 { margin:0; font-size:19px; font-weight:600; letter-spacing:-.018em; color:var(--ink); }
+  .bcard p { margin:0; font-size:14.5px; line-height:1.55; color:var(--muted); max-width:44ch; }
+  .bcard .cta { position:absolute; left:0; bottom:0; z-index:10; padding:24px; display:flex;
+                align-items:center; gap:7px; font-size:14px; color:var(--accent);
+                text-decoration:none; translate:0 40px; opacity:0;
+                transition:translate .3s cubic-bezier(.16,1,.3,1), opacity .3s ease; }
+  .bcard .cta svg { width:15px; height:15px; }
+  .bcard::after { content:""; position:absolute; inset:0; pointer-events:none; z-index:5;
+                  background:rgba(160,175,190,0); transition:background-color .3s ease; }
+  @media (hover:hover) and (min-width:1000px) {
+    .bcard:hover .body { transform:translateY(-38px); }
+    .bcard:hover .ic { transform:scale(.75); color:var(--accent); }
+    .bcard:hover .cta { translate:0 0; opacity:1; }
+    .bcard:hover::after { background:rgba(160,175,190,.045); }
+  }
+  .bcard .mini-term { position:absolute; left:24px; right:24px; top:24px; }
   .mini-term { font-family:var(--mono); font-size:12.5px; line-height:2; color:var(--ghost);
                border:1px solid var(--line); border-radius:var(--r-sm); padding:14px 15px; background:#05070A; }
   .mini-term .pr { color:var(--accent); } .mini-term .rd { color:var(--bad); } .mini-term .warn { color:var(--warn); }
-  .tabrow { display:flex; flex-direction:column; gap:6px; }
+  .tabrow { position:absolute; left:24px; right:24px; top:24px; display:flex; flex-direction:column; gap:6px; }
   .tabrow span { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:8px;
                  border:1px solid var(--line); font-size:13px; color:var(--muted); background:#05070A; }
   .tabrow i { width:6px; height:6px; border-radius:50%; display:block; margin-left:auto; }
@@ -359,6 +395,7 @@
 </style>
 </head>
 <body>
+<div class="aura" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"></div>
 
@@ -582,49 +619,58 @@
     <p class="sub rise">Most of what makes a terminal frightening is that it does exactly what you tell it, instantly, with no warning. Ocarina puts a sentence in the way.</p>
 
     <div class="bento">
-      <div class="cell wide glass rise">
-        <div>
-          <h3>It reads a risky paste back to you first</h3>
-          <p>You are following instructions from a web page you cannot check. Ordinary commands paste silently. Only text that would run several things, or delete something, stops for a sentence.</p>
-        </div>
-        <div class="art mini-term">
+      <div class="bcard w2">
+        <div class="bg mini-term">
           <span class="warn">&#9888;</span> This is 3 separate commands, not one.<br>
           <span class="rd">&#9888;</span> <span class="pr">rm -rf</span> deletes files permanently.<br>
           <span class="rd">&#9888;</span> <span class="pr">sudo</span> runs as administrator.
         </div>
+        <div class="body">
+          <svg class="ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6l14 8v12l-14 8-14-8V14z"/><path d="M20 15v7"/><circle cx="20" cy="27" r=".8" fill="currentColor"/></svg>
+          <h3>A risky paste is read back to you</h3>
+          <p>You are following instructions from a page you cannot check. Ordinary commands paste silently. Only text that would run several things, or delete something, stops for a sentence.</p>
+        </div>
+        <a class="cta" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">How the check works <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
       </div>
 
-      <div class="cell thin glass rise d1">
-        <div>
-          <h3>Every tab says what it is doing</h3>
-          <p>Driven by the shell itself, so a silent job still reads as busy.</p>
-        </div>
-        <div class="art tabrow">
+      <div class="bcard">
+        <div class="bg tabrow">
           <span>Fix the checkout page<i style="background:var(--warn)"></i></span>
+          <span>Write the sign-up tests<i style="background:var(--warn)"></i></span>
           <span>Rename the theme files<i style="background:var(--bad)"></i></span>
           <span>portfolio-site<i style="background:#4A545F"></i></span>
         </div>
+        <div class="body">
+          <svg class="ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="4.5" fill="currentColor" stroke="none"/></svg>
+          <h3>Every tab says what it is doing</h3>
+          <p>Driven by the shell itself, so a job working away in silence still reads as busy.</p>
+        </div>
+        <a class="cta" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">See the states <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
       </div>
 
-      <div class="cell thin glass rise">
-        <div>
-          <h3>Jump by what is running</h3>
-          <p>The palette lists your tabs by their work, not by a number you have to remember.</p>
-        </div>
-        <div class="art mini-term">
+      <div class="bcard">
+        <div class="bg mini-term">
           <span class="pr">&#8984;&#8679;P</span><br>
           checkout page<br>sign-up tests<br>theme files
         </div>
+        <div class="body">
+          <svg class="ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="9" width="28" height="22" rx="4"/><path d="M12 17h9M12 23h16"/></svg>
+          <h3>Jump by what is running</h3>
+          <p>The palette lists your tabs by their work, never by a number you have to remember.</p>
+        </div>
+        <a class="cta" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Open the palette <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
       </div>
 
-      <div class="cell wide glass rise d1">
-        <div>
-          <h3>Nothing here runs itself</h3>
-          <p>Every path that puts a command in front of you types it out and then stops. It sits at the prompt with the sentence that explains it. The last act is always yours.</p>
-        </div>
-        <div class="art mini-term">
+      <div class="bcard w2">
+        <div class="bg mini-term">
           <span class="pr">~ &rsaquo;</span> curl -fsSL https://claude.ai/install.sh | bash <span class="caret"></span>
         </div>
+        <div class="body">
+          <svg class="ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12l7 8-7 8"/><path d="M22 28h8"/></svg>
+          <h3>Nothing here runs itself</h3>
+          <p>Every path that puts a command in front of you types it out and stops, sitting at the prompt with the sentence that explains it. The last act is always yours.</p>
+        </div>
+        <a class="cta" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Read the recipes <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
       </div>
     </div>
   </div>
@@ -702,45 +748,42 @@
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, model.cols * p, 7 * p);
     var lit = Math.round((o.progress == null ? 1 : o.progress) * model.cols);
-    var dead = o.dead, dip = o.dip == null ? 1 : o.dip;
+    var w = o.wave;
     for (var i = 0; i < model.list.length; i++) {
       var c = model.list[i];
       if (!c.on && !o.showOff) continue;
-      var shown = c.on && c.x < lit && !(dead && dead.has(i));
-      g.globalAlpha = shown ? dip : 1;
-      g.fillStyle = shown ? o.color : (o.off || "rgba(255,255,255,.07)");
+      var on = c.on && c.x < lit;
+      // a narrow band of brightness walking across the columns: lit cells
+      // flare as it reaches them, unlit grid cells briefly come up with it,
+      // so the whole board reads as the word travelling through it
+      var k = 0;
+      if (w) { var d = (c.x - w.phase) / w.spread; k = Math.exp(-d * d); }
+      g.globalAlpha = on ? Math.min(1, 0.66 + 0.34 * k) : (o.showOff ? 0.055 + 0.42 * k : 0);
+      g.fillStyle = on ? o.color : (o.off || o.color);
       g.beginPath();
-      g.arc(c.x * p + p / 2, c.y * p + p / 2, p * 0.34, 0, 6.2832);
+      g.arc(c.x * p + p / 2, c.y * p + p / 2, p * (on ? 0.34 + 0.05 * k : 0.30 + 0.06 * k), 0, 6.2832);
       g.fill();
     }
     g.globalAlpha = 1;
   }
 
-  /* An LED board never sits perfectly still: a couple of cells drop out and
-     come back, and now and then the whole panel dips. Slow on purpose, so it
-     reads as a sign warming up rather than a broken page. */
-  function flicker(cv, model, o) {
-    if (reduce) { paint(cv, model, o); return; }
-    var onIdx = [];
-    for (var i = 0; i < model.list.length; i++) if (model.list[i].on) onIdx.push(i);
-    var dead = new Set();
-    o.dead = dead;
-    (function tick() {
-      if (Math.random() < 0.30) {
-        dead.clear();
-        var n = Math.random() < 0.25 ? 2 : 1;
-        for (var k = 0; k < n; k++) dead.add(onIdx[(Math.random() * onIdx.length) | 0]);
-      } else if (Math.random() < 0.5) {
-        dead.clear();
+  /* The board does not sit still: a single column of brightness walks across
+     it on a loop, so the word reads as flowing through the matrix rather than
+     being printed on it. One pass every few seconds, transform-free, and it
+     stops entirely under prefers-reduced-motion. */
+  function flow(cv, model, o) {
+    if (reduce) { o.wave = null; paint(cv, model, o); return; }
+    var span = model.cols + 16, t0 = 0, last = -99;
+    requestAnimationFrame(function frame(t) {
+      if (!t0) t0 = t;
+      var phase = ((t - t0) / 3400 % 1) * span - 8;
+      if (phase - last > 0.12 || phase < last) {
+        last = phase;
+        o.wave = { phase: phase, spread: 1.7 };
+        paint(cv, model, o);
       }
-      if (Math.random() < 0.11) {
-        o.dip = 0.45; paint(cv, model, o);
-        setTimeout(function () { o.dip = 1; paint(cv, model, o); }, 55 + Math.random() * 60);
-      } else {
-        o.dip = 1; paint(cv, model, o);
-      }
-      setTimeout(tick, 160 + Math.random() * 420);
-    })();
+      requestAnimationFrame(frame);
+    });
   }
 
   var BLUE = "#45B6E8";
@@ -762,7 +805,7 @@
       heroOpts.progress = 1 - Math.pow(1 - p, 3);
       paint(hero, MO, heroOpts);
       if (p < 1) requestAnimationFrame(step);
-      else flicker(hero, MO, heroOpts);
+      else flow(hero, MO, heroOpts);
     });
   }
   paint(document.getElementById("boardMark"), MO, { pitch: 7, color: "#38C2FF" });
