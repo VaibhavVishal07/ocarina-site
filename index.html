@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Ocarina is a macOS terminal for people whose first terminal is this one.">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Ocarina">
+<meta property="og:description" content="A macOS terminal for people whose first terminal is this one.">
+<meta property="og:image" content="assets/board.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🎵</text></svg>">
+<style>
+  html { background: #0A0D12; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+</style>
+<title>Ocarina — your first terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+
+<style>
+  /* Deliberately one visual world: every theme this app ships is dark, and a
+     light landing page would misrepresent the product. Nothing inherits from
+     the host — the ground and every colour are painted here. */
+  :root {
+    --ground:   #0A0D12;
+    --panel:    #12171E;
+    --raise:    #161C25;
+    --rule:     rgba(198, 222, 245, 0.10);
+    --rule-lit: rgba(56, 194, 255, 0.28);
+    --lit:      #38C2FF;
+    --dim:      #216B95;
+    --amber:    #FFB838;
+    --text:     #F2F5F8;
+    --muted:    #A8B2BE;
+    --faint:    #77818D;
+    --measure:  62ch;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  .col  { max-width: var(--measure); }
+
+  /* ---------- shared type ---------- */
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-family: "Geist Mono", ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lit);
+    margin: 0 0 22px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--lit);
+    box-shadow: 0 0 8px rgba(56, 194, 255, 0.9);
+    flex: none;
+  }
+
+  h1 {
+    font-size: clamp(44px, 7.2vw, 78px);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.03;
+    margin: 0 0 22px;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-size: clamp(26px, 3.4vw, 34px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    margin: 0 0 8px;
+  }
+
+  p { margin: 0 0 18px; color: var(--muted); }
+  p.lead { font-size: 20px; line-height: 1.55; color: var(--muted); }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 500; }
+
+  kbd {
+    font-family: "Geist Mono", monospace;
+    font-size: 0.82em;
+    color: var(--text);
+    background: var(--raise);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+
+  code {
+    font-family: "Geist Mono", monospace;
+    font-size: 0.86em;
+    color: var(--lit);
+  }
+
+  section { padding: 82px 0; border-top: 1px solid var(--rule); }
+  section:first-of-type { border-top: 0; }
+
+  /* ---------- hero ---------- */
+
+  header.hero { padding: 104px 0 78px; text-align: center; }
+  header.hero .eyebrow { justify-content: center; }
+  header.hero .col { margin: 0 auto; }
+
+  .rule-quote {
+    margin: 46px auto 0;
+    max-width: 54ch;
+    padding: 20px 26px;
+    border-left: 2px solid var(--lit);
+    background: linear-gradient(90deg, rgba(56, 194, 255, 0.07), transparent 70%);
+    text-align: left;
+  }
+  .rule-quote p {
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- figures ---------- */
+
+  figure { margin: 0; }
+
+  .shot {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 30px 70px -30px rgba(0, 0, 0, 0.9);
+  }
+  .shot img { display: block; width: 100%; height: auto; }
+
+  /* The one overt retro flourish, and only on the hero: the board is a
+     lit-dot display, so it gets the scanlines a display would have. */
+  .shot.scan::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.22) 0 1px,
+      transparent 1px 3px
+    );
+    opacity: 0.5;
+  }
+  .shot.glow { box-shadow: 0 30px 90px -34px rgba(56, 194, 255, 0.35); }
+
+  figcaption {
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--faint);
+    margin-top: 14px;
+    max-width: 58ch;
+  }
+  .hero-figure { margin-top: 52px; }
+  .hero-figure figcaption { margin-left: auto; margin-right: auto; text-align: center; }
+
+  /* ---------- feature blocks ---------- */
+
+  .feature { display: grid; gap: 34px; }
+  .feature + .feature { margin-top: 72px; }
+  .feature .body { max-width: var(--measure); }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    align-items: center;
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    color: var(--faint);
+    margin-top: 14px;
+  }
+
+  /* ---------- the four questions ---------- */
+
+  .qa { display: grid; gap: 2px; }
+  .qa-item { padding: 26px 0; border-top: 1px solid var(--rule); }
+  .qa-item:first-child { border-top: 0; padding-top: 0; }
+  .qa-item h3 { color: var(--lit); font-size: 15px; letter-spacing: 0.01em; margin-bottom: 12px; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+  .split > div { padding: 24px 26px; }
+  .split > div + div { border-left: 1px solid var(--rule); }
+  .split h4 {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    color: var(--faint);
+  }
+  .split.ours h4 { color: var(--lit); }
+  .split ul { margin: 0; padding-left: 18px; }
+  .split li { color: var(--muted); margin-bottom: 9px; font-size: 15.5px; }
+  .split li:last-child { margin-bottom: 0; }
+  @media (max-width: 700px) {
+    .split { grid-template-columns: 1fr; }
+    .split > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+  }
+
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .pair { grid-template-columns: 1fr; } }
+
+  .points { display: grid; gap: 26px; margin-top: 34px; }
+  @media (min-width: 760px) { .points { grid-template-columns: 1fr 1fr; gap: 34px 44px; } }
+  .points h3 { font-size: 16.5px; }
+  .points p { font-size: 15.5px; margin: 0; }
+
+  /* ---------- footer ---------- */
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 44px 0 64px;
+    font-family: "Geist Mono", monospace;
+    font-size: 12.5px;
+    color: var(--faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    align-items: baseline;
+  }
+  footer a { color: var(--lit); text-decoration: none; border-bottom: 1px solid var(--rule-lit); }
+  footer a:hover { border-bottom-color: var(--lit); }
+  a:focus-visible { outline: 2px solid var(--lit); outline-offset: 3px; border-radius: 2px; }
+
+  .prompt { color: var(--dim); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="col">
+      <p class="eyebrow">A terminal for macOS</p>
+      <h1>Your first terminal</h1>
+      <p class="lead">
+        Every other terminal assumes you already know the answer. Ocarina is
+        built for the moment before that — for people who came from a web
+        interface, opened Terminal once, and closed it again.
+      </p>
+      <div class="rule-quote">
+        <p>The terminal should never require you to already know the answer.</p>
+      </div>
+    </div>
+
+    <figure class="hero-figure">
+      <div class="shot scan glow">
+        <img src="assets/board.jpg" alt="Ocarina with no tabs open, showing a dot-matrix departure board reading OCARINA — SONG OF A NEW TERMINAL, with New Terminal and keyboard shortcuts below it." width="1240">
+      </div>
+      <figcaption>
+        The screen with nothing open. A departures board, because a column of
+        terminals is a list of things in progress.
+      </figcaption>
+    </figure>
+  </header>
+
+  <section>
+    <div class="col">
+      <p class="eyebrow">What this is about</p>
+      <h2>A different product, not a smaller one.</h2>
+      <p>
+        A developer terminal earns its keep with power: panes, plugins, profiles,
+        a config language. All of it assumes you know what to type, what broke,
+        and what to install. For someone whose first terminal is this one, every
+        one of those assumptions fails at the same moment — and the session ends.
+      </p>
+      <p>
+        Ocarina removes the need to know rather than adding another way to be
+        expert. It carries the commands you would otherwise go and find in a
+        browser. It reads what you asked your coding agent and keeps the list.
+        When something fails, it offers to explain it. And it is opinionated
+        about staying small: no plugin system, no config language, nothing to
+        learn before you can open it.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Inside</p>
+    <h2 class="col">Three things you can see.</h2>
+
+    <div class="feature">
+      <div class="body">
+        <h3>Install something without opening a browser</h3>
+        <p>
+          The old path was: find the docs, copy a line you cannot read, come
+          back, paste, hope. Quick Actions carries those commands — Claude Code,
+          Gemini CLI, Codex, Homebrew, Node — and <strong>nothing in it runs
+          itself</strong>. Choosing types the command at your prompt and says
+          what it does. You press Return.
+        </p>
+        <p>
+          That is the whole point. <code>curl … | bash</code> is exactly the
+          pattern a beginner should never learn to trust on sight, and seeing
+          the command each time is how you stop needing the drawer at all.
+        </p>
+        <div class="meta"><span><kbd>⌘K</kbd> to open</span><span>Every recipe carries the docs it was checked against, and the date</span></div>
+      </div>
+      <figure>
+        <div class="shot"><img src="assets/quick-actions.jpg" alt="The Quick Actions drawer, listing Claude Code, Gemini CLI and Codex CLI under Install an AI coding agent, and Homebrew, Node and Git below." width="1240"></div>
+      </figure>
+    </div>
+
+    <div class="feature">
+      <div class="body">
+        <h3>Remember what you asked the agent</h3>
+        <p>
+          Give an agent five things across twenty minutes and you will not
+          remember which it actually got to. The Tasks panel reads the
+          transcript your agent already writes and keeps the list — Claude
+          names each line, so it reads like a to-do rather than a log.
+        </p>
+        <p>
+          It says <strong>finished</strong>, never “done”. The only signal
+          available is that the agent stopped talking, which is not the same as
+          the work being right, and the wording should not claim more than the
+          data supports.
+        </p>
+        <div class="meta"><span><kbd>⌘J</kbd> or the tab on the edge</span><span>Opens itself the first time a tab has any</span></div>
+      </div>
+      <figure>
+        <div class="shot"><img src="assets/tasks.jpg" alt="Ocarina with the Tasks panel open on the right, listing short task titles with ticks against the finished ones." width="1240"></div>
+      </figure>
+    </div>
+
+    <div class="feature">
+      <div class="body">
+        <h3>Fourteen themes, and none of them can hide an error</h3>
+        <p>
+          Colour, texture and type all move together: a faint motif behind the
+          panels — cherry blossoms, brushed metal, falling glyphs — and Geist
+          throughout, bundled rather than borrowed from your system.
+        </p>
+        <p>
+          Every theme is checked against a contrast floor before it is offered.
+          A pretty palette that makes error text unreadable is not a cosmetic
+          problem for someone who cannot yet read errors — it is the end of the
+          session, so a theme that fails simply does not appear.
+        </p>
+        <div class="meta"><span>All dark</span><span>Drop your own in <code>~/.ocarina/themes</code></span></div>
+      </div>
+      <figure>
+        <div class="shot"><img src="assets/themes.jpg" alt="The theme picker, a grid of fourteen dark themes each shown as its terminal background with its eight base colours." width="1240"></div>
+        <div class="pair" style="margin-top: 18px;">
+          <div class="shot"><img src="assets/theme-sakura.jpg" alt="Ocarina in the Sakura theme: dark plum with pink accents and faint cherry blossoms in the sidebar." width="620"></div>
+          <div class="shot"><img src="assets/theme-matrix.jpg" alt="Ocarina in the Matrix theme: near-black with green text and falling glyph trails." width="620"></div>
+        </div>
+        <figcaption>Sakura and Matrix. The motif is drawn, not shipped as artwork, so it takes each theme's own colour.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">What is the separation?</p>
+    <h2 class="col">Other terminals add power. This one removes the need to know.</h2>
+    <div class="split ours" style="margin-top: 28px;">
+      <div>
+        <h4>Every other terminal</h4>
+        <ul>
+          <li>Twenty tabs all named <code>zsh</code></li>
+          <li>A config file you have to learn first</li>
+          <li>An error is a wall of text and a dead end</li>
+          <li>Pasting from a website is on you</li>
+          <li>Installing anything starts in a browser</li>
+          <li>Features aimed at people who already know</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ocarina</h4>
+        <ul>
+          <li>Tabs named for what they are <em>doing</em></li>
+          <li>Nothing to configure before it is useful</li>
+          <li>A failure offers to explain itself</li>
+          <li>A risky paste is described before it lands</li>
+          <li>The commands are already here</li>
+          <li>Built for the first hour, not the thousandth</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">What makes it great?</p>
+    <h2 class="col">The details are all the same detail.</h2>
+    <p class="col">
+      Each of these is the same decision made again: assume the person reading
+      cannot yet recover from a mistake, and design so they do not have to.
+    </p>
+
+    <div class="points">
+      <div>
+        <h3>Nothing runs itself</h3>
+        <p>Every path that puts a command in front of you types it and stops. The last act is always yours.</p>
+      </div>
+      <div>
+        <h3>Legibility is enforced, not hoped for</h3>
+        <p>All sixteen ANSI colours in every theme are contrast-checked. A theme that fails is listed as broken rather than quietly shipped.</p>
+      </div>
+      <div>
+        <h3>It says what it can support</h3>
+        <p>“Finished”, not “done”. A refused keep-awake shows as refused. The interface does not claim more than it knows.</p>
+      </div>
+      <div>
+        <h3>A paste is read before it lands</h3>
+        <p>Ordinary commands paste silently — a terminal that interrupts everything is one you learn to click through. Only multi-command or destructive text stops for a sentence.</p>
+      </div>
+      <div>
+        <h3>It knows when work is happening</h3>
+        <p>A dot per tab, driven by the shell itself, so a silent <code>sleep 30</code> still reads as busy and a failure reads as red.</p>
+      </div>
+      <div>
+        <h3>Small on purpose</h3>
+        <p>No plugin system, no scripting layer, no profile format. The whole app is one window you can describe in a sentence.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Who is it for?</p>
+    <div class="qa col">
+      <div class="qa-item">
+        <h3>People building with agents, not with tooling</h3>
+        <p>
+          You describe what you want, an agent writes it, and the terminal is
+          simply where that happens. You do not want to become good at the
+          terminal — you want it to stop being the obstacle.
+        </p>
+      </div>
+      <div class="qa-item">
+        <h3>Anyone whose first terminal is this one</h3>
+        <p>
+          No technical background assumed. If you have never installed anything
+          from a command line, the first thing you will need is the thing
+          <kbd>⌘K</kbd> already has.
+        </p>
+      </div>
+      <div class="qa-item">
+        <h3>Not for everyone, and that is the point</h3>
+        <p>
+          If you want tmux integration, split panes, a plugin ecosystem and a
+          config language, this is the wrong terminal and it always will be.
+          Those are good features. They are also the bulk that sent this user
+          away in the first place.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="prompt">%</span>
+    <span>Ocarina · a macOS terminal, written in Swift</span>
+    <span>macOS 14+</span>
+    <span><a href="https://github.com/VaibhavVishal07/Ocarina-Terminal">github.com/VaibhavVishal07/Ocarina-Terminal</a></span>
+    <span>In active development</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
