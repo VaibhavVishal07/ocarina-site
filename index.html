@@ -47,8 +47,11 @@
     --r:16px; --r-sm:10px;
     --mono:"Geist Mono",ui-monospace,Menlo,monospace;
     /* One rail for the whole page. Every block on the page — the nav pill,
-       every section, the footer — is this wide and starts at this x. */
-    --rail:1180px; --gutter:30px;
+       every section, the footer — is this wide and starts at this x. The
+       hero window is the one exception, on --rail-wide: it is a picture of
+       the product rather than a line of text, so the width that stops text
+       being readable does not apply to it. */
+    --rail:1180px; --rail-wide:1420px; --gutter:30px;
     /* One vertical step. Every band on the page pays it top and bottom, so
        the space between any two of them is the same 2 x --sect. */
     --sect:96px;
@@ -87,6 +90,12 @@
 
   .wrap { width:100%; max-width:calc(var(--rail) + var(--gutter) * 2);
           margin:0 auto; padding:0 var(--gutter); }
+  /* The hero window runs on a wider rail than the words do. A line of text
+     has a width past which it stops being readable and the rail is set to
+     that; a picture of the product has no such limit, and the one thing the
+     fold is selling reads bigger for being let past it. Everything else on
+     the page, this window's own copy included, stays on --rail. */
+  .wrap.wide { max-width:calc(var(--rail-wide) + var(--gutter) * 2); }
   /* One rhythm: --sect above and below every band, 14 under a heading,
      40 before the visual it introduces, 26 after it. */
   section { padding:var(--sect) 0; }
@@ -498,11 +507,11 @@
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
   .zoom { position:absolute; inset:0; transform-origin:50% 50%;
           transition:transform 1s cubic-bezier(.5,.02,.2,1); }
-  .hero-stage { margin-top:32px; }
+  .hero-stage { margin-top:12px; }
   @media (max-width:760px) {
     /* crop to the tab column instead of shrinking the whole window */
     #heroStage { aspect-ratio:620/634; }
-    .hero-stage { margin-top:18px; }
+    .hero-stage { margin-top:4px; }
   }
 
   /* ── the window standing up ───────────────────────────────
@@ -521,17 +530,21 @@
      fit in.
 
      The lift is what keeps the angle from costing the gap. Leaning a card
-     back around a low pivot drops its top edge — 160px of it at the full
-     angle — so a steeper lean opens a hole between the copy and the window
-     even after the margin above it comes down. --lift takes most of that
-     back while the card is leaning and nothing at all once it is upright,
-     where the margin alone sets the gap. */
-  .tilt { transform-origin:50% 86%; --lean:30deg; --depth:1400px; --grow:.03;
-          --lift:-63px; }
+     back around a low pivot drops its top edge, and the drop grows with
+     both the angle and the card: at 38 degrees on the wide rail it is
+     205px at the full lean. So every time the window gets steeper or
+     bigger it opens a hole between the copy and itself, and closing that
+     by margin alone would want a negative one — the margin is all there is
+     once the card is upright and the transform is identity. --lift takes
+     most of the drop back while the card leans and nothing at all once it
+     is standing, so the two can be set independently: --lift for the gap
+     you see on the way in, margin-top for the gap you are left with. */
+  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:1400px; --grow:.03;
+          --lift:-183px; }
   @media (max-width:760px) {
     /* The same angle on a phone-width card is read from much closer and
        reads as a fold rather than a lean. */
-    .tilt { --lean:20deg; --depth:900px; --grow:.02; --lift:-20px; }
+    .tilt { --lean:26deg; --depth:900px; --grow:.02; --lift:-50px; }
   }
   @media (prefers-reduced-motion:no-preference) {
     @supports (animation-timeline:view()) {
@@ -848,7 +861,7 @@
     <p class="under">Free and open source &nbsp;&middot;&nbsp; macOS 14+</p>
   </div>
 
-  <div class="wrap">
+  <div class="wrap wide">
     <!-- Fourteen dots under the window they repaint. A section further down
          had to say "and the whole page follows"; here you press one and the
          page has already followed, which is a shorter way of saying it. -->
