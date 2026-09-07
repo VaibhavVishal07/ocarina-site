@@ -507,12 +507,11 @@
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
   .zoom { position:absolute; inset:0; transform-origin:50% 50%;
           transition:transform 1s cubic-bezier(.5,.02,.2,1); }
-  /* A MacBook Pro, drawn the way the rest of this page draws things: no
-     screenshot, just the boxes it is actually made of. Three of them, and
-     each is a real part rather than a decoration — the aluminium rim of the
-     lid, the black bezel inside it, and the front edge of the base under
-     the hinge. What makes it read as this machine and not a tablet is the
-     notch and the thinness: a tablet's bezel is even the whole way round.
+  /* A MacBook Pro's lid, drawn the way the rest of this page draws things:
+     no screenshot, just the boxes it is actually made of — the aluminium rim,
+     the black bezel inside it, and the notch hanging off that. What makes it
+     read as this machine and not a tablet is the notch and the thinness: a
+     tablet's bezel is even the whole way round.
 
      Boxes and not borders. .zoom is positioned to inset:0, which resolves
      against the padding box, so a border on the stage subtracts from the
@@ -522,11 +521,25 @@
      own 1.861, and the cover fit answered it by cutting 14px off the bottom.
      Padding on wrappers instead, and the ratio is the screen's own again.
 
+     A long lens. At a depth about equal to the device's own width the
+     foreshortening is a fisheye: the top edge pinches hard and the thing
+     stops reading as a machine and starts reading as a card someone has
+     tipped over. Product photographs are taken from far away with a long
+     lens, and 3000px is that — the lean is the same angle, it just no
+     longer keystones.
+
+     The lid, and only the lid. The lean tips the top edge away, which means
+     the view is from above, which means a real laptop would show its keyboard
+     deck foreshortened below the hinge. A deck drawn flat in the lid's own
+     plane rotates with the lid and hinges nowhere — which is exactly what
+     made it look like a cutout rather than a laptop. Either it is a true
+     second plane on a hinge or it is not there; this is not there.
+
      Anodised rather than painted: one raking gradient across the metal, a
      lit top edge, and a machined line around the outside. Metal is only ever
      the light on it. */
   .device { --rim:3px; --bez:9px; --chin:13px; --notchw:150px; --notchh:18px;
-            --baseh:15px; --lidr:16px;
+            --lidr:16px;
             margin-top:12px; }
   .lid { padding:var(--rim); border-radius:var(--lidr);
          background:linear-gradient(150deg,
@@ -553,16 +566,6 @@
                       sides that are not buried in the bezel. */
                    background:#05070A;
                    box-shadow:0 0 0 1px rgba(255,255,255,.055); }
-  /* The front edge of the base, seen under the hinge: the same metal, a
-     hair narrower, and the finger groove bitten out of the middle of it. */
-  .base { position:relative; height:var(--baseh); margin:0 auto;
-          width:99%; border-radius:0 0 11px 11px;
-          background:linear-gradient(#2A2F37 0%, #191D23 38%, #0F1216 100%);
-          box-shadow:inset 0 1px 0 rgba(255,255,255,.13),
-                     0 22px 34px -22px rgba(0,0,0,.9); }
-  .base::after { content:""; position:absolute; top:0; left:50%; translate:-50% 0;
-                 width:11%; height:58%; border-radius:0 0 9px 9px;
-                 background:linear-gradient(#05070A,#12161C); }
   .hero-stage { border-radius:9px; border-color:rgba(0,0,0,.55);
                 box-shadow:inset 0 0 0 1px rgba(0,0,0,.55); }
   @media (max-width:760px) {
@@ -571,7 +574,7 @@
     /* the same machine, held closer: every part of the frame comes down
        with the screen, or a phone gets a laptop with a 9px bezel on it. */
     .device { --rim:2px; --bez:5px; --chin:8px; --notchw:84px; --notchh:11px;
-              --baseh:9px; --lidr:10px;
+              --lidr:10px;
               margin-top:4px; }
     .hero-stage { border-radius:6px; }
   }
@@ -605,7 +608,7 @@
      much on a 1024 and pulls the window over the line above it. A
      percentage translate resolves against that same height and holds at
      every size. */
-  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:1400px; --zoom:1.045;
+  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:3000px; --zoom:1.045;
           /* The box is the resting size and the lean scales up out of it, so
              the window fills the rail on the way in and settles to 1/--zoom
              of it, smaller by the time it is standing. Sized the other way
@@ -626,13 +629,13 @@
              the gutter: at 100 it ate the gutter exactly on a 1366 and the
              window sat on the viewport edge. */
           width:calc(95% / var(--zoom)); margin-inline:auto;
-          --lift:-28%; }
+          --lift:-18%; }
   @media (max-width:760px) {
     /* The same angle on a phone-width card is read from much closer and
        reads as a fold rather than a lean. */
     /* A phone-width window has nothing spare to shrink and stay readable.
        The lean is the effect here; the shrink is only a hint of one. */
-    .tilt { --lean:26deg; --depth:900px; --zoom:1.08; --lift:-6%; }
+    .tilt { --lean:26deg; --depth:1800px; --zoom:1.08; --lift:-4%; }
   }
   @media (prefers-reduced-motion:no-preference) {
     @supports (animation-timeline:view()) {
@@ -1137,7 +1140,6 @@
             </div>
           </div>
         </div>
-        <div class="base"></div>
       </div>
     </div>
     <!-- Fourteen dots under the window they repaint. This was a section of
