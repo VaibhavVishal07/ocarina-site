@@ -498,11 +498,11 @@
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
   .zoom { position:absolute; inset:0; transform-origin:50% 50%;
           transition:transform 1s cubic-bezier(.5,.02,.2,1); }
-  .hero-stage { margin-top:52px; }
+  .hero-stage { margin-top:32px; }
   @media (max-width:760px) {
     /* crop to the tab column instead of shrinking the whole window */
     #heroStage { aspect-ratio:620/634; }
-    .hero-stage { margin-top:38px; }
+    .hero-stage { margin-top:18px; }
   }
 
   /* ── the window standing up ───────────────────────────────
@@ -510,18 +510,28 @@
      it runs backwards when you scroll back up, and it is wherever you left
      it if you land on the page halfway down rather than replaying at you.
 
-     Pivot below the middle, not at it. Pivoting at the middle swings the
-     near edge out past the rail, where the hero's own overflow cuts the
-     bottom corners off on any window only as wide as the content; at 78%
-     nearly all of the card is receding and the little that comes forward
-     stays inside the gutter. Same reason it grows into place rather than
-     settling down into it: anything over scale 1 is wider than the rail it
-     has to fit in. */
-  .tilt { transform-origin:50% 78%; --lean:20deg; --depth:1400px; --grow:.03; }
+     Pivot low, near the bottom edge. Pivoting at the middle swings the near
+     edge out past the rail, where the hero's own clip cuts the bottom
+     corners off on any window only as wide as the content. Down at 86%
+     almost the whole card is receding and only a shallow strip comes
+     forward, which is what pays for the angle: the lean reads as steeper
+     while the near edge sits further inside the gutter than a smaller angle
+     pivoted higher up. Same reason it grows into place rather than settling
+     down into it: anything over scale 1 is wider than the rail it has to
+     fit in.
+
+     The lift is what keeps the angle from costing the gap. Leaning a card
+     back around a low pivot drops its top edge — 160px of it at the full
+     angle — so a steeper lean opens a hole between the copy and the window
+     even after the margin above it comes down. --lift takes most of that
+     back while the card is leaning and nothing at all once it is upright,
+     where the margin alone sets the gap. */
+  .tilt { transform-origin:50% 86%; --lean:30deg; --depth:1400px; --grow:.03;
+          --lift:-63px; }
   @media (max-width:760px) {
     /* The same angle on a phone-width card is read from much closer and
        reads as a fold rather than a lean. */
-    .tilt { --lean:13deg; --depth:900px; --grow:.02; }
+    .tilt { --lean:20deg; --depth:900px; --grow:.02; --lift:-20px; }
   }
   @media (prefers-reduced-motion:no-preference) {
     @supports (animation-timeline:view()) {
@@ -537,6 +547,7 @@
        support query above comes back false. */
     html.standjs .tilt {
       transform:perspective(var(--depth))
+                translateY(calc((1 - var(--stand,1)) * var(--lift)))
                 rotateX(calc((1 - var(--stand,1)) * var(--lean)))
                 scale(calc(1 - (1 - var(--stand,1)) * var(--grow)));
     }
@@ -544,8 +555,10 @@
   /* Outside the motion query so it is never the reason a rule is dropped;
      nothing references it unless the block above armed the animation. */
   @keyframes standup {
-    from { transform:perspective(var(--depth)) rotateX(var(--lean)) scale(calc(1 - var(--grow))); }
-    to   { transform:perspective(var(--depth)) rotateX(0deg) scale(1); }
+    from { transform:perspective(var(--depth)) translateY(var(--lift))
+                     rotateX(var(--lean)) scale(calc(1 - var(--grow))); }
+    to   { transform:perspective(var(--depth)) translateY(0px)
+                     rotateX(0deg) scale(1); }
   }
 </style>
 <style>
