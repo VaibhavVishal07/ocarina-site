@@ -507,11 +507,26 @@
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
   .zoom { position:absolute; inset:0; transform-origin:50% 50%;
           transition:transform 1s cubic-bezier(.5,.02,.2,1); }
-  .hero-stage { margin-top:12px; }
+  /* An iPad, more or less: a thick near-black bezel, corners rounded the
+     way a device is rather than the way a card is, and a hairline around
+     the outside where the machined edge catches the light.
+
+     A border and not padding. .zoom is absolutely positioned to inset:0,
+     which resolves against the padding box, so padding would leave the
+     screen lying under the bezel rather than inside it; a border moves that
+     box in. The stage already clips to it, and a browser rounds the inner
+     corner to the outer radius less the border, which is the 25px the
+     screen wants without being told. */
+  .hero-stage { margin-top:12px;
+                border:15px solid #14161B; border-radius:40px;
+                background:#14161B;
+                box-shadow:0 0 0 1px rgba(255,255,255,.10),
+                           0 60px 120px -50px rgba(0,0,0,.95); }
   @media (max-width:760px) {
     /* crop to the tab column instead of shrinking the whole window */
     #heroStage { aspect-ratio:620/634; }
-    .hero-stage { margin-top:4px; }
+    /* the same device, held closer */
+    .hero-stage { margin-top:4px; border-width:9px; border-radius:26px; }
   }
 
   /* ── the window standing up ───────────────────────────────
@@ -543,25 +558,33 @@
      much on a 1024 and pulls the window over the line above it. A
      percentage translate resolves against that same height and holds at
      every size. */
-  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:1400px; --zoom:1.2;
+  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:1400px; --zoom:1.045;
           /* The box is the resting size and the lean scales up out of it, so
              the window fills the rail on the way in and settles to 1/--zoom
-             of it — a fifth smaller by the time it is standing. Sized the
-             other way round, full rail and scaled down at rest, the stage
-             keeps its full height under a window that no longer fills it and
-             the swatches sit a fifth of a window adrift.
+             of it, smaller by the time it is standing. Sized the other way
+             round, full rail and scaled down at rest, the stage keeps its
+             full height under a window that no longer fills it and the
+             swatches sit that far adrift.
+
+             --zoom is also what the resting window can grow into. The lean
+             already reaches within 35px of the viewport on a 1440, so the
+             rail cannot go wider there; the only room left is between the
+             resting window and that lean, and taking it means less of a
+             difference between the two. At 1.045 the window at rest is 15%
+             bigger and shrinks about 8% on the way in. It was 1.2, and
+             shrank 20% into a window 15% smaller.
 
              95 rather than 100 because the near edge of a leaning card
              projects about 5% wider than the card, and that 5% comes out of
              the gutter: at 100 it ate the gutter exactly on a 1366 and the
              window sat on the viewport edge. */
           width:calc(95% / var(--zoom)); margin-inline:auto;
-          --lift:-16%; }
+          --lift:-28%; }
   @media (max-width:760px) {
     /* The same angle on a phone-width card is read from much closer and
        reads as a fold rather than a lean. */
-    /* A fifth off a phone-width window is a window you cannot read. The
-       lean is the effect here; the shrink is only a hint of one. */
+    /* A phone-width window has nothing spare to shrink and stay readable.
+       The lean is the effect here; the shrink is only a hint of one. */
     .tilt { --lean:26deg; --depth:900px; --zoom:1.08; --lift:-6%; }
   }
   @media (prefers-reduced-motion:no-preference) {
