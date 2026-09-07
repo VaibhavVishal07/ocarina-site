@@ -173,15 +173,17 @@
   @media (prefers-reduced-motion:reduce) { .navfold nav .bar { transform:none; } }
 
   /* ── hero ─────────────────────────────────────────────── */
-  /* clip, not hidden. Both cut the glow and the grid off at the same edge,
-     but `hidden` makes the hero a scroll container, and a scroll container
-     is what a view() timeline inside it then measures against — the window
-     would be permanently, motionlessly "in view" of a box that never
-     scrolls, and would never lean. `clip` clips without that. */
+  /* clip, not hidden. Both cut the grid off at the same edge, but `hidden`
+     makes the hero a scroll container, and a scroll container is what a
+     view() timeline inside it then measures against — the window would be
+     permanently, motionlessly "in view" of a box that never scrolls, and
+     would never lean. `clip` clips without that. */
+  /* There was a blurred wash hung 190px above this box as well. The hero
+     clips, so it was cut off square at the top edge rather than fading:
+     a seam straight across the grid, with the dots above it a shade
+     muddier than the dots below. The fold is already lit from behind by
+     .aura, which is not clipped by anything and does not need to be. */
   header.hero { position:relative; padding:56px 0 var(--sect); overflow:clip; }
-  header.hero::before { content:""; position:absolute; left:50%; top:-190px; width:1400px; height:760px;
-    transform:translateX(-50%); pointer-events:none; filter:blur(40px);
-    background:radial-gradient(42% 46% at 50% 46%,color-mix(in srgb,var(--accent) 17%,transparent),transparent 70%); }
   /* Flickering grid, hung off the very top edge of the page and faded out
      by a quarter of the way down the fold, so the headline sits on clean
      ground. Sized in vh so the falloff tracks the fold, not the header,
