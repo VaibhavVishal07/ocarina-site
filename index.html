@@ -51,7 +51,7 @@
        hero window is the one exception, on --rail-wide: it is a picture of
        the product rather than a line of text, so the width that stops text
        being readable does not apply to it. */
-    --rail:1180px; --rail-wide:1420px; --gutter:30px;
+    --rail:1180px; --rail-wide:1400px; --gutter:30px;
     /* One vertical step. Every band on the page pays it top and bottom, so
        the space between any two of them is the same 2 x --sect. */
     --sect:96px;
@@ -525,34 +525,56 @@
      almost the whole card is receding and only a shallow strip comes
      forward, which is what pays for the angle: the lean reads as steeper
      while the near edge sits further inside the gutter than a smaller angle
-     pivoted higher up. Same reason it grows into place rather than settling
-     down into it: anything over scale 1 is wider than the rail it has to
-     fit in.
+     pivoted higher up.
 
      The lift is what keeps the angle from costing the gap. Leaning a card
      back around a low pivot drops its top edge, and the drop grows with
-     both the angle and the card: at 38 degrees on the wide rail it is
-     205px at the full lean. So every time the window gets steeper or
+     both the angle and the card: at 38 degrees it is 128px on a 1440, of
+     which the lift gives back 74. So every time the window gets steeper or
      bigger it opens a hole between the copy and itself, and closing that
      by margin alone would want a negative one — the margin is all there is
      once the card is upright and the transform is identity. --lift takes
      most of the drop back while the card leans and nothing at all once it
      is standing, so the two can be set independently: --lift for the gap
-     you see on the way in, margin-top for the gap you are left with. */
-  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:1400px; --grow:.03;
-          --lift:-183px; }
+     you see on the way in, margin-top for the gap you are left with.
+
+     In percent, not pixels: what it is cancelling is a fraction of the
+     window's own height, so a figure that suits a 1440 is half again too
+     much on a 1024 and pulls the window over the line above it. A
+     percentage translate resolves against that same height and holds at
+     every size. */
+  .tilt { transform-origin:50% 86%; --lean:38deg; --depth:1400px; --zoom:1.2;
+          /* The box is the resting size and the lean scales up out of it, so
+             the window fills the rail on the way in and settles to 1/--zoom
+             of it — a fifth smaller by the time it is standing. Sized the
+             other way round, full rail and scaled down at rest, the stage
+             keeps its full height under a window that no longer fills it and
+             the swatches sit a fifth of a window adrift.
+
+             95 rather than 100 because the near edge of a leaning card
+             projects about 5% wider than the card, and that 5% comes out of
+             the gutter: at 100 it ate the gutter exactly on a 1366 and the
+             window sat on the viewport edge. */
+          width:calc(95% / var(--zoom)); margin-inline:auto;
+          --lift:-16%; }
   @media (max-width:760px) {
     /* The same angle on a phone-width card is read from much closer and
        reads as a fold rather than a lean. */
-    .tilt { --lean:26deg; --depth:900px; --grow:.02; --lift:-50px; }
+    /* A fifth off a phone-width window is a window you cannot read. The
+       lean is the effect here; the shrink is only a hint of one. */
+    .tilt { --lean:26deg; --depth:900px; --zoom:1.08; --lift:-6%; }
   }
   @media (prefers-reduced-motion:no-preference) {
     @supports (animation-timeline:view()) {
       .tilt { animation:standup linear both; animation-timeline:view();
-              /* from its top edge clearing the bottom of the window until
-                 it has all but finished coming in, so it is upright by the
-                 time you are actually looking at it */
-              animation-range:entry 0% entry 90%; }
+              /* Starts where the window already sits on a screen of average
+                 height, not where it first breaks the bottom edge. Nearly
+                 half the old range was spent before the page was even
+                 scrolled, so the shrink you actually saw was half the one
+                 that was set; and the frames before it were a window scaled
+                 up past the viewport, which only ever showed on a short one.
+                 Ends as it finishes coming in. */
+              animation-range:entry 45% entry 100%; }
     }
     /* Where that is missing — every Safari before 26, and Firefox — the
        same range is measured from a scroll listener and handed back as a
@@ -560,17 +582,32 @@
        support query above comes back false. */
     html.standjs .tilt {
       transform:perspective(var(--depth))
-                translateY(calc((1 - var(--stand,1)) * var(--lift)))
+                translateY(calc((1 - var(--stand,1)) * (1 - var(--stand,1))
+                                * var(--lift)))
                 rotateX(calc((1 - var(--stand,1)) * var(--lean)))
-                scale(calc(1 - (1 - var(--stand,1)) * var(--grow)));
+                scale(calc(1 + (1 - var(--stand,1)) * (var(--zoom) - 1)));
     }
   }
   /* Outside the motion query so it is never the reason a rule is dropped;
      nothing references it unless the block above armed the animation. */
+  /* The lean and the zoom run straight through; the lift does not, and the
+     stops are here for it alone. What the lean costs vertically is the top
+     edge receding, which goes as 1-cos of the angle still to go — near
+     enough to the square of it over this range. A lift straight from full
+     to nothing therefore overtakes the drop it is meant to cancel somewhere
+     in the middle and hauls the window up into the copy above it; that read
+     as a 2px gap on most windows and an overlap on a 1024. Four segments of
+     that square keep it underneath the drop the whole way down. */
   @keyframes standup {
-    from { transform:perspective(var(--depth)) translateY(var(--lift))
-                     rotateX(var(--lean)) scale(calc(1 - var(--grow))); }
-    to   { transform:perspective(var(--depth)) translateY(0px)
+    0%   { transform:perspective(var(--depth)) translateY(var(--lift))
+                     rotateX(var(--lean)) scale(var(--zoom)); }
+    25%  { transform:perspective(var(--depth)) translateY(calc(var(--lift) * .5625))
+                     rotateX(calc(var(--lean) * .75)) scale(calc(1 + (var(--zoom) - 1) * .75)); }
+    50%  { transform:perspective(var(--depth)) translateY(calc(var(--lift) * .25))
+                     rotateX(calc(var(--lean) * .5))  scale(calc(1 + (var(--zoom) - 1) * .5)); }
+    75%  { transform:perspective(var(--depth)) translateY(calc(var(--lift) * .0625))
+                     rotateX(calc(var(--lean) * .25)) scale(calc(1 + (var(--zoom) - 1) * .25)); }
+    100% { transform:perspective(var(--depth)) translateY(0px)
                      rotateX(0deg) scale(1); }
   }
 </style>
@@ -1451,9 +1488,11 @@
       if (!h) return;
       var y = 0;
       for (var n = stand; n; n = n.offsetParent) y += n.offsetTop;
-      // `entry 0% entry 90%`: 0 as the top edge clears the bottom of the
-      // window, 1 nine tenths of the way to being all the way in
-      var p = (innerHeight + (window.scrollY || window.pageYOffset) - y) / (h * 0.9);
+      // the stylesheet's `entry 45% entry 100%`, in the same terms: how far
+      // the element has come in, rebased onto the part of that the
+      // animation actually runs over
+      var entered = (innerHeight + (window.scrollY || window.pageYOffset) - y) / h;
+      var p = (entered - 0.45) / 0.55;
       stand.style.setProperty("--stand", p < 0 ? "0" : p > 1 ? "1" : p.toFixed(4));
     };
     document.documentElement.classList.add("standjs");
