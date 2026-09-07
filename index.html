@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ocarina</title>
-<meta name="description" content="A macOS terminal that does not assume you already know. Run as many coding agents as you like in one window, and it explains what breaks.">
+<meta name="description" content="Use Claude Code, Codex, Gemini and other coding agents without becoming a terminal expert. A macOS terminal built to be your first one. Free and open source.">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Ocarina">
 <meta property="og:description" content="A terminal you don't have to learn.">
@@ -104,6 +104,12 @@
      ran into "Three agents" and the theme picker ran into the closing
      card at half the gap every other seam gets. */
   .band { padding-top:var(--sect); }
+  /* A heading that introduces the two or three sections under it, rather than
+     a section of its own: it pays the band above and almost nothing below, so
+     it reads as their title instead of an empty screen between them. */
+  section.lead { padding-bottom:0; }
+  section.lead + section { padding-top:44px; }
+  section.lead .sub { margin-top:14px; }
   h1,h2,h3 { text-wrap:balance; }
   h2 { font-size:clamp(30px,3.9vw,44px); font-weight:500; letter-spacing:-.032em;
        line-height:1.1; margin:0 0 14px; max-width:21ch; }
@@ -695,95 +701,6 @@
   .takeaway { margin:26px 0 0; font-size:17px; color:var(--muted); max-width:62ch; }
   .takeaway b { color:var(--ink); font-weight:500; }
 
-  /* ── keep awake ───────────────────────────────────────── */
-  .awake { display:grid; grid-template-columns:1fr 1fr; gap:54px; align-items:center; }
-  @media (max-width:900px) { .awake { grid-template-columns:1fr; gap:32px; } }
-  /* Two machines, same task, side by side. A toggle made the reader do the
-     work of imagining the other case; this just shows both. */
-  .awake-pair { display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:40px; align-items:start; }
-  @media (max-width:900px) { .awake-pair { grid-template-columns:1fr; gap:44px; } }
-  .acol .cap { font-family:var(--mono); font-size:11.5px; letter-spacing:.13em;
-               color:var(--ghost); margin-bottom:18px; }
-  .acol.good .cap { color:var(--accent); }
-  .asay { margin:26px 0 0; font-size:15px; line-height:1.55; color:var(--ghost); min-height:44px;
-          transition:color .35s ease; }
-  .asay b { font-weight:500; }
-  .acol.good .asay b { color:var(--ink); }
-  .asay.done b { color:var(--ok); }
-  /* No laptop. The window is the thing; a bezel around it was decoration
-     that also ate 11px off every edge and clipped the status bar. */
-  .screen { position:relative; width:100%; aspect-ratio:520/300; overflow:hidden;
-            border-radius:14px; border:1px solid var(--line-2); background:#000;
-            box-shadow:0 34px 70px -38px rgba(0,0,0,.95); }
-  .veil {
-    position:absolute; inset:0; z-index:5; display:grid; place-items:center;
-    background:#000; opacity:0; pointer-events:none;
-    transition:opacity .9s ease;
-    font-family:var(--mono); font-size:12px; letter-spacing:.16em; color:rgba(255,255,255,.20);
-  }
-  .veil.on { opacity:1; }
-  .veil em { display:block; margin-top:11px; font-style:normal; font-size:10.5px;
-             letter-spacing:.1em; color:rgba(255,255,255,.14); }
-  /* Waking the slept screen shows what you would actually find on it. The run
-     did not pause and pick up again: it ended with the connection, mid-sentence. */
-  .screen.slept { cursor:pointer; }
-  .screen.woke .veil.on { opacity:0; }
-
-  /* Apple's Terminal, at the same design size so both scale identically. */
-  .twin { position:absolute; top:0; left:0; width:520px; height:300px;
-          transform-origin:0 0; transform:scale(var(--fit,1));
-          display:flex; flex-direction:column; background:#000; color:#C9CFD4; }
-  .twin .tbar { flex:none; height:32px; display:flex; align-items:center; gap:7px; padding:0 13px;
-                background:#1E2124; border-bottom:1px solid rgba(255,255,255,.08); }
-  .twin .tbar i { width:9px; height:9px; border-radius:50%; display:block; }
-  .twin .tbar span { margin-left:9px; font-family:var(--mono); font-size:11.5px; color:rgba(255,255,255,.34); }
-  .twin .tb { flex:1; padding:18px 20px; font-family:var(--mono); font-size:14px; line-height:2.05; }
-  .twin .tb .l { display:block; white-space:pre-wrap; }
-  .twin .dim { color:rgba(201,207,212,.5); }
-  .twin .dim b { color:#C9CFD4; font-weight:400; }
-  .twin .caret { background:#C9CFD4; width:8px; }
-  /* --wred lives on .win; Apple's window is not one, so the dead line needs
-     the shared token directly or it inherits the ordinary foreground. */
-  .twin .rd, .twin .rd b { color:var(--oc-red); }
-  .twin .rd b { font-weight:500; }
-
-  /* Ocarina, the same window the rest of the page draws. This used to be
-     Sakura to read as a different machine next to Apple's black default;
-     the status bar and the cyan toggle already do that, and one brand
-     colour across every window on the page is worth more. */
-  .awin { --sbg:var(--oc-bg); --sfg:var(--oc-fg); --spanel:var(--oc-top); --sfoot:var(--oc-bot);
-          --sacc:var(--oc-acc); --sdim:rgba(201,212,224,.55); --sline:rgba(201,212,224,.13);
-          position:absolute; top:0; left:0; width:520px; height:300px;
-          transform-origin:0 0; transform:scale(var(--fit,1));
-          display:flex; flex-direction:column;
-          background:var(--sbg); color:var(--sfg); }
-  .awin .win-bar { position:static; height:32px; padding:0 13px; background:var(--spanel);
-                   border-bottom:1px solid var(--sline); }
-  .awin .win-bar .name { font-size:12.5px; color:var(--sdim); }
-  .awin .tl { width:9px; height:9px; }
-  .awin .ab { flex:1; padding:18px 20px; font-family:var(--mono); font-size:14px;
-              line-height:2.05; color:var(--sfg); }
-  .awin .ab .l { display:block; white-space:pre-wrap; }
-  .awin .pr { color:var(--sacc); } .awin .dimtx { color:var(--sdim); }
-  .awin .caret { background:var(--sacc); width:8px; }
-  .astat { flex:none; height:46px; display:flex; align-items:center; gap:14px;
-           padding:0 14px 0 20px; border-top:1px solid var(--sline);
-           background:var(--sfoot); font-size:13px; color:var(--sdim); }
-  .astat .run { display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12.5px; }
-  .astat .run i { width:7px; height:7px; border-radius:50%; background:var(--oc-yel); display:block;
-                  animation:pulse 1.5s ease-in-out infinite; }
-  .astat .run b { color:var(--sfg); font-weight:400; }
-  .akrow { margin-left:auto; display:flex; align-items:center; gap:10px;
-           font-family:inherit; font-size:13px; color:var(--sfg);
-           background:rgba(201,212,224,.08); border:1px solid rgba(56,194,255,.5);
-           border-radius:9px; padding:7px 11px; position:relative; }
-  .akrow .sw { width:30px; height:17px; border-radius:9px; flex:none; position:relative;
-               background:rgba(201,212,224,.2); }
-  .akrow .sw::after { content:""; position:absolute; top:2px; left:2px; width:13px; height:13px;
-                      border-radius:50%; background:var(--sfg); }
-  .akrow .sw.on { background:var(--sacc); }
-  .akrow .sw.on::after { translate:13px 0; background:#0B1218; }
-
   /* ── footer ───────────────────────────────────────────── */
   .closing { border-radius:26px; padding:72px 40px; text-align:center; }
   .close-icon { width:92px; height:92px; display:block; margin:0 auto 26px;
@@ -854,6 +771,130 @@
     .progress { display:none; }
   }
 </style>
+<style>
+  /* ══ blocks the rewrite needed and the page did not have ══
+     Type, rules and space. Everything that wanted a picture already had a
+     component; these are the ones that are better without one. */
+
+  .eyebrow { margin:0 0 16px; font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+             text-transform:uppercase; color:var(--faint); }
+
+  /* Three or four abreast: a label, a line, a sentence. */
+  .trio { display:grid; grid-template-columns:repeat(3,1fr); gap:30px; margin-top:40px; }
+  .quad { display:grid; grid-template-columns:repeat(4,1fr); gap:26px; margin-top:40px; }
+  @media (max-width:900px) { .trio,.quad { grid-template-columns:1fr 1fr; gap:26px; } }
+  @media (max-width:560px) { .trio,.quad { grid-template-columns:1fr; } }
+  .item { padding-top:17px; border-top:1px solid var(--line-2); }
+  .item .tag { display:block; margin:0 0 11px; font-family:var(--mono); font-size:11px;
+               letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+  .item h3 { margin:0 0 7px; font-size:16.5px; font-weight:500; letter-spacing:-.018em;
+             line-height:1.35; color:var(--ink); text-wrap:balance; }
+  .item p { margin:0; font-size:14.5px; color:var(--muted); line-height:1.65; }
+
+  /* The comparison. A table without rules down it or a header band across it:
+     the two columns are the whole argument, so they are all that is drawn. */
+  .cmp { margin-top:40px; }
+  .cmp .hd { display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:0 2px 11px;
+             border-bottom:1px solid var(--line-2);
+             font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+             text-transform:uppercase; color:var(--ghost); }
+  .cmp .r { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:baseline;
+            padding:15px 2px; border-bottom:1px solid var(--line-2); }
+  .cmp .was { font-family:var(--mono); font-size:13.5px; color:var(--faint); }
+  .cmp .oc { font-size:15.5px; color:var(--ink); }
+  .cmp .oc code { font-family:var(--mono); font-size:13.5px; color:var(--accent); }
+
+  /* Four steps, numbered by the stylesheet so the markup stays a list of
+     things rather than a list of numbers. */
+  .steps { counter-reset:s; display:grid; grid-template-columns:repeat(4,1fr);
+           gap:26px; margin-top:40px; }
+  @media (max-width:900px) { .steps { grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px) { .steps { grid-template-columns:1fr; } }
+  .steps .st { counter-increment:s; padding-top:17px; border-top:1px solid var(--line-2); }
+  .steps .st::before { content:counter(s); display:block; margin-bottom:10px;
+                       font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .steps h3 { margin:0 0 6px; font-size:16px; font-weight:500; letter-spacing:-.015em; color:var(--ink); }
+  .steps p { margin:0; font-size:14px; color:var(--muted); line-height:1.6; }
+
+  /* The questions. <details> so it works with the keyboard and with script
+     switched off, and so the answers are not eight paragraphs on arrival. */
+  .faq { margin-top:38px; border-top:1px solid var(--line-2); max-width:78ch; }
+  .faq details { border-bottom:1px solid var(--line-2); }
+  .faq summary { list-style:none; cursor:pointer; padding:17px 2px; font-size:16.5px;
+                 color:var(--ink); display:flex; align-items:center; gap:16px; }
+  .faq summary::-webkit-details-marker { display:none; }
+  .faq summary::after { content:"+"; margin-left:auto; flex:none; color:var(--ghost);
+                        font-size:19px; line-height:1; transition:transform .25s ease; }
+  .faq details[open] summary::after { transform:rotate(45deg); }
+  .faq summary:hover { color:var(--accent); }
+  .faq p { margin:-2px 0 19px; padding:0 2px; font-size:15px; color:var(--muted); line-height:1.7; }
+
+  /* The agents it runs. Chips, because the list is the message. */
+  .agents { display:flex; flex-wrap:wrap; gap:10px; margin-top:34px; }
+  .agents span { display:inline-flex; align-items:center; gap:9px; padding:11px 16px;
+                 border:1px solid var(--line-2); border-radius:var(--r-sm);
+                 background:var(--raise); font-size:14.5px; color:var(--ink); }
+  .agents span i { width:7px; height:7px; border-radius:50%; flex:none; background:var(--tint); }
+
+  /* A session list on its own, away from the window it lives in: the tab
+     column is the argument in two of these sections and the whole drawn
+     window would be answering a question nobody asked there. */
+  .sess { margin-top:34px; max-width:520px; border:1px solid var(--line-2);
+          border-radius:var(--r); background:var(--raise); padding:11px 10px; }
+  .sess .s { display:flex; align-items:center; gap:11px; padding:11px 11px; border-radius:9px;
+             font-size:14.5px; color:var(--muted); }
+  .sess .s.on { background:color-mix(in srgb,var(--accent) 10%,transparent); color:var(--ink);
+                box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent); }
+  .sess .s i { width:7px; height:7px; border-radius:50%; flex:none; background:var(--tint,var(--ghost)); }
+  .sess .s .when { margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--faint); }
+  .sess .day { padding:14px 11px 7px; font-family:var(--mono); font-size:11px;
+               letter-spacing:.12em; text-transform:uppercase; color:var(--ghost); }
+  .sess .day:first-child { padding-top:5px; }
+
+  /* Before and after, stacked. The error as it arrives and the error as the
+     app says it back. */
+  .ba { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
+  @media (max-width:860px) { .ba { grid-template-columns:1fr; } }
+  .ba .side2 { border:1px solid var(--line-2); border-radius:var(--r);
+               background:var(--raise); padding:18px; }
+  .ba .cap { font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+             text-transform:uppercase; color:var(--ghost); margin-bottom:14px; }
+  .ba .err { font-family:var(--mono); font-size:13px; line-height:1.75; color:var(--oc-red,#E86D6D); }
+  .ba h4 { margin:0 0 5px; font-size:14px; font-weight:500; color:var(--ink); }
+  .ba h4 + p { margin:0 0 15px; }
+  .ba p { margin:0; font-size:14.5px; color:var(--muted); line-height:1.65; }
+
+  /* ── dropping a file on it ────────────────────────────────
+     Restored from the section this page carried until September, when it was
+     dropped for length rather than for being wrong. The app still does it. */
+  .duo { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:34px; }
+  @media (max-width:860px) { .duo { grid-template-columns:1fr; } }
+  .demo { border:1px solid var(--line-2); border-radius:var(--r); background:var(--raise);
+          padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .demo .cap { font-size:11px; letter-spacing:.10em; color:var(--faint); text-transform:uppercase; }
+  /* A terminal, small, with the drop overlay over it. Same two sentences the
+     app says, because saying them before the mouse is released is the whole
+     point of the overlay. */
+  .droplet { position:relative; border-radius:11px; overflow:hidden; padding:14px 16px;
+             background:var(--oc-bg); border:1px solid rgba(200,222,242,.10);
+             font-family:var(--mono); font-size:12.5px; line-height:1.9; color:var(--oc-fg);
+             min-height:150px; }
+  .droplet .pale { color:color-mix(in srgb,var(--oc-fg) 45%,transparent); }
+  .droplet .over { position:absolute; inset:0; display:flex; flex-direction:column;
+                   align-items:center; justify-content:center; gap:7px; text-align:center;
+                   font-family:"Geist",sans-serif;
+                   background:color-mix(in srgb,var(--oc-bg) 74%,transparent); }
+  .droplet .over::before { content:""; position:absolute; inset:8px; border-radius:9px;
+                           border:2px dashed color-mix(in srgb,var(--oc-acc) 75%,transparent); }
+  .droplet .over b { font-size:14px; color:var(--ink); font-weight:600; }
+  .droplet .over span { font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .droplet .over em { font-style:normal; font-size:20px; color:var(--oc-acc); }
+  .after { font-family:var(--mono); font-size:12.5px; color:var(--muted); line-height:1.9;
+           padding:0 2px; }
+  .after b { color:var(--ink); font-weight:400; }
+  .plain { margin:0; font-size:14px; color:var(--muted); line-height:1.7; }
+  .plain b { color:var(--ink); font-weight:500; }
+</style>
 </head>
 <body>
 <div class="aura" aria-hidden="true"></div>
@@ -888,11 +929,9 @@
     </a>
     <span class="spacer"></span>
     <span class="navlinks">
-      <a class="link" href="#one">One window</a>
-      <a class="link" href="#awake">Keep awake</a>
-      <a class="link" href="#kit">&#8984;K menu</a>
-      <a class="link" href="#errors">Explain this</a>
-      <a class="link" href="#tasks">Your tasks</a>
+      <a class="link" href="#product">Product</a>
+      <a class="link" href="#why">Why Ocarina</a>
+      <a class="link" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">GitHub</a>
     </span>
     <span class="navcta">
       <a class="btn btn-ghost btn-sm" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg><span class="lbl">Buy me a coffee</span></a>
@@ -907,18 +946,19 @@
       <svg class="app-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
       <canvas class="mark hero-mark" id="heroMark" role="img" aria-label="Ocarina"></canvas>
     </div>
+    <p class="eyebrow">Ocarina for macOS</p>
     <h1>A terminal<br><span class="soft">you don't have to learn.</span></h1>
     <div class="flip" aria-label="Ocarina is built for people who opened Terminal once and closed it, were told to just run this command, paste commands they cannot read, build with agents rather than shells, have never written a line of bash, design and ship without writing code, gave up the first time they tried, learned all of it from a tutorial, or do not know where to start.">
       <span class="pr">~ &rsaquo;</span>
       <span class="flip-lead">built for people who</span>
       <span class="roll" id="roll"></span>
     </div>
-    <p class="hero-sub">A macOS terminal for running AI coding agents. As many as you like, in one window, each one named after what you asked it for.</p>
+    <p class="hero-sub">Use Claude Code, Codex, Gemini and other coding agents without becoming a terminal expert.</p>
     <div class="cta">
-      <span class="btn btn-soon"><i></i>Coming soon</span>
-      <a class="btn btn-ghost" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
+      <span class="btn btn-soon"><i></i>Download for Mac &mdash; coming soon</span>
+      <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">View on GitHub</a>
     </div>
-    <p class="under">Free and open source &nbsp;&middot;&nbsp; macOS 14+</p>
+    <p class="under">Free &nbsp;&middot;&nbsp; Open source &nbsp;&middot;&nbsp; Runs locally on your Mac</p>
   </div>
 
   <div class="wrap wide">
@@ -1062,12 +1102,14 @@
      moment it is let go. -->
 
 
-<section id="one">
+<!-- The problem, drawn rather than argued: three windows that cannot tell
+     you what they are, next to one that can. -->
+<section id="problem">
   <div class="wrap">
-    <h2 class="rise">All your terminals <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Every agent in one window, each tab named after the ask that opened it. Nothing to juggle, nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
+    <h2 class="rise">The terminal was built <span class="soft">for people who already know the terminal.</span></h2>
+    <p class="sub rise">AI coding agents have made building software easier. The interface around them hasn&rsquo;t.</p>
 
-    <div class="versus">
+<div class="versus">
       <div class="vs glass rise d1">
         <div class="cap">MACOS TERMINAL</div>
         <div class="stack">
@@ -1109,90 +1151,65 @@
       </div>
     </div>
 
-    <p class="takeaway rise">The dot says working, done or stopped — <b>read from the agent&rsquo;s own transcript</b>, so it goes green when the work stops rather than blinking at work that finished ten minutes ago.</p>
+
+    <p class="takeaway rise">Ocarina keeps the power of the terminal <b>without assuming you already know how to use one.</b></p>
   </div>
 </section>
 
 
-<section id="awake">
+<!-- The three jobs, in the order you meet them. -->
+<section id="product" class="lead">
   <div class="wrap">
-    <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-    <p class="sub rise">The display stays on while a run is going, so a long task finishes instead of stopping when the screen does.</p>
-  </div>
-
-  <div class="wrap awake-pair">
-    <div class="acol rise d1">
-      <div class="cap">MACOS TERMINAL</div>
-      <div class="screen" id="screenA">
-        <div class="twin">
-          <div class="tbar"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span>vaibhav &mdash; -zsh &mdash; 80&times;24</span></div>
-          <div class="tb">
-            <span class="l">~ % claude</span>
-            <span class="l">&nbsp;</span>
-            <span class="l dim">&gt; Fix the checkout page</span>
-            <span class="l">Looking through the cart files</span>
-            <span class="l" id="lineA">Making the change<span class="caret" id="caretA"></span></span>
-            <span class="l">&nbsp;</span>
-            <span class="l dim" id="runA"><span id="labA">running </span><b id="clockA">6:04</b></span>
-          </div>
-        </div>
-        <div class="veil" id="veilA"><span>Display asleep<em>hover to wake it</em></span></div>
-      </div>
-      <p class="asay" id="sayA">Running.</p>
-    </div>
-
-    <div class="acol good rise d2">
-      <div class="cap">OCARINA</div>
-      <div class="screen">
-        <div class="awin">
-          <div class="win-bar">
-            <span class="tl" style="background:#FF5F57"></span>
-            <span class="tl" style="background:#FEBC2E"></span>
-            <span class="tl" style="background:#28C840"></span>
-            <span class="name">Fix the checkout page</span>
-          </div>
-          <div class="ab">
-            <span class="l"><span class="pr">~ &rsaquo;</span> claude</span>
-            <span class="l">&nbsp;</span>
-            <span class="l dimtx">&gt; Fix the checkout page</span>
-            <span class="l">Looking through the cart files</span>
-            <span class="l" id="lineB">Making the change<span class="caret" id="caretB"></span></span>
-          </div>
-          <div class="astat">
-            <span class="run"><i id="beadB"></i>running <b id="clockB">6:04</b></span>
-            <span class="akrow static">Keep awake<span class="sw on"></span></span>
-          </div>
-        </div>
-      </div>
-      <p class="asay" id="sayB">Running.</p>
-    </div>
+    <h2 class="rise">Ask. Understand. <span class="soft">Stay organised.</span></h2>
+    <p class="sub rise">Three things the terminal has always made you work for.</p>
   </div>
 </section>
 
-<!-- Four features, four sections. They were two, each holding a pair of
-     them behind a chip you had to press: a feature that lives behind a tab
-     is a feature most people never find. Each window below is the same one
-     window, framed on the one part the section is about. -->
-<section id="kit">
+<section id="ask">
   <div class="wrap">
-    <h2 class="rise">The install command, <span class="soft">already in the app.</span></h2>
-    <p class="sub rise">&#8984;K keeps the install command for Claude Code, Gemini CLI and Codex, next to the Homebrew and Node they assume.</p>
-    <div class="feat">
-      <div class="feat-say">
-      <p class="takeaway rise">One menu, in the terminal itself, with <b>the command for every agent it runs</b> &mdash; and the two things those commands expect to be on the machine already.</p>
+    <h2 class="rise">Just tell your coding agent <span class="soft">what you want.</span></h2>
+    <p class="sub rise">Choose your project, open the agent you already use, and start building. You shouldn&rsquo;t need to learn terminal workflows before you can ship something.</p>
+    <div class="duo">
+      <div class="demo glass rise d1">
+        <div class="cap">A tab, opened on a project</div>
+        <div class="droplet"><span class="pale">vaibhav@mac ~/portfolio-site</span><br>
+          <span class="pale">&rsaquo;</span> claude<br><br>
+          &gt; Build a settings page with account<br>
+          &gt; and notification controls.
+        </div>
       </div>
-      <div class="stage rise d1" id="kitStage"></div>
+      <div class="demo glass rise d2">
+        <div class="cap">What the tab is called afterwards</div>
+        <div class="sess" style="margin-top:0;max-width:none">
+          <div class="s on" style="--tint:var(--ok)"><i></i>Build a settings page</div>
+          <div class="s" style="--tint:var(--accent)"><i></i>portfolio-site</div>
+        </div>
+        <p class="plain">The ask names the tab. You do not have to label anything, and you do not have to remember which window you left it in.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="errors">
   <div class="wrap">
-    <h2 class="rise">When a command fails, <span class="soft">it says so in English.</span></h2>
-    <p class="sub rise">A failed command puts <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">Explain this</span> at the top of the window. One click turns the red output into a sentence.</p>
+    <h2 class="rise">When something breaks, <span class="soft">understand why.</span></h2>
+    <p class="sub rise">Terminal errors are written for people who already understand terminals. Ocarina helps turn them into something useful.</p>
+    <div class="ba">
+      <div class="side2 rise d1">
+        <div class="cap">What the terminal says</div>
+        <p class="err">npm ERR! ERESOLVE unable to resolve dependency tree</p>
+      </div>
+      <div class="side2 rise d2">
+        <div class="cap">What Ocarina says</div>
+        <h4>What happened</h4>
+        <p>A package in the project expects a different version of React.</p>
+        <h4>What you can try</h4>
+        <p>Ask your agent to update the conflicting dependency.</p>
+      </div>
+    </div>
     <div class="feat">
       <div class="feat-say">
-      <p class="takeaway rise">What broke, and what to try next, <b>read out of the run you just did</b> &mdash; not looked up somewhere that assumed you already knew.</p>
+      <p class="takeaway rise">Read out of <b>the run you just did</b> &mdash; not looked up somewhere that assumed you already knew.</p>
       <p class="try rise">Press <span>Explain this</span> in the window &rarr;</p>
       </div>
       <div class="stage rise d1" id="errStage"></div>
@@ -1200,10 +1217,103 @@
   </div>
 </section>
 
+<section id="organised">
+  <div class="wrap">
+    <h2 class="rise">Know what every agent <span class="soft">is working on.</span></h2>
+    <p class="sub rise">Ocarina names sessions from the work happening inside them, so you don&rsquo;t have to remember which terminal belongs to which task.</p>
+    <div class="sess rise d1">
+      <div class="s on" style="--tint:var(--ok)"><i></i>Fix mobile checkout</div>
+      <div class="s" style="--tint:var(--ok)"><i></i>Add search filters</div>
+      <div class="s" style="--tint:var(--accent)"><i></i>Build onboarding</div>
+    </div>
+    <p class="takeaway rise">Your original task stays easy to find, <b>even after the terminal fills up.</b></p>
+  </div>
+</section>
+
+
+<!-- The section the whole positioning rests on. -->
+<section id="first" class="lead">
+  <div class="wrap">
+    <h2 class="rise">Never used a terminal before? <span class="soft">Perfect.</span></h2>
+    <p class="sub rise">Ocarina was designed to be your first one.</p>
+  </div>
+</section>
+
+<section id="kit">
+  <div class="wrap">
+    <h2 class="rise">Install the tools you need <span class="soft">without hunting for commands.</span></h2>
+    <p class="sub rise">&#8984;K keeps the install command for Claude Code, Codex and Gemini CLI, next to the Homebrew and Node they assume.</p>
+    <div class="feat">
+      <div class="feat-say">
+      <p class="takeaway rise">Ocarina types the command into the prompt rather than running it behind your back. <b>See what will run before you run it.</b></p>
+      </div>
+      <div class="stage rise d1" id="kitStage"></div>
+    </div>
+  </div>
+</section>
+
+<section id="drop">
+  <div class="wrap">
+    <h2 class="rise">Drop files <span class="soft">instead of typing paths.</span></h2>
+    <p class="sub rise">Drag a screenshot, file or folder straight into Ocarina. No need to learn filesystem syntax first.</p>
+    <div class="duo">
+      <div class="demo glass rise d1">
+        <div class="cap">Dragging a screenshot onto the terminal</div>
+        <div class="droplet">
+          <span class="pale">~ &rsaquo;</span> claude &quot;look at this and tell me what is off&quot;
+          <div class="over">
+            <em>&#10515;</em>
+            <b>Drop to add it here</b>
+            <span>The file&rsquo;s location is typed at the prompt.<br>Nothing is uploaded, and nothing runs.</span>
+          </div>
+        </div>
+      </div>
+      <div class="demo glass rise d2">
+        <div class="cap">What lands at the prompt</div>
+        <div class="after">~ &rsaquo; claude &quot;look at this&quot; <b>'~/Desktop/Screenshot 2026-09-06.png'</b></div>
+        <p class="plain">The path arrives quoted only where it needs to be, with a space after it so you can carry on typing. <b>An image with no file behind it</b> &mdash; dragged off a web page or out of a message &mdash; is written out first, so there is still a path to hand the agent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="learn">
+  <div class="wrap">
+    <h2 class="rise">Understand the terminal <span class="soft">while you use it.</span></h2>
+    <p class="sub rise">Ocarina doesn&rsquo;t hide the command line from you. It removes the friction around it, so you can learn it as you go instead of studying it before you start.</p>
+  </div>
+</section>
+
+
+<section id="agents">
+  <div class="wrap">
+    <h2 class="rise">Use the agent <span class="soft">you already like.</span></h2>
+    <p class="sub rise">Ocarina doesn&rsquo;t have its own AI model. It gives your existing coding agents a better place to work.</p>
+    <div class="agents rise d1">
+      <span style="--tint:#D97857"><i></i>Claude Code</span>
+      <span style="--tint:#9AA4B2"><i></i>Codex</span>
+      <span style="--tint:#7399F2"><i></i>Gemini CLI</span>
+    </div>
+    <p class="takeaway rise">Switch agents <b>without switching your workspace.</b></p>
+  </div>
+</section>
+
+<section id="parallel">
+  <div class="wrap">
+    <h2 class="rise">One task doesn&rsquo;t have <span class="soft">to stop another.</span></h2>
+    <p class="sub rise">Run several coding agents side by side. Start another piece of work while the first one keeps going, and switch between them without losing context.</p>
+    <div class="sess rise d1">
+      <div class="s on" style="--tint:var(--ok)"><i></i>Fix authentication<span class="when">Working</span></div>
+      <div class="s" style="--tint:var(--ok)"><i></i>Write tests<span class="when">Working</span></div>
+      <div class="s" style="--tint:var(--accent)"><i></i>Update landing page<span class="when">Done</span></div>
+    </div>
+  </div>
+</section>
+
 <section id="tasks">
   <div class="wrap">
-    <h2 class="rise">All your prompted tasks <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Every ask you make in this window, in one list, ticked off when the agent stops working on it.</p>
+    <h2 class="rise">Your prompts shouldn&rsquo;t <span class="soft">disappear into scrollback.</span></h2>
+    <p class="sub rise">Ocarina keeps the work you gave your coding agents easy to find.</p>
     <div class="feat">
       <div class="feat-say">
       <p class="takeaway rise">Read from <b>your agent&rsquo;s own transcript</b>, so any agent you run here fills it &mdash; and the list outlives the scrollback it came from.</p>
@@ -1213,15 +1323,132 @@
   </div>
 </section>
 
+<section id="utilities">
+  <div class="wrap">
+    <h2 class="rise">Built around the way <span class="soft">coding agents actually work.</span></h2>
+    <div class="trio">
+      <div class="item rise"><span class="tag">Naming</span>
+        <h3>Your tabs know what you&rsquo;re working on.</h3>
+        <p>Sessions name themselves from the task happening inside them.</p></div>
+      <div class="item rise d1"><span class="tag">Keep Awake</span>
+        <h3>Let long-running tasks finish.</h3>
+        <p>Keep your Mac awake while an agent is working, so a long run ends when the work does rather than when the screen does.</p></div>
+      <div class="item rise d2"><span class="tag">Projects</span>
+        <h3>Keep related work together.</h3>
+        <p>Move between projects without accumulating anonymous terminal windows.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="wrap">
+    <h2 class="rise">Ocarina doesn&rsquo;t hide <span class="soft">your computer from you.</span></h2>
+    <p class="sub rise">It makes the terminal easier without turning it into a black box. You can see the commands you run, understand what went wrong, and keep your Ocarina data on your Mac.</p>
+    <div class="quad">
+      <div class="item rise"><span class="tag">Local</span>
+        <h3>Your Ocarina history stays on your Mac.</h3>
+        <p>Sessions, tasks and settings live on the machine. The coding agents you run inside it have their own data policies.</p></div>
+      <div class="item rise d1"><span class="tag">Transparent</span>
+        <h3>See commands before running them.</h3>
+        <p>&#8984;K types the command at the prompt. You press return.</p></div>
+      <div class="item rise d2"><span class="tag">Open source</span>
+        <h3>The code is available on GitHub.</h3>
+        <p>Small enough to read in an afternoon, if you want to.</p></div>
+      <div class="item rise d2"><span class="tag">Agent-independent</span>
+        <h3>Use Claude, Codex, Gemini, or whatever comes next.</h3>
+        <p>Ocarina has no model of its own to sell you.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <h2 class="rise">Made for people who build with AI, <span class="soft">not people who live in Terminal.</span></h2>
+    <div class="quad">
+      <div class="item rise"><span class="tag">Product designer</span>
+        <h3>You can design the product. Now you can build the prototype too.</h3>
+        <p>Use a coding agent without spending your week learning terminal tooling.</p></div>
+      <div class="item rise d1"><span class="tag">Product manager</span>
+        <h3>Turn an idea into something people can actually try.</h3>
+        <p>Build internal tools, experiments and prototypes without changing your entire workflow.</p></div>
+      <div class="item rise d2"><span class="tag">Founder</span>
+        <h3>Move from idea to product with fewer tools in the way.</h3>
+        <p>Keep several pieces of work moving without juggling anonymous terminals.</p></div>
+      <div class="item rise d2"><span class="tag">Developer</span>
+        <h3>Already comfortable in Terminal?</h3>
+        <p>Ocarina gives you a cleaner way to manage agent-heavy work.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <h2 class="rise">It&rsquo;s still a real terminal. <span class="soft">Just friendlier.</span></h2>
+    <div class="cmp rise d1">
+      <div class="hd"><span>Normal terminal</span><span>Ocarina</span></div>
+      <div class="r"><span class="was">zsh</span><span class="oc">Fix checkout</span></div>
+      <div class="r"><span class="was">Remember commands</span><span class="oc"><code>&#8984;K</code> Quick Actions</span></div>
+      <div class="r"><span class="was">Decode errors yourself</span><span class="oc">Explain this</span></div>
+      <div class="r"><span class="was">Search scrollback</span><span class="oc">Task history</span></div>
+      <div class="r"><span class="was">Juggle windows</span><span class="oc">Organised sessions</span></div>
+      <div class="r"><span class="was">Learn first</span><span class="oc">Start first</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <h2 class="rise">From opening it to your first task <span class="soft">in a minute.</span></h2>
+    <div class="steps">
+      <div class="st rise"><h3>Open Ocarina</h3><p>No terminal setup ritual.</p></div>
+      <div class="st rise d1"><h3>Choose your project</h3><p>Select the folder you want to work on.</p></div>
+      <div class="st rise d2"><h3>Start your coding agent</h3><p>Claude Code, Codex, Gemini CLI or another CLI tool you already use.</p></div>
+      <div class="st rise d2"><h3>Tell it what you want to build</h3><p>That&rsquo;s it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2 class="rise">Questions</h2>
+    <div class="faq rise d1">
+      <details><summary>Do I need to know how to code?</summary>
+        <p>No. Ocarina doesn&rsquo;t replace your coding agent, but it makes working with one easier. Some understanding of the project you are building will still help.</p></details>
+      <details><summary>Does Ocarina include Claude Code, Codex or Gemini?</summary>
+        <p>No. Ocarina is the workspace around those tools. You use the agent and the account you already have.</p></details>
+      <details><summary>Is Ocarina an AI coding tool?</summary>
+        <p>Not exactly. Ocarina is a terminal designed around the way people use AI coding agents.</p></details>
+      <details><summary>Is it a real terminal?</summary>
+        <p>Yes. Normal terminal commands still work.</p></details>
+      <details><summary>Does Ocarina send my terminal history somewhere?</summary>
+        <p>Ocarina&rsquo;s own history and organisation stay on the Mac. The third-party coding agents you run inside it have their own data policies.</p></details>
+      <details><summary>Is Ocarina only for AI coding?</summary>
+        <p>No. It works as a normal terminal as well, but its interface is designed around agent workflows.</p></details>
+      <details><summary>How much does it cost?</summary>
+        <p>Ocarina is free and open source.</p></details>
+      <details><summary>Which platforms are supported?</summary>
+        <p>macOS, for now.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="opensource">
+  <div class="wrap">
+    <h2 class="rise">Free and <span class="soft">open source.</span></h2>
+    <p class="sub rise">Ocarina started with a simple frustration: AI coding agents became incredibly capable, and the terminal around them still assumed you knew what you were doing. This is an attempt to change that.</p>
+  </div>
+</section>
+
 <div class="wrap band">
   <div class="closing glass rise">
     <svg class="close-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
-    <h2>Open it and <span class="soft">start typing.</span></h2>
-    <p class="sub">Free, open source, small enough to read in an afternoon.</p>
+    <h2>A terminal <span class="soft">you don&rsquo;t have to learn.</span></h2>
+    <p class="sub">Build with Claude Code, Codex or Gemini without fighting the terminal around them.</p>
     <div class="cta">
-      <span class="btn btn-soon"><i></i>Coming soon</span>
-      <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Read the source</a>
+      <span class="btn btn-soon"><i></i>Download for Mac &mdash; coming soon</span>
+      <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">View on GitHub</a>
     </div>
+    <p class="under">Free &nbsp;&middot;&nbsp; Open source &nbsp;&middot;&nbsp; macOS</p>
   </div>
 
   <div class="coffee-card glass rise">
@@ -1527,109 +1754,6 @@
     standSync();
   }
 
-  /* ── keep awake: the actual switch ───────────────────────── */
-  /* Both machines start the same job. One display sleeps on the usual timer
-     and takes the run with it; the other does not. Plays itself on a loop
-     while it is on screen, because a comparison the reader has to operate is
-     a comparison most readers never see. */
-  var AW = {
-    veil:   document.getElementById("veilA"),
-    clockA: document.getElementById("clockA"),
-    clockB: document.getElementById("clockB"),
-    sayA:   document.getElementById("sayA"),
-    sayB:   document.getElementById("sayB"),
-    lineB:  document.getElementById("lineB"),
-    caretB: document.getElementById("caretB"),
-    beadB:  document.getElementById("beadB"),
-    screenA: document.getElementById("screenA"),
-    runA:   document.getElementById("runA"),
-    labA:   document.getElementById("labA"),
-    caretA: document.getElementById("caretA")
-  };
-  var SLEEP_AT = 4, FINISH_AT = 14, RESET_AT = 20;
-  var awHover = false;
-  var awTick = null, awStep = 0;
-
-  function mmss(n) { return Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0"); }
-  function awPaint(a, b) {
-    AW.clockA.textContent = mmss(a);
-    AW.clockB.textContent = mmss(b);
-  }
-  /* What the slept machine looks like underneath: the caret is gone, and the
-     line that was counting up is now the time the connection went away. */
-  function awSleep(a) {
-    AW.veil.classList.add("on");
-    AW.screenA.classList.add("slept");
-    AW.caretA.style.display = "none";
-    AW.labA.textContent = "disconnected ";
-    AW.runA.className = "l rd";
-    AW.sayA.innerHTML = "The display slept. <b>The run stopped at " + mmss(a) + ".</b>";
-    awWake();
-    if (awHover) awStop();
-  }
-  // the veil lifts only while the pointer is on a screen that has slept
-  function awWake() {
-    AW.screenA.classList.toggle("woke", awHover && AW.screenA.classList.contains("slept"));
-  }
-  function awReset() {
-    awStep = 0;
-    AW.veil.classList.remove("on");
-    AW.screenA.classList.remove("slept", "woke");
-    AW.caretA.style.display = "";
-    AW.labA.textContent = "running ";
-    AW.runA.className = "l dim";
-    AW.sayA.classList.remove("done");
-    AW.sayB.classList.remove("done");
-    AW.sayA.innerHTML = "Running.";
-    AW.sayB.innerHTML = "Running.";
-    AW.lineB.firstChild.nodeValue = "Making the change";
-    AW.caretB.style.display = "";
-    AW.beadB.style.background = "#E5B25A";
-    awPaint(364, 364);
-  }
-  function awFrame() {
-    awStep++;
-    var a = 364 + Math.min(awStep, SLEEP_AT);
-    var b = 364 + Math.min(awStep, FINISH_AT);
-    awPaint(a, b);
-    if (awStep === SLEEP_AT) awSleep(a);
-    if (awStep === FINISH_AT) {
-      AW.lineB.firstChild.nodeValue = "\u2713 the total now updates";
-      AW.caretB.style.display = "none";
-      AW.beadB.style.background = "#5FC98D";
-      AW.sayB.classList.add("done");
-      AW.sayB.innerHTML = "The screen stayed on. <b>The agent finished at " + mmss(b) + ".</b>";
-    }
-    if (awStep >= RESET_AT) awReset();
-  }
-  var awSeen = false;
-  function awStart() { if (!awTick && !reduce && awSeen) awTick = setInterval(awFrame, 1000); }
-  function awStop() { clearInterval(awTick); awTick = null; }
-
-  awReset();
-  /* Reading the sleeping half means holding it still: the loop would otherwise
-     reset the window out from under whoever is looking at it. */
-  AW.screenA.addEventListener("pointerenter", function () {
-    awHover = true; awWake();
-    if (AW.screenA.classList.contains("slept")) awStop();
-  });
-  AW.screenA.addEventListener("pointerleave", function () { awHover = false; awWake(); awStart(); });
-
-  if (reduce) {
-    // no animation: show the outcome, which is the point of the section
-    awPaint(370, 378);
-    awSleep(370);
-    AW.lineB.firstChild.nodeValue = "\u2713 the total now updates";
-    AW.caretB.style.display = "none";
-    AW.beadB.style.background = "#5FC98D";
-    AW.sayB.classList.add("done");
-    AW.sayB.innerHTML = "The screen stayed on. <b>The agent finished at 6:18.</b>";
-  } else if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) {
-      awSeen = e[0].isIntersecting;
-      awSeen ? awStart() : awStop();
-    }, { threshold: 0.25 }).observe(document.getElementById("awake"));
-  } else { awSeen = true; awStart(); }
 
   /* Each drawn window has a design size and is scaled to its container, so
      the same markup works from a phone to a wide display without reflowing
@@ -1648,8 +1772,6 @@
     fit(document.querySelector("#heroStage .win"), narrow.matches ? 620 : 1180, 634);
     Array.prototype.forEach.call(document.querySelectorAll(".stage .win"),
       function (el) { fit(el, 1180, 634); });
-    fit(document.querySelector(".awin"), 520, 300);
-    fit(document.querySelector(".twin"), 520, 300);
   }
 
   /* ── the tour ─────────────────────────────────────────────
