@@ -507,26 +507,73 @@
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
   .zoom { position:absolute; inset:0; transform-origin:50% 50%;
           transition:transform 1s cubic-bezier(.5,.02,.2,1); }
-  /* An iPad, more or less: a thick near-black bezel, corners rounded the
-     way a device is rather than the way a card is, and a hairline around
-     the outside where the machined edge catches the light.
+  /* A MacBook Pro, drawn the way the rest of this page draws things: no
+     screenshot, just the boxes it is actually made of. Three of them, and
+     each is a real part rather than a decoration — the aluminium rim of the
+     lid, the black bezel inside it, and the front edge of the base under
+     the hinge. What makes it read as this machine and not a tablet is the
+     notch and the thinness: a tablet's bezel is even the whole way round.
 
-     A border and not padding. .zoom is absolutely positioned to inset:0,
-     which resolves against the padding box, so padding would leave the
-     screen lying under the bezel rather than inside it; a border moves that
-     box in. The stage already clips to it, and a browser rounds the inner
-     corner to the outer radius less the border, which is the 25px the
-     screen wants without being told. */
-  .hero-stage { margin-top:12px;
-                border:15px solid #14161B; border-radius:40px;
-                background:#14161B;
-                box-shadow:0 0 0 1px rgba(255,255,255,.10),
-                           0 60px 120px -50px rgba(0,0,0,.95); }
+     Boxes and not borders. .zoom is positioned to inset:0, which resolves
+     against the padding box, so a border on the stage subtracts from the
+     stage; and since box-sizing is border-box the aspect ratio then belongs
+     to the outside of the frame rather than to the screen. That is what was
+     cropping the terminal: the screen came out at 1.902 against the window's
+     own 1.861, and the cover fit answered it by cutting 14px off the bottom.
+     Padding on wrappers instead, and the ratio is the screen's own again.
+
+     Anodised rather than painted: one raking gradient across the metal, a
+     lit top edge, and a machined line around the outside. Metal is only ever
+     the light on it. */
+  .device { --rim:3px; --bez:9px; --chin:13px; --notchw:150px; --notchh:18px;
+            --baseh:15px; --lidr:16px;
+            margin-top:12px; }
+  .lid { padding:var(--rim); border-radius:var(--lidr);
+         background:linear-gradient(150deg,
+           #3C424A 0%, #23272E 13%, #15181D 36%, #12151A 55%,
+           #1E222A 76%, #40464F 93%, #191C22 100%);
+         box-shadow:inset 0 1px 0 rgba(255,255,255,.16),
+                    inset 0 -1px 0 rgba(255,255,255,.05),
+                    0 0 0 1px rgba(255,255,255,.09),
+                    0 60px 120px -50px rgba(0,0,0,.95); }
+  .bezel { position:relative; padding:var(--bez) var(--bez) var(--chin);
+           border-radius:calc(var(--lidr) - var(--rim));
+           background:#0A0C10; }
+  /* The notch. It belongs to the bezel and hangs into the screen, which is
+     why it is drawn here and not inside the stage the stage would clip it. */
+  .bezel::before { content:""; position:absolute; z-index:3;
+                   top:var(--bez); left:50%; translate:-50% 0;
+                   width:var(--notchw); height:var(--notchh);
+                   border-radius:0 0 9px 9px;
+                   /* The window's own title bar renders at rgb(4,7,11) and
+                      this sits on top of it, so no fill will ever show the
+                      shape — on the real machine the notch is equally
+                      invisible against a dark menu bar. It is the edge that
+                      reads, so it is drawn as one: a hairline round the three
+                      sides that are not buried in the bezel. */
+                   background:#05070A;
+                   box-shadow:0 0 0 1px rgba(255,255,255,.055); }
+  /* The front edge of the base, seen under the hinge: the same metal, a
+     hair narrower, and the finger groove bitten out of the middle of it. */
+  .base { position:relative; height:var(--baseh); margin:0 auto;
+          width:99%; border-radius:0 0 11px 11px;
+          background:linear-gradient(#2A2F37 0%, #191D23 38%, #0F1216 100%);
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.13),
+                     0 22px 34px -22px rgba(0,0,0,.9); }
+  .base::after { content:""; position:absolute; top:0; left:50%; translate:-50% 0;
+                 width:11%; height:58%; border-radius:0 0 9px 9px;
+                 background:linear-gradient(#05070A,#12161C); }
+  .hero-stage { border-radius:9px; border-color:rgba(0,0,0,.55);
+                box-shadow:inset 0 0 0 1px rgba(0,0,0,.55); }
   @media (max-width:760px) {
     /* crop to the tab column instead of shrinking the whole window */
     #heroStage { aspect-ratio:620/634; }
-    /* the same device, held closer */
-    .hero-stage { margin-top:4px; border-width:9px; border-radius:26px; }
+    /* the same machine, held closer: every part of the frame comes down
+       with the screen, or a phone gets a laptop with a 9px bezel on it. */
+    .device { --rim:2px; --bez:5px; --chin:8px; --notchw:84px; --notchh:11px;
+              --baseh:9px; --lidr:10px;
+              margin-top:4px; }
+    .hero-stage { border-radius:6px; }
   }
 
   /* ── the window standing up ───────────────────────────────
@@ -968,122 +1015,129 @@
          the stage is a .rise, and that transform ends at none, so on one
          element the reveal and the lean would take turns erasing each other. -->
     <div class="tilt">
-      <div class="stage hero-stage rise" id="heroStage">
-        <div class="zoom">
-          <div class="win shelled tasked" id="win">
-            <div class="win-bar">
-              <span class="tl" style="background:#FF5F57"></span>
-              <span class="tl" style="background:#FEBC2E"></span>
-              <span class="tl" style="background:#28C840"></span>
-              <span class="name">Ocarina</span>
-            </div>
-            <div class="win-body">
-              <div class="side" id="side">
-                <div class="card up tabs">
-                  <canvas class="mark sidemark" aria-hidden="true"></canvas>
-                  <div id="tablist">
-                    <div class="row on"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Fix the checkout page</span></div>
-                    <div class="row"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Write the sign-up tests</span></div>
-                    <div class="row"><span class="dot bad"></span><span class="g gm">&#9671;</span><span class="t">Rename the theme files</span></div>
-                    <div class="row"><span class="dot ok"></span><span class="g cl">&#10043;</span><span class="t">Add a dark mode toggle</span></div>
-                    <div class="row"><span class="dot"></span><span class="t">portfolio-site</span></div>
-                    <div class="row"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
+      <div class="device">
+        <div class="lid">
+          <div class="bezel">
+            <div class="stage hero-stage rise" id="heroStage">
+              <div class="zoom">
+                <div class="win shelled tasked" id="win">
+                  <div class="win-bar">
+                    <span class="tl" style="background:#FF5F57"></span>
+                    <span class="tl" style="background:#FEBC2E"></span>
+                    <span class="tl" style="background:#28C840"></span>
+                    <span class="name">Ocarina</span>
                   </div>
-                  <div class="fill"></div>
-                </div>
-                <div class="card down foot">
-                  <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 1 0 0 17.6c1 0 1.7-.75 1.7-1.6 0-.4-.16-.78-.42-1.05-.27-.28-.43-.64-.43-1.05 0-.85.72-1.55 1.6-1.55h1.85A4.9 4.9 0 0 0 21 10.6c0-4.1-4-7.4-9-7.4Z"/><circle cx="7.6" cy="11.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="11" cy="7.7" r="1.05" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.8" r="1.05" fill="currentColor" stroke="none"/></svg>Theme</div>
-                  <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.1c0 3.5-3.4 6.4-7.6 6.4-.9 0-1.8-.13-2.6-.37L5.2 20.4l1.4-3.5c-1.1-1.15-1.8-2.6-1.8-4.8 0-3.53 3.4-6.4 7.6-6.4s8 2.87 8 6.4Z"/></svg>Share Feedback</div>
-                  <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 6.9l1.8 1.8 3-3"/><path d="M11 7.4h9.4"/><path d="M3.6 15.9l1.8 1.8 3-3"/><path d="M11 16.4h9.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
-                  <div class="row" id="awakeRow"><svg class="fi cupfi" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.2 17.4h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Keep Awake<span class="sw on"></span></div>
-                </div>
-              </div>
+                  <div class="win-body">
+                    <div class="side" id="side">
+                      <div class="card up tabs">
+                        <canvas class="mark sidemark" aria-hidden="true"></canvas>
+                        <div id="tablist">
+                          <div class="row on"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Fix the checkout page</span></div>
+                          <div class="row"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Write the sign-up tests</span></div>
+                          <div class="row"><span class="dot bad"></span><span class="g gm">&#9671;</span><span class="t">Rename the theme files</span></div>
+                          <div class="row"><span class="dot ok"></span><span class="g cl">&#10043;</span><span class="t">Add a dark mode toggle</span></div>
+                          <div class="row"><span class="dot"></span><span class="t">portfolio-site</span></div>
+                          <div class="row"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
+                        </div>
+                        <div class="fill"></div>
+                      </div>
+                      <div class="card down foot">
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 1 0 0 17.6c1 0 1.7-.75 1.7-1.6 0-.4-.16-.78-.42-1.05-.27-.28-.43-.64-.43-1.05 0-.85.72-1.55 1.6-1.55h1.85A4.9 4.9 0 0 0 21 10.6c0-4.1-4-7.4-9-7.4Z"/><circle cx="7.6" cy="11.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="11" cy="7.7" r="1.05" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.8" r="1.05" fill="currentColor" stroke="none"/></svg>Theme</div>
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.1c0 3.5-3.4 6.4-7.6 6.4-.9 0-1.8-.13-2.6-.37L5.2 20.4l1.4-3.5c-1.1-1.15-1.8-2.6-1.8-4.8 0-3.53 3.4-6.4 7.6-6.4s8 2.87 8 6.4Z"/></svg>Share Feedback</div>
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 6.9l1.8 1.8 3-3"/><path d="M11 7.4h9.4"/><path d="M3.6 15.9l1.8 1.8 3-3"/><path d="M11 16.4h9.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
+                        <div class="row" id="awakeRow"><svg class="fi cupfi" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.2 17.4h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Keep Awake<span class="sw on"></span></div>
+                      </div>
+                    </div>
 
-              <div class="main">
-                <div class="board">
-                  <canvas id="boardMark" aria-hidden="true"></canvas>
-                  <div class="newbtn">NEW TERMINAL &nbsp;&#8984;T</div>
-                  <div class="keys">&#8984;K&nbsp;&nbsp;QUICK ACTIONS<br>&#8984;&#8679;P&nbsp;&nbsp;COMMAND PALETTE</div>
-                </div>
-                <div class="shell" id="shell">
-                  <span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>
-                  <span class="l"><span class="pr">&#10095;</span> <span class="cmd" id="cmd">claude</span></span>
-                  <span class="l">&nbsp;</span>
-                  <span class="l dimtx">&gt; Fix the checkout page. The total doesn't change</span>
-                  <span class="l dimtx">&gt; when someone picks a different quantity.</span>
-                  <span class="l">&nbsp;</span>
-                  <span class="l">Looking through the cart files</span>
-                  <span class="l dimtx">  found it: the quantity box never tells the total</span>
-                  <span class="l">Making the change</span>
-                  <span class="l">Running the tests</span>
-                  <span class="l"><span class="gr">&#10003;</span> all 14 passed</span>
-                  <span class="l">&nbsp;</span>
-                  <span class="l"><span class="gr">&#10003;</span> The total now updates when the quantity changes.</span>
-                  <span class="l">&nbsp;</span>
-                  <span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>
-                  <span class="l"><span class="pr">&#10095;</span> <span class="caret"></span></span>
-                </div>
-                <div class="banner">
-                  <span class="dot bad"></span>
-                  <b>That didn't work.</b>
-                  <span class="say">The last command stopped with an error (code 1).</span>
-                  <button type="button" class="go">Explain this</button>
-                </div>
-                <!-- What the button gets you. In the app the answer arrives in
-                     the terminal, because the thing answering is the agent in
-                     the tab; here it is a sheet, so the answer and the command
-                     that acts on it are on screen at the same time. -->
-                <div class="sheet">
-                  <div class="sh-head">
-                    <b>What went wrong</b>
-                    <button type="button" class="sh-x" aria-label="Close">&#10005;</button>
-                  </div>
-                  <div class="sh-body">
-                    <p>One of the fourteen tests expected the cart total to change when the quantity does. It still reads the old total, so the run stopped there.</p>
-                    <p class="sh-next"><b>What to try next</b>Have the quantity box tell the total when it changes, then run the tests again.</p>
-                  </div>
-                  <div class="sh-foot">
-                    <button type="button" class="sh-cta">Fix it</button>
-                    <span class="sh-note">writes the ask at your prompt</span>
-                  </div>
-                </div>
-                <div class="drawer">
-                  <div class="q">What do you want to do?</div>
-                  <div class="grp">INSTALL AN AI CODING AGENT</div>
-                  <div class="it sel">Claude Code <span class="b">Anthropic's coding agent</span></div>
-                  <div class="it">Gemini CLI <span class="b">Google's coding agent</span></div>
-                  <div class="it">Codex CLI <span class="b">OpenAI's coding agent</span></div>
-                  <div class="grp">THINGS THE AGENTS NEED</div>
-                  <div class="it">Homebrew <span class="b">Most Mac installs assume it</span></div>
-                  <div class="it">Node <span class="b">Needed by Gemini and Codex</span></div>
-                </div>
-              </div>
+                    <div class="main">
+                      <div class="board">
+                        <canvas id="boardMark" aria-hidden="true"></canvas>
+                        <div class="newbtn">NEW TERMINAL &nbsp;&#8984;T</div>
+                        <div class="keys">&#8984;K&nbsp;&nbsp;QUICK ACTIONS<br>&#8984;&#8679;P&nbsp;&nbsp;COMMAND PALETTE</div>
+                      </div>
+                      <div class="shell" id="shell">
+                        <span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>
+                        <span class="l"><span class="pr">&#10095;</span> <span class="cmd" id="cmd">claude</span></span>
+                        <span class="l">&nbsp;</span>
+                        <span class="l dimtx">&gt; Fix the checkout page. The total doesn't change</span>
+                        <span class="l dimtx">&gt; when someone picks a different quantity.</span>
+                        <span class="l">&nbsp;</span>
+                        <span class="l">Looking through the cart files</span>
+                        <span class="l dimtx">  found it: the quantity box never tells the total</span>
+                        <span class="l">Making the change</span>
+                        <span class="l">Running the tests</span>
+                        <span class="l"><span class="gr">&#10003;</span> all 14 passed</span>
+                        <span class="l">&nbsp;</span>
+                        <span class="l"><span class="gr">&#10003;</span> The total now updates when the quantity changes.</span>
+                        <span class="l">&nbsp;</span>
+                        <span class="l"><span class="pu">vaibhav@mac</span> <span class="pp">~/portfolio-site</span></span>
+                        <span class="l"><span class="pr">&#10095;</span> <span class="caret"></span></span>
+                      </div>
+                      <div class="banner">
+                        <span class="dot bad"></span>
+                        <b>That didn't work.</b>
+                        <span class="say">The last command stopped with an error (code 1).</span>
+                        <button type="button" class="go">Explain this</button>
+                      </div>
+                      <!-- What the button gets you. In the app the answer arrives in
+                           the terminal, because the thing answering is the agent in
+                           the tab; here it is a sheet, so the answer and the command
+                           that acts on it are on screen at the same time. -->
+                      <div class="sheet">
+                        <div class="sh-head">
+                          <b>What went wrong</b>
+                          <button type="button" class="sh-x" aria-label="Close">&#10005;</button>
+                        </div>
+                        <div class="sh-body">
+                          <p>One of the fourteen tests expected the cart total to change when the quantity does. It still reads the old total, so the run stopped there.</p>
+                          <p class="sh-next"><b>What to try next</b>Have the quantity box tell the total when it changes, then run the tests again.</p>
+                        </div>
+                        <div class="sh-foot">
+                          <button type="button" class="sh-cta">Fix it</button>
+                          <span class="sh-note">writes the ask at your prompt</span>
+                        </div>
+                      </div>
+                      <div class="drawer">
+                        <div class="q">What do you want to do?</div>
+                        <div class="grp">INSTALL AN AI CODING AGENT</div>
+                        <div class="it sel">Claude Code <span class="b">Anthropic's coding agent</span></div>
+                        <div class="it">Gemini CLI <span class="b">Google's coding agent</span></div>
+                        <div class="it">Codex CLI <span class="b">OpenAI's coding agent</span></div>
+                        <div class="grp">THINGS THE AGENTS NEED</div>
+                        <div class="it">Homebrew <span class="b">Most Mac installs assume it</span></div>
+                        <div class="it">Node <span class="b">Needed by Gemini and Codex</span></div>
+                      </div>
+                    </div>
 
-              <div class="right">
-                <div class="card up panel">
-                  <div class="inner">
-                    <div class="phead"><b>Tasks</b><span class="cnt">3/5</span><span class="clr">Clear</span></div>
-                    <div class="prule"></div>
-                    <!-- newest first, the way the panel reads it off the transcript,
-                         so the one still running is the one at the top -->
-                    <div class="task"><span class="tk sq"></span>Write the sign-up tests</div>
-                    <div class="task"><span class="tk sq"></span>Fix the checkout page</div>
-                    <div class="task done"><span class="tk">&#10003;</span>Add a dark mode toggle</div>
-                    <div class="task done"><span class="tk">&#10003;</span>Set up the project folder</div>
-                    <div class="task done"><span class="tk">&#10003;</span>Install Claude Code</div>
-                  </div>
-                </div>
-                <div class="card down tokencard">
-                  <div class="tl1">This window <b>1.4M</b> <span>tokens</span></div>
-                  <div class="tl2">
-                    <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-                    <span class="rem">3h 12m</span>
+                    <div class="right">
+                      <div class="card up panel">
+                        <div class="inner">
+                          <div class="phead"><b>Tasks</b><span class="cnt">3/5</span><span class="clr">Clear</span></div>
+                          <div class="prule"></div>
+                          <!-- newest first, the way the panel reads it off the transcript,
+                               so the one still running is the one at the top -->
+                          <div class="task"><span class="tk sq"></span>Write the sign-up tests</div>
+                          <div class="task"><span class="tk sq"></span>Fix the checkout page</div>
+                          <div class="task done"><span class="tk">&#10003;</span>Add a dark mode toggle</div>
+                          <div class="task done"><span class="tk">&#10003;</span>Set up the project folder</div>
+                          <div class="task done"><span class="tk">&#10003;</span>Install Claude Code</div>
+                        </div>
+                      </div>
+                      <div class="card down tokencard">
+                        <div class="tl1">This window <b>1.4M</b> <span>tokens</span></div>
+                        <div class="tl2">
+                          <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                          <span class="rem">3h 12m</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="base"></div>
       </div>
     </div>
     <!-- Fourteen dots under the window they repaint. This was a section of
