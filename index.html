@@ -507,11 +507,12 @@
            box-shadow:0 50px 100px -46px rgba(0,0,0,.95); }
   .zoom { position:absolute; inset:0; transform-origin:50% 50%;
           transition:transform 1s cubic-bezier(.5,.02,.2,1); }
-  /* A MacBook Pro's lid, drawn the way the rest of this page draws things:
-     no screenshot, just the boxes it is actually made of — the aluminium rim,
-     the black bezel inside it, and the notch hanging off that. What makes it
-     read as this machine and not a tablet is the notch and the thinness: a
-     tablet's bezel is even the whole way round.
+  /* The lid, drawn the way the rest of this page draws things: no
+     screenshot, just the boxes it is actually made of — an aluminium rim and
+     a black bezel inside it, a third again as thick as they were. The notch
+     that used to hang off the bezel is gone, and with it the one detail that
+     named the machine; what is left is a display, which is the honest thing
+     to call it.
 
      Boxes and not borders. .zoom is positioned to inset:0, which resolves
      against the padding box, so a border on the stage subtracts from the
@@ -538,34 +539,30 @@
      Anodised rather than painted: one raking gradient across the metal, a
      lit top edge, and a machined line around the outside. Metal is only ever
      the light on it. */
-  .device { --rim:3px; --bez:9px; --chin:13px; --notchw:150px; --notchh:18px;
-            --lidr:16px;
+  .device { --rim:4px; --bez:12px; --chin:17px; --lidr:21px;
             margin-top:12px; }
   .lid { padding:var(--rim); border-radius:var(--lidr);
-         background:linear-gradient(150deg,
-           #3C424A 0%, #23272E 13%, #15181D 36%, #12151A 55%,
-           #1E222A 76%, #40464F 93%, #191C22 100%);
-         box-shadow:inset 0 1px 0 rgba(255,255,255,.16),
-                    inset 0 -1px 0 rgba(255,255,255,.05),
-                    0 0 0 1px rgba(255,255,255,.09),
+         background:
+           /* Raking bands, bright then dark then bright again. What separates
+              brushed metal from grey plastic is that it carries more than one
+              highlight: a single ramp reads as a painted bevel, three reads as
+              a surface being turned under a light. */
+           linear-gradient(148deg,
+             rgba(255,255,255,.22) 0%,  rgba(255,255,255,.06) 6%,
+             rgba(255,255,255,0)   17%, rgba(0,0,0,.20)       31%,
+             rgba(255,255,255,.04) 44%, rgba(255,255,255,.17) 54%,
+             rgba(255,255,255,.02) 63%, rgba(0,0,0,.22)       77%,
+             rgba(255,255,255,.15) 91%, rgba(255,255,255,.01) 100%),
+           linear-gradient(#31363E 0%, #212630 42%, #161A20 100%);
+         box-shadow:inset 0 1px 0 rgba(255,255,255,.30),
+                    inset 0 -1px 0 rgba(255,255,255,.09),
+                    inset 1px 0 0 rgba(255,255,255,.08),
+                    inset -1px 0 0 rgba(255,255,255,.08),
+                    0 0 0 1px rgba(255,255,255,.12),
                     0 60px 120px -50px rgba(0,0,0,.95); }
-  .bezel { position:relative; padding:var(--bez) var(--bez) var(--chin);
+  .bezel { padding:var(--bez) var(--bez) var(--chin);
            border-radius:calc(var(--lidr) - var(--rim));
            background:#0A0C10; }
-  /* The notch. It belongs to the bezel and hangs into the screen, which is
-     why it is drawn here and not inside the stage the stage would clip it. */
-  .bezel::before { content:""; position:absolute; z-index:3;
-                   top:var(--bez); left:50%; translate:-50% 0;
-                   width:var(--notchw); height:var(--notchh);
-                   border-radius:0 0 9px 9px;
-                   /* The window's own title bar renders at rgb(4,7,11) and
-                      this sits on top of it, so no fill will ever show the
-                      shape — on the real machine the notch is equally
-                      invisible against a dark menu bar. It is the edge that
-                      reads, so it is drawn as one: a hairline round the three
-                      sides that are not buried in the bezel. */
-                   background:#05070A;
-                   box-shadow:0 0 0 1px rgba(255,255,255,.055); }
   .hero-stage { border-radius:9px; border-color:rgba(0,0,0,.55);
                 box-shadow:inset 0 0 0 1px rgba(0,0,0,.55); }
   @media (max-width:760px) {
@@ -573,8 +570,7 @@
     #heroStage { aspect-ratio:620/634; }
     /* the same machine, held closer: every part of the frame comes down
        with the screen, or a phone gets a laptop with a 9px bezel on it. */
-    .device { --rim:2px; --bez:5px; --chin:8px; --notchw:84px; --notchh:11px;
-              --lidr:10px;
+    .device { --rim:3px; --bez:6px; --chin:10px; --lidr:13px;
               margin-top:4px; }
     .hero-stage { border-radius:6px; }
   }
