@@ -38,7 +38,13 @@
     /* derived, so a theme is a list of colours and not a list of opacities */
     --line:color-mix(in srgb,var(--bd) 9%,transparent);
     --line-2:color-mix(in srgb,var(--bd) 17%,transparent);
-    --faint:color-mix(in srgb,var(--ghost) 76%,var(--ground));
+    /* The dimmest tier that is still *text*. It used to be mixed toward the
+       ground, which in every theme but High Contrast landed it between 2.6
+       and 3.1 to 1 — under the 4.5 small copy needs, and legibly so on the
+       colophon and the spec labels. Mixed toward --ink instead it keeps the
+       theme's hue and its place at the bottom of the ladder (ink, muted,
+       faint) while holding 4.8:1 or better across all fourteen. */
+    --faint:color-mix(in srgb,var(--ghost) 78%,var(--ink));
     /* the icon's four gradient stops, so it turns with the accent */
     --ic-1:color-mix(in srgb,var(--accent) 34%,#FFFFFF);
     --ic-2:var(--accent);
@@ -107,6 +113,9 @@
   h1,h2,h3 { text-wrap:balance; }
   h2 { font-size:clamp(30px,3.9vw,44px); font-weight:500; letter-spacing:-.032em;
        line-height:1.1; margin:0 0 14px; max-width:21ch; }
+  /* --ghost is a display tint, not a text colour: at 3.7–4.4:1 it clears
+     AA's 3:1 bar for 30px+ type and nothing below it. Everything smaller
+     that used to read --ghost now reads --muted. */
   h2 .soft { color:var(--ghost); }
   .sub { color:var(--muted); font-size:17.5px; margin:0; max-width:58ch; line-height:1.65; }
   a { color:inherit; }
@@ -149,7 +158,6 @@
   nav .spacer { flex:1; }
   nav a.link { color:var(--muted); text-decoration:none; font-size:14.5px; padding:8px 10px; border-radius:8px; }
   nav a.link:hover { color:var(--ink); background:rgba(255,255,255,.05); }
-  @media (max-width:760px) { nav .navlinks { display:none; } }
   .btn { display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:450;
          padding:9px 17px; border-radius:var(--r-sm); text-decoration:none; white-space:nowrap;
          transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .2s,border-color .2s,opacity .2s; }
@@ -170,6 +178,20 @@
   nav .navcta { display:flex; align-items:center; gap:9px; }
   /* links carry 10px of their own padding, so they group tighter than the bar gap */
   nav .navlinks { display:flex; align-items:center; gap:2px; }
+  /* Below the pill's own width the six links do not fit and were spilling
+     out of it — 804px of them in a 350px bar. This has to sit after the
+     rule above: a media query adds no specificity, and the hide was losing
+     to a base rule declared later in the sheet. */
+  @media (max-width:760px) { nav .navlinks { display:none; } }
+  /* With the links gone the pill still did not fit a phone: brand 118 plus
+     controls 169 plus the bar's own padding and gaps is 367px, in 280 on a
+     320. The wordmark is the part that is saying something the icon beside
+     it has already said, so it is what goes; the icon stays as the way
+     back up, and the bar closes up around it. */
+  @media (max-width:560px) {
+    nav .brand canvas.mark { display:none; }
+    nav .bar { gap:14px; padding:0 12px 0 14px; }
+  }
 
   /* The pill is the way back up, not part of the first screen: it sits out
      the fold and slides in once the headline is behind you. Armed by script,
@@ -204,7 +226,7 @@
   .hero-inner { position:relative; text-align:center; }
   /* Icon and wordmark as one lockup, rather than stacking two dot-matrix
      marks on top of each other. */
-  .lockup { display:flex; align-items:center; justify-content:center; gap:20px; margin:30px 0 30px; }
+  .lockup { display:flex; align-items:center; justify-content:center; gap:20px; margin:10px 0 30px; }
   .app-icon { width:62px; height:62px; display:block; flex:none;
               filter:drop-shadow(0 12px 26px rgba(0,0,0,.55)); }
   .hero-mark { margin:0; height:42px; width:auto; max-width:100%; }
@@ -224,7 +246,7 @@
           background:rgba(255,255,255,.028); border:1px solid rgba(255,255,255,.075);
           box-shadow:inset 0 1px 0 rgba(255,255,255,.10); max-width:100%; }
   .flip .pr { color:var(--accent); flex:none; }
-  .flip-lead { color:var(--ghost); flex:none; white-space:nowrap; }
+  .flip-lead { color:var(--muted); flex:none; white-space:nowrap; }
   .roll { display:block; width:36ch; max-width:100%; height:1.6em; overflow:hidden; text-align:left; }
   .roll-in { display:block; transition:transform .6s cubic-bezier(.16,1,.3,1); }
   .roll-in i { display:block; height:1.6em; line-height:1.6em; color:var(--ink);
@@ -350,6 +372,14 @@
             translate:0 -100%; opacity:0;
             transition:translate .45s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
   .banner b { font-weight:500; color:var(--wred); }
+  /* The banner is one row the full 1180 wide, and a phone can show about 520
+     of those at a size worth reading. The middle sentence is what the crop
+     can afford to lose: the verdict and the button it offers are the whole
+     of the claim, and margin-left:auto was holding them 900px apart. */
+  @media (max-width:760px) {
+    .win .banner .say { display:none; }
+    .win .banner .go { margin-left:0; }
+  }
   .banner .say { color:var(--wdim); }
   .banner .go { margin-left:auto; border:1px solid var(--wsf); border-radius:6px;
                 padding:5px 12px; color:var(--wsf); white-space:nowrap;
@@ -482,6 +512,14 @@
   .swatch.on::after { content:""; position:absolute; inset:-5px; border-radius:11px;
                       border:1.5px solid color-mix(in srgb,var(--sw-c) 62%,transparent); }
   .swatch:focus-visible { outline:2px solid var(--sw-c); outline-offset:5px; }
+  /* Fourteen chips and no names on them. One line under the strip carries
+     the name instead: the chosen theme's, or whichever chip is under the
+     pointer while there is one, so the strip can be read without pressing
+     every colour to find out what it is called. Its height is held, or
+     naming a theme would nudge the window above it. */
+  .swname { margin:11px auto 0; text-align:center; font-family:var(--mono);
+            font-size:11.5px; letter-spacing:.15em; text-transform:uppercase;
+            color:var(--muted); min-height:1.4em; transition:color .2s ease; }
   @media (max-width:560px) { .swatches { gap:7px; } .swatch { width:32px; height:21px; } }
 
   /* ── the colour arriving ──────────────────────────────
@@ -685,7 +723,7 @@
   .versus { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:40px; align-items:stretch; }
   @media (max-width:900px) { .versus { grid-template-columns:1fr; } }
   .vs { border-radius:var(--r); padding:22px; display:flex; flex-direction:column; }
-  .vs .cap { font-family:var(--mono); font-size:11.5px; letter-spacing:.13em; color:var(--ghost); margin-bottom:18px; }
+  .vs .cap { font-family:var(--mono); font-size:11.5px; letter-spacing:.13em; color:var(--muted); margin-bottom:18px; }
   .vs.good .cap { color:var(--accent); }
   .vs .stack { position:relative; flex:1; min-height:300px; }
   /* three overlapping system windows, which is the actual problem */
@@ -749,9 +787,9 @@
   .awake-pair { display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:40px; align-items:start; }
   @media (max-width:900px) { .awake-pair { grid-template-columns:1fr; gap:44px; } }
   .acol .cap { font-family:var(--mono); font-size:11.5px; letter-spacing:.13em;
-               color:var(--ghost); margin-bottom:18px; }
+               color:var(--muted); margin-bottom:18px; }
   .acol.good .cap { color:var(--accent); }
-  .asay { margin:26px 0 0; font-size:15px; line-height:1.55; color:var(--ghost); min-height:44px;
+  .asay { margin:26px 0 0; font-size:15px; line-height:1.55; color:var(--muted); min-height:44px;
           transition:color .35s ease; }
   .asay b { font-weight:500; }
   .acol.good .asay b { color:var(--ink); }
@@ -860,18 +898,6 @@
   .coffee-card h3 { margin:0 0 3px; font-size:17px; font-weight:500; letter-spacing:-.015em; }
   .coffee-card p { margin:0; font-size:14.5px; color:var(--faint); }
 
-  /* Buy Me a Coffee's own yellow. This is the one place a second colour is
-     allowed on the page: it is a third party's brand, and the recognition is
-     the point of using it rather than the site's blue. */
-  .btn-bmc { background:#FFDD00; color:#0B0B0B; font-weight:600; }
-  .btn-bmc:hover { background:#FFE84D; }
-  .btn-bmc .cup, .btn-ghost .cup { width:17px; height:17px; display:block; flex:none; }
-  .btn-soon { background:rgba(255,255,255,.07); border:1px solid var(--line-2);
-              color:var(--ink); cursor:default; gap:10px; }
-  .btn-soon i { width:7px; height:7px; border-radius:50%; background:var(--accent);
-                display:block; flex:none; animation:pulse 1.9s ease-in-out infinite; }
-  .btn-sm { padding:8px 13px; font-size:13.5px; }
-  @media (max-width:1200px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
 
   .specs { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:52px;
            border-top:1px solid var(--line); padding-top:32px; }
@@ -996,7 +1022,7 @@
       <span class="flip-lead">built for people who</span>
       <span class="roll" id="roll"></span>
     </div>
-    <p class="hero-sub">A macOS terminal for running AI coding agents. As many as you like, in one window, each one named after what you asked it for.</p>
+    <p class="hero-sub">A macOS terminal for AI coding agents. Many at once, in one window, each tab named after its ask.</p>
     <div class="cta">
       <span class="btn btn-soon"><i></i>Coming soon</span>
       <a class="btn btn-ghost" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
@@ -1143,6 +1169,7 @@
          under the window you press one and the page has already followed,
          which is a shorter way of saying it. -->
     <div class="swatches rise d1" id="swatches" role="radiogroup" aria-label="Theme"></div>
+    <p class="swname rise d1" id="swName"></p>
   </div>
 </header>
 <!-- The colour arriving. One edge, entering from the side the pressed dot
@@ -1154,7 +1181,7 @@
 <section id="one">
   <div class="wrap">
     <h2 class="rise">All your terminals <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Every agent in one window, each tab named after the ask that opened it. Nothing to juggle, nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
+    <p class="sub rise">Each tab named after the ask that opened it. Nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
 
     <div class="versus">
       <div class="vs glass rise d1">
@@ -1198,7 +1225,7 @@
       </div>
     </div>
 
-    <p class="takeaway rise">The dot says working, done or stopped — <b>read from the agent&rsquo;s own transcript</b>, so it goes green when the work stops rather than blinking at work that finished ten minutes ago.</p>
+    <p class="takeaway rise">The dot says working, done or stopped, <b>read from the agent&rsquo;s own transcript</b>.</p>
   </div>
 </section>
 
@@ -1206,7 +1233,7 @@
 <section id="awake">
   <div class="wrap">
     <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-    <p class="sub rise">The display stays on while a run is going, so a long task finishes instead of stopping when the screen does.</p>
+    <p class="sub rise">The display stays on while a run is going, so a long task finishes.</p>
   </div>
 
   <div class="wrap awake-pair">
@@ -1265,10 +1292,10 @@
 <section id="kit">
   <div class="wrap">
     <h2 class="rise">The install command, <span class="soft">already in the app.</span></h2>
-    <p class="sub rise">&#8984;K keeps the install command for Claude Code, Gemini CLI and Codex, next to the Homebrew and Node they assume.</p>
+    <p class="sub rise">&#8984;K keeps the install command for Claude Code, Gemini CLI and Codex.</p>
     <div class="feat">
       <div class="feat-say">
-      <p class="takeaway rise">One menu, in the terminal itself, with <b>the command for every agent it runs</b> &mdash; and the two things those commands expect to be on the machine already.</p>
+      <p class="takeaway rise">One menu, <b>in the terminal itself</b>.</p>
       </div>
       <div class="stage rise d1" id="kitStage"></div>
     </div>
@@ -1278,10 +1305,10 @@
 <section id="errors">
   <div class="wrap">
     <h2 class="rise">When a command fails, <span class="soft">it says so in English.</span></h2>
-    <p class="sub rise">A failed command puts <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">Explain this</span> at the top of the window. One click turns the red output into a sentence.</p>
+    <p class="sub rise">A failed command puts <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">Explain this</span> at the top of the window.</p>
     <div class="feat">
       <div class="feat-say">
-      <p class="takeaway rise">What broke, and what to try next, <b>read out of the run you just did</b> &mdash; not looked up somewhere that assumed you already knew.</p>
+      <p class="takeaway rise">What broke and what to try next, <b>read out of the run you just did</b>.</p>
       <p class="try rise">Press <span>Explain this</span> in the window &rarr;</p>
       </div>
       <div class="stage rise d1" id="errStage"></div>
@@ -1292,10 +1319,10 @@
 <section id="tasks">
   <div class="wrap">
     <h2 class="rise">All your prompted tasks <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Every ask you make in this window, in one list, ticked off when the agent stops working on it.</p>
+    <p class="sub rise">Every ask in one list, ticked off when the agent stops.</p>
     <div class="feat">
       <div class="feat-say">
-      <p class="takeaway rise">Read from <b>your agent&rsquo;s own transcript</b>, so any agent you run here fills it &mdash; and the list outlives the scrollback it came from.</p>
+      <p class="takeaway rise">Read from <b>your agent&rsquo;s own transcript</b>, so the list outlives the scrollback.</p>
       </div>
       <div class="stage rise d1" id="taskStage"></div>
     </div>
@@ -1308,7 +1335,7 @@
     <div class="bento">
       <div class="q glass w4 rise">
         <h3>Do I need to know how to code?</h3>
-        <p>No. Ocarina doesn&rsquo;t replace your coding agent, but it makes working with one easier. Some understanding of the project you are building will still help.</p>
+        <p>No. Ocarina doesn&rsquo;t replace your coding agent, it is the window around it.</p>
       </div>
       <div class="q glass w2 rise d1">
         <h3>Is it a real terminal?</h3>
@@ -1317,24 +1344,24 @@
 
       <div class="q glass w2 rise">
         <h3>Does Ocarina include Claude Code, Codex or Gemini?</h3>
-        <p>No. Ocarina is the workspace around those tools. You use the agent and the account you already have.</p>
+        <p>No. You bring the agent and the account you already have.</p>
       </div>
       <div class="q glass w2 rise d1">
         <h3>Is Ocarina an AI coding tool?</h3>
-        <p>Not exactly. It is a terminal designed around the way people use AI coding agents.</p>
+        <p>No. It is a terminal built around how people run them.</p>
       </div>
       <div class="q glass w2 rise d2">
         <h3>Is Ocarina only for AI coding?</h3>
-        <p>No. It works as a normal terminal as well, but its interface is built around agent workflows.</p>
+        <p>No. It is a normal terminal too.</p>
       </div>
 
       <div class="q glass w3 rise">
         <h3>Does Ocarina send my terminal history somewhere?</h3>
-        <p>Ocarina&rsquo;s own history and organisation stay on the Mac. The third-party coding agents you run inside it have their own data policies.</p>
+        <p>Ocarina&rsquo;s history stays on the Mac. The agents you run inside it have their own policies.</p>
       </div>
       <div class="q glass w3 rise d1">
         <h3>How much does it cost?</h3>
-        <p>Ocarina is free and open source. The agents you run inside it are billed by whoever makes them.</p>
+        <p>Free and open source. The agents inside it are billed by whoever makes them.</p>
       </div>
 
       <div class="q glass w6 rise">
@@ -1778,8 +1805,23 @@
   }
   function fitAll() {
     fit(document.querySelector("#heroStage .win"), narrow.matches ? 620 : 1180, 634);
+    /* Every scene window was fitted to the full 1180 whatever the screen,
+       which is the whole of the phone problem: 1180 into 352 is 0.30, and
+       0.30 of 14px is 4px. On a phone each one is fitted to its own slice
+       instead, and the stage is shaped to that slice so the fit is exact
+       rather than a cover that overflows the framing maths below. */
     Array.prototype.forEach.call(document.querySelectorAll(".stage .win"),
-      function (el) { fit(el, 1180, 634); });
+      function (el) {
+        var st = el.closest(".stage");
+        var nar = st && SCENES[st.id] && SCENES[st.id].nar;
+        if (narrow.matches && nar) {
+          st.style.aspectRatio = nar.w + "/" + nar.h;
+          fit(el, nar.w, nar.h);
+        } else {
+          if (st) st.style.aspectRatio = "";
+          fit(el, 1180, 634);
+        }
+      });
     fit(document.querySelector(".awin"), 520, 300);
     fit(document.querySelector(".twin"), 520, 300);
   }
@@ -1796,8 +1838,49 @@
     return c;
   }
 
+  /* Where the window is fitted to a slice of itself rather than to the whole
+     of it, the slice that shows is the one the window scales from — its top
+     left corner — and none of these three sections is about that corner. The
+     scale is already right, so this only has to slide the window until the
+     part the scene names is in the middle of the stage, and stop sliding at
+     the point where an edge of the window would come into it. */
+  function narrowFrame(winEl, zoomEl, sc) {
+    /* `nar` when the scene names a different region for a phone, the scene's
+       own otherwise — the frames the live scene switches to (the sheet, the
+       prompt) name one region for both and still have to be centred. */
+    var nar = sc.nar || sc;
+    if (!nar.sel && !nar.rect) return { s: 1, x: 0, y: 0 };
+    var zr = zoomEl.getBoundingClientRect();
+    var f = parseFloat(getComputedStyle(winEl).getPropertyValue("--fit")) || 1;
+    if (!zr.width || !zr.height) return { s: 1, x: 0, y: 0 };
+    // the region's centre, in the window's own untransformed 1180x634
+    var cx, cy;
+    if (nar.rect) {
+      cx = (nar.rect[0] + nar.rect[2] / 2) / 100 * 1180;
+      cy = (nar.rect[1] + nar.rect[3] / 2) / 100 * 634;
+    } else {
+      var t = nar.sel ? winEl.querySelector(nar.sel) : null;
+      if (!t) return { s: 1, x: 0, y: 0 };
+      // measured untransformed, for the reason the desktop path measures
+      // untransformed: a rect read through the live transform is that
+      // transform's rect, and it is the number being solved for
+      var keepT = zoomEl.style.transition, keep = zoomEl.style.transform;
+      zoomEl.style.transition = "none"; zoomEl.style.transform = "none";
+      void zoomEl.offsetWidth;
+      var tr = t.getBoundingClientRect(), wr = winEl.getBoundingClientRect();
+      cx = (tr.left + tr.width / 2 - wr.left) / f;
+      cy = (tr.top + tr.height / 2 - wr.top) / f;
+      zoomEl.style.transform = keep; zoomEl.style.transition = keepT;
+    }
+    // slide so that centre lands mid-stage, then hold the window over the stage
+    var dx = zr.width / 2 - cx * f, dy = zr.height / 2 - cy * f;
+    dx = Math.min(0, Math.max(zr.width - 1180 * f, dx));
+    dy = Math.min(0, Math.max(zr.height - 634 * f, dy));
+    return { s: 1, x: dx / zr.width * 100, y: dy / zr.height * 100 };
+  }
+
   function frameFor(winEl, zoomEl, sc) {
-    if (narrow.matches) return { s: 1, x: 0, y: 0 };
+    if (narrow.matches) return narrowFrame(winEl, zoomEl, sc);
     // Measure untransformed, always. A rect scene that measures while the
     // previous scene's transition is still running reads an animating size,
     // and every number downstream of it is then wrong.
@@ -1841,10 +1924,27 @@
 
   /* One scene per section: which part of the window it is about, and what
      the window has to be showing for that part to exist. */
+  /* `nar` is the same scene framed for a phone. The desktop framing cannot
+     be reused there: it scales the whole 1180px window down to cover the
+     stage, and a 352px stage puts that window at 0.30 — the terminal's 14px
+     type lands at 4px, which is what "the terminals are not visible" is.
+     So the phone gets the answer the hero already uses, crop instead of
+     shrink: `w`/`h` is the slice of the window, in the window's own 1180x634
+     coordinates, that the stage is sized to and filled with. Small enough
+     that the type inside it comes back up to a readable size, and placed on
+     the part of the window the section is actually about. */
   var SCENES = {
-    kitStage:    { cls: "drawn", sel: ".drawer", pad: 30, max: 1.75 },
-    errStage:    { cls: "shelled erred", rect: [18, 0, 82, 32], max: 1.9, live: true },
-    taskStage:   { cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1 }
+    kitStage:    { cls: "drawn", sel: ".drawer", pad: 30, max: 1.75,
+                   nar: { w: 450, h: 370, sel: ".drawer" } },
+    errStage:    { cls: "shelled erred", rect: [18, 0, 82, 32], max: 1.9, live: true,
+                   /* the banner runs 82% of the window wide, which is 967px,
+                      and will not come down to a phone at any size worth
+                      reading. The middle sentence is dropped there (see the
+                      .banner rule), which closes the verdict and the button up
+                      into this slice — the two things the section is about. */
+                   nar: { w: 520, h: 280, rect: [2, 1, 34, 28] } },
+    taskStage:   { cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1,
+                   nar: { w: 290, h: 280, sel: ".panel .inner" } }
   };
 
   /* Both sections are the same machine: one drawn window, framed on a different
@@ -2060,12 +2160,19 @@
   var swatches = document.getElementById("swatches");
   var current = null;
 
+  var swName = document.getElementById("swName");
+  /* The chosen theme's name, unless a chip is being pointed at, in which case
+     that one's — the strip is read by hovering along it, and a label that only
+     ever said what was already picked would be answering the wrong question. */
+  function say(name) { if (swName) swName.textContent = name; }
+
   function light(id) {
     Array.prototype.forEach.call(swatches.children, function (b) {
       var on = b.getAttribute("data-id") === id;
       b.classList.toggle("on", on);
       b.setAttribute("aria-checked", on ? "true" : "false");
     });
+    say(THEMES[id] ? THEMES[id].name : "");
   }
 
   /* Drawing the new page on from the side the chip is on.
@@ -2134,6 +2241,11 @@
     // one colour: the lamp this theme lights its board with
     b.style.setProperty("--sw-c", t.lit);
     b.addEventListener("click", function () { pick(id, b); });
+    b.addEventListener("pointerenter", function () { say(t.name); });
+    b.addEventListener("focus", function () { say(t.name); });
+    // back to the one actually in use, not to nothing
+    b.addEventListener("pointerleave", function () { say(THEMES[current].name); });
+    b.addEventListener("blur", function () { say(THEMES[current].name); });
     swatches.appendChild(b);
   });
   applyTheme("ocarina");
