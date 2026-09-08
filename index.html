@@ -192,6 +192,12 @@
      wider than the space between the wordmark and the buttons whatever is
      done to either. */
   @media (max-width:1200px) { nav a.link { font-size:13.2px; padding:8px 6px; } }
+  /* One more step, because the row gained Sessions, Notifications and Recent.
+     Eleven links at the 1200 size come to 814pt, and with the mark and the
+     buttons beside them that runs past the window a little above the width at
+     which the row is dropped altogether. Tightening the type keeps the
+     navigation on screens that had it. */
+  @media (max-width:1120px) { nav a.link { font-size:12.6px; padding:8px 4px; } }
   @media (max-width:1040px) { nav .navlinks { display:none; } }
   /* With the links gone the pill still did not fit a phone: brand 118 plus
      controls 169 plus the bar's own padding and gaps is 367px, in 280 on a
@@ -938,6 +944,10 @@
      off. Square, because every other item up there is: a tall narrow one reads
      as something squeezed rather than as something drawn to fit. */
   .mb-card { display:block; height:16.6px; width:16.6px; flex:none; }
+  /* Beside the card, in the font every other item up there is already set in.
+     The app's own 5x7 alphabet came to 136 points for a line this length —
+     wider than the clock, the Wi-Fi and the battery together. */
+  .mb-word { margin-left:-9px; font-size:12px; letter-spacing:-.005em; white-space:nowrap; }
   .mb-i { height:13px; width:auto; flex:none; opacity:.85; }
   .mb-clock { font-variant-numeric:tabular-nums; opacity:.9; }
   /* Dropped from the board, and pinned to it: the item it belongs to is the
@@ -997,6 +1007,30 @@
     .states dt { width:auto; }
     .states dd { margin-top:1px; }
   }
+
+  /* ── switching, notifications, recents ────────────────── */
+  .keyrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:34px; }
+  .keycell { display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+             border:1px solid var(--line); border-radius:var(--r); padding:16px 18px;
+             background:var(--raise); }
+  .keycell span { font-size:14px; color:var(--muted); flex:1 1 100%; }
+  kbd { font-family:var(--mono); font-size:12.5px; color:var(--ink);
+        border:1px solid var(--line); border-radius:6px; padding:3px 7px;
+        background:var(--raise-2); }
+
+  /* Notification cards, at the proportions Notification Centre draws them. */
+  .notes { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin-top:34px; }
+  .note { border:1px solid var(--line); border-radius:14px; padding:15px 17px;
+          background:var(--raise); display:grid; gap:3px; }
+  .note b { font-size:14.5px; font-weight:600; color:var(--ink); }
+  .note span { font-size:13.5px; color:var(--muted); }
+
+  .chips { display:flex; flex-wrap:wrap; gap:9px; margin-top:34px; }
+  .chip { display:inline-flex; align-items:center; gap:8px; font-size:14px; color:var(--ink);
+          border:1px solid var(--line); border-radius:10px; padding:9px 14px;
+          background:var(--raise); }
+  .chip i { font-style:normal; font-family:var(--mono); font-size:11.5px; color:var(--muted); }
+  .mono { font-family:var(--mono); font-size:.92em; }
 
   .takeaway { margin:26px 0 0; font-size:17px; color:var(--muted); max-width:62ch; }
   .takeaway b { color:var(--ink); font-weight:500; }
@@ -1215,8 +1249,11 @@
     <span class="spacer"></span>
     <span class="navlinks">
       <a class="link" href="#one">One window</a>
+      <a class="link" href="#switch">Sessions</a>
       <a class="link" href="#awake">Keep awake</a>
       <a class="link" href="#status">Menu bar</a>
+      <a class="link" href="#notify">Notifications</a>
+      <a class="link" href="#recent">Recent</a>
       <a class="link" href="#kit">&#8984;K menu</a>
       <a class="link" href="#errors">Explain this</a>
       <a class="link" href="#tasks">Your tasks</a>
@@ -1299,6 +1336,7 @@
                       <div class="card middle foot">
                         <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4.4" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="17.6" r="1.15" fill="currentColor" stroke="none"/><path d="M9 6.4h11.4M9 12h11.4M9 17.6h11.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
                         <div class="row" id="awakeRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M13.7 2.6 5.4 13.5h5.4l-.5 7.9 8.3-10.9h-5.4l.5-7.9Z"/></svg>Keep Awake<span class="sw on"></span></div>
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2a5.6 5.6 0 0 1 5.6 5.6c0 4.4 1.6 5.9 1.6 5.9H4.8s1.6-1.5 1.6-5.9A5.6 5.6 0 0 1 12 3.2Z"/><path d="M10.3 18.4a1.8 1.8 0 0 0 3.4 0"/></svg>Notify<span class="sw on"></span></div>
                       </div>
                       <!-- What opens, at the foot, where a row you press to leave
                            the column belongs. Both open a sheet over the window,
@@ -1518,6 +1556,21 @@
 </section>
 
 
+<section id="switch">
+  <div class="wrap">
+    <h2 class="rise">Ten sessions, <span class="soft">as easy as two.</span></h2>
+    <p class="sub rise">&#8679;&#8984;] and &#8679;&#8984;[ walk the column. &#8984;1 to &#8984;9 go straight to one.</p>
+    <div class="keyrow rise d1">
+      <div class="keycell"><kbd>&#8679;&#8984;]</kbd><kbd>&#8679;&#8984;[</kbd><span>Next and previous, wrapping</span></div>
+      <div class="keycell"><kbd>&#8984;1</kbd>&hellip;<kbd>&#8984;9</kbd><span>By position in the column</span></div>
+      <div class="keycell"><kbd>&#8679;&#8984;P</kbd><span>Search by name</span></div>
+      <div class="keycell"><kbd>&#8984;K</kbd><span>Clear the terminal</span></div>
+    </div>
+    <p class="takeaway rise">The shortcuts step through the order the sidebar draws, not the order you last used one. <b>An order with no representation on screen is one you cannot predict.</b></p>
+    <p class="takeaway rise">Recency goes where the order <i>is</i> drawn: &#8679;&#8984;P opens on the sessions you looked at most recently. <b>With ten open, the two you are moving between are almost never neighbours in the column.</b></p>
+  </div>
+</section>
+
 <section id="awake">
   <div class="wrap">
     <h2 class="rise">Long task? <span class="soft">Let it finish.</span></h2>
@@ -1588,7 +1641,7 @@
 <section id="status">
   <div class="wrap">
     <h2 class="rise">Know which ones <span class="soft">need you.</span></h2>
-    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in. <b>One click down, your last five asks and what became of each.</b></p>
+    <p class="sub rise">Beside the Wi-Fi: one cell of a departure board, and the state beside it in words. <b>One click down, your last five asks and what became of each.</b></p>
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise"><b>Still going</b> means an ask that has not come back yet &mdash; read from the agent&rsquo;s conversation, not from what the screen is repainting.</p>
@@ -1598,6 +1651,8 @@
         <dl class="states faces rise d1">
           <div><dt><canvas class="card" data-card="working" role="img" aria-label="A card folding through the seam"></canvas></dt>
                <dd><b>Still going</b>your ask has not come back yet</dd></div>
+          <div><dt><canvas class="card" data-card="needsYou" role="img" aria-label="An exclamation, its gap on the seam"></canvas></dt>
+               <dd><b>Needs you</b>it rang: it wants a decision</dd></div>
           <div><dt><canvas class="card" data-card="backToYou" role="img" aria-label="A ring, cut by the seam"></canvas></dt>
                <dd><b>Back to you</b>it stopped, and it is your move</dd></div>
           <div><dt><canvas class="card" data-card="ready" role="img" aria-label="An empty cell, the seam lit across it"></canvas></dt>
@@ -1621,6 +1676,11 @@
           <span class="mb-m" aria-hidden="true"></span><span class="mb-m" aria-hidden="true"></span><span class="mb-m" aria-hidden="true"></span>
           <span class="mb-gap"></span>
           <canvas class="mb-card" id="mbFace" role="img" aria-label="Ocarina"></canvas>
+          <!-- The state, in the house's words. The card is the reading and the
+               word is what tells you which reading you are looking at — a
+               picture on its own asks you to have learned five plates before it
+               says anything. -->
+          <span class="mb-word" id="mbWord">Still going</span>
           <svg class="mb-i" viewBox="0 0 26 14" aria-hidden="true"><rect x=".8" y="1.4" width="20.4" height="11.2" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".55"/><rect x="2.6" y="3.2" width="13.4" height="7.6" rx="1.8" fill="currentColor"/><path d="M23 5.2v3.6a2.6 2.6 0 0 0 0-3.6Z" fill="currentColor" opacity=".55"/></svg>
           <svg class="mb-i" viewBox="0 0 18 14" aria-hidden="true"><path d="M1 5.1a11.4 11.4 0 0 1 16 0M3.7 8a7.6 7.6 0 0 1 10.6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="11.2" r="1.4" fill="currentColor"/></svg>
           <svg class="mb-i" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 4.4h12M2 9.6h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10.4" cy="4.4" r="1.9" fill="currentColor"/><circle cx="5.6" cy="9.6" r="1.9" fill="currentColor"/></svg>
@@ -1650,7 +1710,38 @@
     </div>
     <p class="takeaway rise">A tick on what it stopped on, an empty box on what is open. <b>The panel needs the window in front of you; this does not.</b></p>
     <p class="takeaway rise">Five, and the rest counted rather than dropped. <b>A menu holding twenty would cover the window it saves you opening.</b></p>
+    <p class="takeaway rise">Nothing up there says <i>Completed</i>. An agent stopping means it stopped talking, not that it managed what you asked &mdash; <b>so the word is <i>Back to you</i>, which is a thing the signal can support.</b></p>
     <p class="takeaway rise"><b>&#8984;J shuts the column, and the token figure is one click down.</b></p>
+  </div>
+</section>
+
+<section id="notify">
+  <div class="wrap">
+    <h2 class="rise">It tells you, <span class="soft">and only when you are elsewhere.</span></h2>
+    <p class="sub rise">Three moments reach macOS notifications. Nothing is sent while Ocarina is the app in front.</p>
+    <div class="notes rise d1">
+      <div class="note"><b>Needs you</b><span>Fix the checkout page</span></div>
+      <div class="note"><b>Back to you</b><span>Write the sign-up tests</span></div>
+      <div class="note"><b>Stopped (127)</b><span>npm run build</span></div>
+    </div>
+    <p class="takeaway rise">Not every command, not output, not a shell reaching a prompt. <b>A terminal reaches a prompt a hundred times an hour and none of them are news.</b></p>
+    <p class="takeaway rise">A notification about a window you are looking at is a second copy of the screen. <b>The tab&rsquo;s dot, the rail and the menu bar have already said it.</b></p>
+    <p class="takeaway rise">No sound: whatever prompted most of these already rang the bell. <b>Two notifications about one session replace each other rather than stacking.</b></p>
+  </div>
+</section>
+
+<section id="recent">
+  <div class="wrap">
+    <h2 class="rise">It remembers <span class="soft">where you work.</span></h2>
+    <p class="sub rise">Open the app with nothing running and the folders you have been in are waiting. One press opens a terminal already there.</p>
+    <div class="chips rise d1">
+      <span class="chip">Ocarina Terminal <i>claude</i></span>
+      <span class="chip">Portfolio Site <i>codex</i></span>
+      <span class="chip">Xstream Creative Suite</span>
+      <span class="chip">Side Project <i>claude</i></span>
+    </div>
+    <p class="takeaway rise">Nothing asks you to add a folder. The shell reports where it is on every prompt, so <b>a <span class="mono">cd</span> into a project is what puts that project on the screen</b>.</p>
+    <p class="takeaway rise">The agent is shown and never started. <b>An app that launches Claude because you launched Claude last time has decided what you came to do.</b></p>
   </div>
 </section>
 
@@ -2723,6 +2814,9 @@
   var CARDS = {
     ready:     [".......", ".......", ".......", "#######", ".......", ".......", "......."],
     backToYou: ["..###..", ".#...#.", "#.....#", ".......", "#.....#", ".#...#.", "..###.."],
+    /* An exclamation, and the one plate where the seam is not something to
+       draw around: the fold falls inside the mark's own gap. */
+    needsYou:  ["..###..", "..###..", "..###..", ".......", ".......", "..###..", "......."],
     stopped:   ["#.....#", ".#...#.", "..#.#..", ".......", "..#.#..", ".#...#.", "#.....#"]
   };
   /* The turn, five frames: the card stands, folds through the seam, passes
@@ -2846,28 +2940,32 @@
     // done: what the agent has stopped on. Never "succeeded" — an agent
     // stopping means it stopped talking, which is the same reason nothing on
     // the board says done either.
+    // `bar` is the house's word, `say` picks the theme's. They are not the
+    // same sentence and must not be: the bar is read from outside Ocarina,
+    // where a theme being arch costs somebody the reading they came for.
     var MBS = [
-      { face: "working", say: 0, more: 2, tasks: [
+      { face: "working", say: 0, bar: "Still going", more: 2, tasks: [
         { t: "Fix the checkout page",     done: false },
         { t: "Add a dark mode toggle",    done: true  },
         { t: "Rename the theme files",    done: true  },
         { t: "Write the sign-up tests",   done: true  },
         { t: "Read the deploy log",       done: true  } ] },
-      { face: "backToYou", say: 1, more: 2, tasks: [
+      { face: "backToYou", say: 1, bar: "Back to you", more: 2, tasks: [
         { t: "Fix the checkout page",     done: true  },
         { t: "Add a dark mode toggle",    done: true  },
         { t: "Rename the theme files",    done: true  },
         { t: "Write the sign-up tests",   done: true  },
         { t: "Read the deploy log",       done: true  } ] },
-      { face: "stopped", say: 2, more: 0, tasks: [
+      { face: "stopped", say: 2, bar: "Stopped (127)", more: 0, tasks: [
         { t: "Rename the theme files",    done: true  },
         { t: "Write the sign-up tests",   done: true  } ] },
-      { face: "ready", say: 3, more: 0, tasks: [] }
+      { face: "ready", say: 3, bar: "Ready", more: 0, tasks: [] }
     ];
     var mbMenu = document.querySelector(".mb-menu");
     var mbBar  = mbEl.parentElement;
     var mbLine = document.getElementById("mbLine");
     var mbTasks = document.getElementById("mbTasks");
+    var mbWord = document.getElementById("mbWord");
     var mbAt = -1, mbSeen = false, mbTurn = null;
 
     function mbSay() {
@@ -2877,6 +2975,7 @@
       // free to be as arch as it likes and cannot produce a failure that
       // reads as anything else
       mbLine.textContent = st.say === 2 ? v[2] + " (127)" : v[st.say];
+      if (mbWord) mbWord.textContent = st.bar;
 
       // Newest first, because the menu is read from the top and the ask you
       // are waiting on is the last one you made — the same order the panel
