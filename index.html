@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;450;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
   :root {
-    /* The page's palette is one of the app's fourteen themes, written out
+    /* The page's palette is one of the app's nineteen themes, written out
        here as Ocarina so a scriptless page still has colours, and rewritten
        on :root by the picker in the themes section. Everything the page is
        painted with resolves through these, so changing them changes the
@@ -43,7 +43,7 @@
        and 3.1 to 1 — under the 4.5 small copy needs, and legibly so on the
        colophon and the spec labels. Mixed toward --ink instead it keeps the
        theme's hue and its place at the bottom of the ladder (ink, muted,
-       faint) while holding 4.8:1 or better across all fourteen. */
+       faint) while holding 4.8:1 or better across all nineteen. */
     --faint:color-mix(in srgb,var(--ghost) 78%,var(--ink));
     /* the icon's four gradient stops, so it turns with the accent */
     --ic-1:color-mix(in srgb,var(--accent) 34%,#FFFFFF);
@@ -1247,7 +1247,7 @@
       <span class="flip-lead">built for people who</span>
       <span class="roll" id="roll"></span>
     </div>
-    <p class="hero-sub">A macOS terminal for AI coding agents. Many at once, in one window, each tab named after its ask.</p>
+    <p class="hero-sub">A macOS terminal for AI coding agents. Many at once, in one window, each tab named for the project it is in.</p>
     <div class="cta">
       <span class="btn btn-soon"><i></i>Coming soon</span>
       <a class="btn btn-ghost" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
@@ -1428,13 +1428,12 @@
                         <b>Skills</b><span class="sf-x">&#10005;</span>
                       </div>
                       <div class="sf-what">Written instructions your agent reads when a task calls for it.</div>
-                      <div class="sf-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.2"/><path d="m15.3 15.3 4.7 4.7"/></svg>Search 216 skills</div>
-                      <!-- Three sections, and one skeleton under all of them.
-                           Everything above the tabs is constant and everything
-                           below them is cards: each used to open with a
-                           different kind of thing, so the panel reshuffled
-                           itself every time you moved between them. -->
-                      <div class="sf-tabs"><i class="on">Start here</i><i>Browse all</i><i>Installed</i></div>
+                      <!-- One field, and nothing above it but the question.
+                           Three tabs, nine category pills, a search box and a
+                           grid were four ways of narrowing 216 things, offered
+                           to somebody who has one: they know roughly what they
+                           want and cannot name the folder. So it asks. -->
+                      <div class="sf-find sf-ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.2"/><path d="m15.3 15.3 4.7 4.7"/></svg>make my UI look less generic</div>
                       <div class="sf-grid">
                       <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Make a web page that looks designed</span></div><div class="sk-a">frontend-design &middot; Anthropic</div></div><span class="sk-go">Add</span></div>
                       <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Check my code before I commit it</span></div><div class="sk-a">code-review &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
@@ -1475,7 +1474,7 @@
 <section id="one">
   <div class="wrap">
     <h2 class="rise">All your terminals <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Each tab named after the ask that opened it. Nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
+    <p class="sub rise">Each tab named for the project it is working in. Nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
 
     <div class="versus">
       <div class="vs glass rise d1">
@@ -2540,7 +2539,42 @@
       red:"#FF8A80", grn:"#69F0AE", yel:"#FFE14D", blu:"#82B9FF", acc:"#4DD8F0",
       lit:"#5CE8E8", unlit:"#1A1A1A", bd:"#FFFFFF",
       t1:"#FFFFFF", t2:"#D0D0D0", t3:"#A8A8A8",
-      si:"#82B9FF", sr:"#FFE14D", sg:"#69F0AE", sf:"#FF8A80" }
+      si:"#82B9FF", sr:"#FFE14D", sg:"#69F0AE", sf:"#FF8A80" },
+    "phosphor": { name:"Phosphor",
+      voice:["Cycling", "Halted, clean", "Carrier dropped", "Screen clear"],
+      bg:"#0B0700", fg:"#FFB000", top:"#150E02", bot:"#0F0901", bed:"#0A0600",
+      red:"#FF8A3D", grn:"#E0A62E", yel:"#FFC94D", blu:"#C98F2B", acc:"#C07A12",
+      lit:"#FFB000", unlit:"#120C02", bd:"#C0913F",
+      t1:"#F0C377", t2:"#A67C33", t3:"#6E5320",
+      si:"#C98F2B", sr:"#FFB000", sg:"#E8C24D", sf:"#FF7A33" },
+    "preprint": { name:"Preprint",
+      voice:["Compiling", "Compiled", "Failed to compile", "Nothing pending"],
+      bg:"#14110B", fg:"#E6DECB", top:"#1E1A12", bot:"#17140D", bed:"#12100A",
+      red:"#D64F41", grn:"#7A9448", yel:"#C4A244", blu:"#5C86C4", acc:"#B03A2C",
+      lit:"#E6DECB", unlit:"#1A1710", bd:"#9C9078",
+      t1:"#E4DCC8", t2:"#A0977E", t3:"#6E6754",
+      si:"#A0977E", sr:"#5C86C4", sg:"#7A9448", sf:"#D4483A" },
+    "big-blue": { name:"Big Blue",
+      voice:["Working", "Done", "Abnormal termination", "Ready"],
+      bg:"#000E5E", fg:"#E8ECFF", top:"#0A1A72", bot:"#05105C", bed:"#000B4E",
+      red:"#FF8A8A", grn:"#66E08A", yel:"#FFE066", blu:"#8AB4FF", acc:"#F0C838",
+      lit:"#F0C838", unlit:"#031052", bd:"#8E9EDC",
+      t1:"#E4E9FF", t2:"#A8B4E4", t3:"#7482BC",
+      si:"#8AB4FF", sr:"#7AE8E8", sg:"#66E08A", sf:"#FF8A8A" },
+    "shibuya": { name:"Shibuya",
+      voice:["Running hot", "Landed", "Went dark", "The street is empty"],
+      bg:"#0A0616", fg:"#DED2F5", top:"#150C28", bot:"#0E0820", bed:"#0B0618",
+      red:"#FF5C8A", grn:"#4FE8B4", yel:"#FFD24F", blu:"#7A8CFF", acc:"#C233A8",
+      lit:"#FF4FD8", unlit:"#12092A", bd:"#8A6ED0",
+      t1:"#E4D8FA", t2:"#A091C4", t3:"#6E6190",
+      si:"#9EACFF", sr:"#4FE8FF", sg:"#4FE8B4", sf:"#FF5C8A" },
+    "calibrated": { name:"Calibrated",
+      voice:["Running", "Within tolerance", "Out of tolerance", "Nothing outstanding"],
+      bg:"#04262E", fg:"#C2D2D2", top:"#0A3038", bot:"#062A32", bed:"#04222A",
+      red:"#E0685C", grn:"#8FB33A", yel:"#C4A03A", blu:"#4B95D6", acc:"#2E8C86",
+      lit:"#39A8A0", unlit:"#062C34", bd:"#6E9098",
+      t1:"#C2D2D2", t2:"#8AA0A2", t3:"#5E7478",
+      si:"#6FAEE8", sr:"#39A8A0", sg:"#8FB33A", sf:"#E0685C" },
   };
   var ORDER = Object.keys(THEMES);
 
@@ -2550,7 +2584,7 @@
      all seven drawn windows pink in one go. */
   var ROOT = document.documentElement.style;
   /* `bg` and not `bed`: the board's backdrop is the darkest colour a theme
-     owns, and fourteen near-blacks wiping over one another is a wipe you
+     owns, and nineteen near-blacks wiping over one another is a wipe you
      cannot see. The terminal's own background carries the hue. */
   var PAGE = { ground:"bg", raise:"bot", "raise-2":"top", ink:"t1", muted:"t2",
                ghost:"t3", bd:"bd", accent:"lit", "accent-2":"acc",
