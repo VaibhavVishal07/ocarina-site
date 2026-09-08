@@ -473,7 +473,7 @@
      is a sheet over the whole window, and at 780 wide it does not fit inside
      a pane that is 690 — the two ends of the head were being cut off by the
      pane's own clip. */
-  .shelf { position:absolute; left:50%; top:50%; z-index:6; width:780px; height:560px;
+  .shelf { position:absolute; left:50%; top:50%; z-index:6; width:600px; height:600px;
            translate:-50% -46%; opacity:0; pointer-events:none; font-family:"Geist",sans-serif;
            display:flex; flex-direction:column; overflow:hidden;
            background:var(--wtop); border:1px solid color-mix(in srgb,var(--wfg) 22%,transparent);
@@ -481,76 +481,65 @@
            transition:translate .4s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
   .win.skilled .shelf { translate:-50% -50%; opacity:1; }
   .shelf .sf-head { flex:none; display:flex; align-items:baseline; gap:8px;
-                    padding:16px 18px 12px; }
-  .shelf .sf-head b { font-size:15px; font-weight:600; color:var(--wfg); }
-  /* Not decoration. A skill is instructions the agent will follow, so where
-     it is going is part of what you are agreeing to. */
-  .shelf .sf-for { font-size:11.5px; font-weight:500; color:var(--wdim2); }
-  /* What is on the shelf. A catalogue that never says how big it is reads as
-     a short list that happens to scroll. */
-  .shelf .sf-tally { margin-left:auto; font-size:10.5px; font-weight:500;
-                     color:var(--wdim2); font-variant-numeric:tabular-nums; }
-  .shelf .sf-x { font-size:11px; line-height:1; color:var(--wdim2); }
-  .shelf .sf-find { flex:none; display:flex; align-items:center; gap:8px; height:30px;
-                    margin:0 18px; padding:0 10px; border-radius:8px;
+                    padding:20px 22px 5px; }
+  .shelf .sf-head b { font-size:15.5px; font-weight:600; color:var(--wfg); }
+  .shelf .sf-x { margin-left:auto; font-size:11px; line-height:1; color:var(--wdim2); }
+  /* What the thing is, in one line, always. Nobody arriving from a sidebar row
+     called "Skills" has been told, and a catalogue answers "which one" to
+     somebody who has not been told "of what". */
+  .shelf .sf-what { flex:none; padding:0 22px 18px; font-size:11.5px; color:var(--wdim2); }
+  .shelf .sf-find { flex:none; display:flex; align-items:center; gap:8px; height:34px;
+                    margin:0 22px; padding:0 12px; border-radius:9px;
                     background:color-mix(in srgb,var(--wfg) 7%,transparent);
                     border:1px solid color-mix(in srgb,var(--wfg) 14%,transparent);
                     font-size:12.5px; color:var(--wdim2); }
-  .shelf .sf-find svg { width:11px; height:11px; flex:none; }
-  .shelf .sf-chips { flex:none; display:flex; gap:6px; height:26px; align-items:center;
-                     margin:10px 18px 14px; overflow:hidden; }
-  .shelf .sf-chips i { flex:none; display:flex; align-items:center; height:24px; padding:0 10px;
-                       border-radius:12px; font-size:11px; font-weight:500; font-style:normal;
-                       color:var(--wdim); background:color-mix(in srgb,var(--wacc) 6%,transparent);
-                       box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 14%,transparent); }
-  /* Pressing the one already on clears it, so the filter never becomes a
-     thing you cannot get out of without finding "All" again. */
-  .shelf .sf-chips i.on { color:var(--wfg); background:color-mix(in srgb,var(--wacc) 22%,transparent);
-                          box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 50%,transparent); }
-  .shelf .sf-rule { flex:none; height:1px; background:color-mix(in srgb,var(--wfg) 12%,transparent); }
+  .shelf .sf-find svg { width:11.5px; height:11.5px; flex:none; }
+  /* Three words on a rule, and the active one's mark is a heavier length of
+     that same rule. It used to float a few points above a separate divider, so
+     the panel carried two nearly-parallel lines. */
+  .shelf .sf-tabs { flex:none; display:flex; gap:20px; align-items:flex-end; margin:18px 22px 0;
+                    box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--wfg) 13%,transparent); }
+  .shelf .sf-tabs i { flex:none; padding:2px 0 11px; font-size:12px; font-weight:500;
+                      font-style:normal; color:var(--wdim2); }
+  .shelf .sf-tabs i.on { color:var(--wfg); font-weight:600;
+                         box-shadow:inset 0 -1.5px 0 color-mix(in srgb,var(--wfg) 60%,transparent); }
   .shelf .sf-grid { flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr;
-                    gap:10px; padding:14px 18px; align-content:start; overflow:hidden; }
-  .sk { display:flex; align-items:flex-start; gap:11px; height:74px; padding:11px;
-        border-radius:10px; background:color-mix(in srgb,var(--wfg) 3%,transparent); }
-  /* The category, as a shape. It is what makes the grid scannable before a
-     word of it has been read — nine kinds, one mark each, in the same place
-     on every card. */
-  .sk .sk-m { flex:none; display:flex; align-items:center; justify-content:center;
-              width:30px; height:30px; border-radius:8px; color:var(--wdim2);
-              background:color-mix(in srgb,var(--wfg) 7%,transparent); }
-  .sk .sk-m svg { width:12px; height:12px; display:block; }
+                    gap:14px; padding:20px 22px 22px; align-content:start; overflow:hidden; }
+  /* Two lines and a button, and the same two everywhere. It carried four
+     things — a headline, a supporting line, the author and the button — which
+     is one more than a card this size lays out without the eye having to
+     decide what to read next. */
+  .sk { display:flex; align-items:center; gap:12px; height:86px; padding:0 14px;
+        border-radius:10px; background:color-mix(in srgb,var(--wfg) 3.5%,transparent);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 9%,transparent); }
   .sk .sk-b { min-width:0; flex:1; }
   .sk .sk-t { display:flex; align-items:center; gap:6px; }
-  .sk .sk-n { font-size:12.5px; font-weight:600; color:var(--wfg);
+  .sk .sk-n { font-size:12.5px; font-weight:600; line-height:1.32; color:var(--wfg);
+              display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+              overflow:hidden; }
+  /* Who wrote it, always, and on the same line as what the folder is called.
+     A skill is instructions the agent will follow, so the publisher is most of
+     the decision — and a decision you have to hunt for on each card is one you
+     stop making. */
+  .sk .sk-a { margin-top:5px; font-size:10.5px; color:var(--wdim2);
               overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  /* Who wrote it, always. A skill is instructions the agent will follow, so
-     the publisher is most of the decision. */
-  .sk .sk-a { margin-top:2px; font-size:10px; font-weight:500; color:var(--wdim2); }
-  /* One line, and a line that ends where a sentence does. These descriptions
-     are written for the agent, which reads all of them, and clipping the raw
-     text to the card's width broke every card mid-word. */
-  /* Half a point under the app's, because Geist is wider than the app's own
-     UI face at the same size and the card must let the headline's ellipsis
-     land before the label's does — one lands on a word, the other wherever
-     the pixels ran out. */
-  .sk .sk-d { margin-top:5px; font-size:10.5px; color:var(--wdim);
-              overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  /* Nothing at all until it is either installed or under the pointer. Two
-     hundred Install buttons drawn at once is two hundred things asking to be
-     pressed, and a shelf where everything is asking is a shelf you cannot
-     read. */
-  .sk .sk-go { margin-left:auto; flex:none; display:none; align-items:center; height:19px;
-               padding:0 9px; border-radius:10px; font-size:9.5px; font-weight:600;
-               color:var(--wfg); background:color-mix(in srgb,var(--wacc) 26%,transparent); }
-  .sk.hov { background:color-mix(in srgb,var(--wfg) 7%,transparent);
-            box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 18%,transparent); }
-  .sk.hov .sk-go { display:flex; }
+  /* Two treatments and not four: an outlined Add, which is the one thing on
+     the card asking to be pressed, and a plain word for anything that has
+     already happened. */
+  .sk .sk-go { flex:none; display:flex; align-items:center; height:22px; padding:0 11px;
+               border-radius:11px; font-size:10.5px; font-weight:600; color:var(--wdim);
+               box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 35%,transparent); }
+  .sk .sk-in { flex:none; font-size:10.5px; font-weight:500; color:var(--wdim2); }
+  /* Where an install is going, said once, at the foot, with a fill of its own
+     so it reads as the panel's floor. */
+  .shelf .sf-foot { flex:none; padding:13px 22px; font-size:10.5px; color:var(--wdim2);
+                    border-top:1px solid color-mix(in srgb,var(--wfg) 11%,transparent);
+                    background:color-mix(in srgb,var(--wfg) 4.5%,transparent); }
+  .sk.hov { background:color-mix(in srgb,var(--wfg) 8.5%,transparent);
+            box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 22%,transparent); }
   /* Installed is a state the card wears, not a second control beside the
-     first: the mark lights, and the word at the end of the title becomes the
-     way back out when you point at it. */
-  .sk.here .sk-m { color:var(--wlit); }
-  .sk .sk-in { margin-left:auto; flex:none; font-size:9.5px; font-weight:500;
-               color:var(--wdim2); }
+     first: the word becomes the way back out when you point at it. */
+  .sk.here .sk-go { display:none; }
 
   .right { width:0; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:hidden;
            transition:width .5s cubic-bezier(.16,1,.3,1); }
@@ -931,11 +920,12 @@
   .mb-app { width:46px; height:8px; border-radius:4px; background:rgba(255,255,255,.42); }
   .mb-m { width:30px; height:7px; border-radius:4px; background:rgba(255,255,255,.2); }
   .mb-gap { flex:1; }
-  /* The face, at the size the bar actually gives it: six rows of 1.6pt lamp
-     on a 2.3pt pitch is thirteen points tall, which is what a 22pt menu bar
-     has room for once the item's own padding is off. Small on purpose — every
-     other item up there is one glyph wide, and this one is square. */
-  .mb-face { display:block; height:13px; width:auto; flex:none; }
+  /* The card, at the size the bar actually gives it: seven rows of 1.7pt lamp
+     on a 2.05pt pitch, plus the frame, is sixteen and a half points square —
+     which is what a 22pt menu bar has room for once the item's own padding is
+     off. Square, because every other item up there is: a tall narrow one reads
+     as something squeezed rather than as something drawn to fit. */
+  .mb-card { display:block; height:16.6px; width:16.6px; flex:none; }
   .mb-i { height:13px; width:auto; flex:none; opacity:.85; }
   .mb-clock { font-variant-numeric:tabular-nums; opacity:.9; }
   /* Dropped from the board, and pinned to it: the item it belongs to is the
@@ -959,14 +949,13 @@
   .states dd { margin:0; font-size:14.5px; color:var(--muted); }
   .states.homes dt { width:8.4em; font-family:inherit; font-size:14.5px; letter-spacing:0; }
   .states.homes dd { font-family:var(--mono); font-size:12.5px; color:var(--accent); }
-  /* The four expressions, at a size you can read one. In the bar they are
-     fifteen points square and the plate is the point; here the plate is what
-     makes the shape legible, so it is the same grid blown up rather than a
-     drawing of a face. */
+  /* The four states, at a size you can read one. In the bar they are sixteen
+     points square; here it is the same grid blown up rather than a drawing of
+     a card, because what the seam is doing is the whole of what this is. */
   .states.faces { gap:14px; }
   .states.faces div { align-items:center; gap:16px; }
   .states.faces dt { width:auto; flex:none; }
-  .states.faces .face { display:block; width:60px; height:auto; }
+  .states.faces .card { display:block; width:69px; height:69px; }
   .states.faces dd b { display:block; font-weight:500; color:var(--ink); font-size:14.5px; }
   @media (max-width:520px) {
     .states div { display:block; }
@@ -1267,14 +1256,17 @@
                         <div class="fill"></div>
                       </div>
                       <div class="card down foot">
-                        <!-- Five rows with an agent running, four without. Skills
-                             is the one row here that is about the work rather than
-                             about the app, so it goes on top — and it is only true
-                             while there is an agent to read them: on a plain shell
-                             there is no directory to install into. Its trailing
-                             value names the agent, which is the answer to the
-                             question the row raises: skills for what. -->
-                        <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">Claude Code</span></div>
+                        <!-- Always, and on top: Skills is the one row here that
+                             is about the work rather than about the app. It used
+                             to appear only with an agent running, on the
+                             reasoning that a skill installs into an agent's
+                             directory and a plain shell has none — which made it
+                             missing on the day somebody most needed it. You find
+                             out what a skill is by opening this, and you could
+                             not open it until you had already started the agent
+                             the skills are for. Its trailing value is how many
+                             you have, counting the ones waiting for an agent. -->
+                        <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">4</span></div>
                         <!-- The marks are deliberately plain: a half-filled circle,
                              a bubble, three lines, a bolt. They were a paint
                              palette, a cup on a saucer and a checklist, which is
@@ -1377,23 +1369,30 @@
                          on a plain shell the way in is simply not there. -->
                     <div class="shelf">
                       <div class="sf-head">
-                        <b>Skills</b><span class="sf-for">for Claude Code</span>
-                        <span class="sf-tally">216 skills</span><span class="sf-x">&#10005;</span>
+                        <b>Skills</b><span class="sf-x">&#10005;</span>
                       </div>
-                      <div class="sf-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.2"/><path d="m15.3 15.3 4.7 4.7"/></svg>Search skills</div>
-                      <div class="sf-chips"><i class="on">All</i><i>Workflow</i><i>Testing</i><i>Cloud</i><i>Data</i><i>Web</i><i>Security</i><i>Writing</i><i>Design</i><i>Documents</i></div>
-                      <div class="sf-rule"></div>
+                      <div class="sf-what">Written instructions your agent reads when a task calls for it.</div>
+                      <div class="sf-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.2"/><path d="m15.3 15.3 4.7 4.7"/></svg>Search 216 skills</div>
+                      <!-- Three sections, and one skeleton under all of them.
+                           Everything above the tabs is constant and everything
+                           below them is cards: each used to open with a
+                           different kind of thing, so the panel reshuffled
+                           itself every time you moved between them. -->
+                      <div class="sf-tabs"><i class="on">Start here</i><i>Browse all</i><i>Installed</i></div>
                       <div class="sf-grid">
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M12 3.6a8.4 8.4 0 0 0 0 16.8Z" fill="currentColor" stroke="none"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">grill-with-docs</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">A relentless interview to sharpen a plan or…</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.6 3.6 5.4 3.6 8.4S14.4 17.8 12 20.4C9.6 17.8 8.4 15 8.4 12S9.6 6.2 12 3.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">improve-codebase-architecture</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Scan a codebase for deepening opportunities,…</div></div></div>
-                      <div class="sk hov"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.6 3.6 5.4 3.6 8.4S14.4 17.8 12 20.4C9.6 17.8 8.4 15 8.4 12S9.6 6.2 12 3.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">frontend-design</span><span class="sk-go">Install</span></div><div class="sk-a">Anthropic</div><div class="sk-d">Guidance for distinctive, intentional visual…</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.6 3.6 5.4 3.6 8.4S14.4 17.8 12 20.4C9.6 17.8 8.4 15 8.4 12S9.6 6.2 12 3.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">web-design-guidelines</span></div><div class="sk-a">Vercel</div><div class="sk-d">Review UI code for Web Interface Guidelines…</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M12 3.6a8.4 8.4 0 0 0 0 16.8Z" fill="currentColor" stroke="none"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">codebase-design</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Shared vocabulary for designing deep modules</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M7.2 18.4h9.9a4.1 4.1 0 0 0 .5-8.2 5.6 5.6 0 0 0-10.8-.6 4.4 4.4 0 0 0 .4 8.8Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">azure-deploy</span></div><div class="sk-a">Microsoft</div><div class="sk-d">Execute Azure deployments for ALREADY-PREPARED…</div></div></div>
-                      <div class="sk here"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13.5 6.5 20 12l-6.5 5.5"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">code-review</span><span class="sk-in">Installed</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Review the changes since a fixed point (commit,…</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M16.4 3.9 20.1 7.6 8.3 19.4l-4.6.9.9-4.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">research</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Investigate a question against high-trust…</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.6 9.6 18 19.5 6.6"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">supabase-postgres-best-practices</span></div><div class="sk-a">Supabase</div><div class="sk-d">Postgres best practices maintained by Supabase,…</div></div></div>
-                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13.5 6.5 20 12l-6.5 5.5"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">git-guardrails-claude-code</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Set up Claude Code hooks to block dangerous git…</div></div></div>
+                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Make a web page that looks designed</span></div><div class="sk-a">frontend-design &middot; Anthropic</div></div><span class="sk-go">Add</span></div>
+                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Check my code before I commit it</span></div><div class="sk-a">code-review &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
+                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Work out why something is broken</span></div><div class="sk-a">systematic-debugging &middot; obra</div></div><span class="sk-go">Add</span></div>
+                      <div class="sk hov"><div class="sk-b"><div class="sk-t"><span class="sk-n">Look something up and write down what it found</span></div><div class="sk-a">research &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
+                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Read and write PDFs</span></div><div class="sk-a">pdf &middot; Anthropic</div></div><span class="sk-go">Add</span></div>
+                      <div class="sk here"><div class="sk-b"><div class="sk-t"><span class="sk-n">Read and write Word documents</span></div><div class="sk-a">docx &middot; Anthropic</div></div><span class="sk-in">Installed</span></div>
+                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Stop me running a git command I cannot undo</span></div><div class="sk-a">git-guardrails-claude-code &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
+                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Write the test before the code</span></div><div class="sk-a">test-driven-development &middot; obra</div></div><span class="sk-go">Add</span></div>
+                      </div>
+                      <!-- Where an install is going, said once, at the foot.
+                           It was in the title — "Skills for Claude Code" —
+                           which put the answer above the question. -->
+                      <div class="sf-foot">Installing for Claude Code.</div>
                       </div>
                     </div>
                 </div>
@@ -1539,21 +1538,21 @@
 <section id="status">
   <div class="wrap">
     <h2 class="rise">Whether it is still going, <span class="soft">without the window.</span></h2>
-    <p class="sub rise">Beside the Wi-Fi, as a small face on a plate of the app&rsquo;s own lamps.</p>
+    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in.</p>
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise"><b>Still going</b> means an ask that has not come back yet &mdash; read from the agent&rsquo;s conversation, not from what the screen is repainting.</p>
-        <!-- The words did not go anywhere: a face has nothing to say about an
+        <!-- The words did not go anywhere: a card has nothing to say about an
              exit code, so they are the item's tooltip and the line the menu
              opens on. Here they are captions, which is the same job. -->
         <dl class="states faces rise d1">
-          <div><dt><canvas class="face" data-face="working" role="img" aria-label="Three lamps travelling along a flat mouth"></canvas></dt>
+          <div><dt><canvas class="card" data-card="working" role="img" aria-label="A card folding through the seam"></canvas></dt>
                <dd><b>Still going</b>your ask has not come back yet</dd></div>
-          <div><dt><canvas class="face" data-face="backToYou" role="img" aria-label="A smile"></canvas></dt>
+          <div><dt><canvas class="card" data-card="backToYou" role="img" aria-label="A ring, cut by the seam"></canvas></dt>
                <dd><b>Back to you</b>it stopped, and it is your move</dd></div>
-          <div><dt><canvas class="face" data-face="ready" role="img" aria-label="A flat mouth"></canvas></dt>
+          <div><dt><canvas class="card" data-card="ready" role="img" aria-label="An empty cell, the seam lit across it"></canvas></dt>
                <dd><b>Ready</b>nothing has been asked in this tab</dd></div>
-          <div><dt><canvas class="face" data-face="stopped" role="img" aria-label="Shut eyes"></canvas></dt>
+          <div><dt><canvas class="card" data-card="stopped" role="img" aria-label="A cross, cut by the seam"></canvas></dt>
                <dd><b>Stopped (127)</b>it exited, and the number is in the words</dd></div>
         </dl>
       </div>
@@ -1571,7 +1570,7 @@
           <span class="mb-app" aria-hidden="true"></span>
           <span class="mb-m" aria-hidden="true"></span><span class="mb-m" aria-hidden="true"></span><span class="mb-m" aria-hidden="true"></span>
           <span class="mb-gap"></span>
-          <canvas class="mb-face" id="mbFace" role="img" aria-label="Ocarina"></canvas>
+          <canvas class="mb-card" id="mbFace" role="img" aria-label="Ocarina"></canvas>
           <svg class="mb-i" viewBox="0 0 26 14" aria-hidden="true"><rect x=".8" y="1.4" width="20.4" height="11.2" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".55"/><rect x="2.6" y="3.2" width="13.4" height="7.6" rx="1.8" fill="currentColor"/><path d="M23 5.2v3.6a2.6 2.6 0 0 0 0-3.6Z" fill="currentColor" opacity=".55"/></svg>
           <svg class="mb-i" viewBox="0 0 18 14" aria-hidden="true"><path d="M1 5.1a11.4 11.4 0 0 1 16 0M3.7 8a7.6 7.6 0 0 1 10.6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="11.2" r="1.4" fill="currentColor"/></svg>
           <svg class="mb-i" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 4.4h12M2 9.6h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10.4" cy="4.4" r="1.9" fill="currentColor"/><circle cx="5.6" cy="9.6" r="1.9" fill="currentColor"/></svg>
@@ -1595,7 +1594,7 @@
        </div>
       </div>
     </div>
-    <p class="takeaway rise">Only the mouth moves. <b>Eyes that chased as well would read as a face blinking at you</b>, and something that blinks is asking for attention &mdash; this is reporting.</p>
+    <p class="takeaway rise">It lands on a ring and never on a tick. An agent stopping means it stopped talking, not that it managed what you asked &mdash; <b>so the card claims nothing, and the one state you most want to catch is also the one place the bar says whose it is</b>.</p>
     <p class="takeaway rise">The token figure moved up here when the task panel learned to close: <b>&#8984;J shuts the column, and the number is one click down</b>.</p>
   </div>
 </section>
@@ -1648,7 +1647,7 @@
 <section id="skills">
   <div class="wrap">
     <h2 class="rise">Two hundred agent skills, <span class="soft">already in the app.</span></h2>
-    <p class="sub rise">A skill is a folder of instructions your agent loads when a task calls for it. 216 of them, bundled &mdash; so the shelf opens instantly and offline.</p>
+    <p class="sub rise">A skill is a folder of instructions your agent loads when a task calls for it. 216 of them, bundled &mdash; so the shelf opens instantly and offline, and opens on eight rather than on all of them.</p>
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise">Installed into the directory <b>the agent in front of you actually reads</b> &mdash; which is not the same directory for all four.</p>
@@ -1662,6 +1661,7 @@
       <div class="stage rise d1" id="skillStage"></div>
     </div>
     <p class="takeaway rise">Who published a skill sits next to what it is called, on every card. <b>It is instructions an agent will follow</b>, so that is most of what you are deciding.</p>
+    <p class="takeaway rise">Press Add with no agent running and it waits. A strip across the window says which skill is queued and offers to start Claude, and <b>it goes in on its own the moment an agent appears</b>.</p>
   </div>
 </section>
 
@@ -2612,132 +2612,138 @@
   current = "ocarina";
   light("ocarina");
 
-  /* ── the menu bar's face ───────────────────────────────────
+  /* ── the menu bar's card ───────────────────────────────────
      The one surface the app owns that is read from outside the app. It was
      the whole line set in the app's 5x7 alphabet, which was right about the
      language and wrong about what it cost: eleven characters at six columns
      each is 136 points of menu bar for a reading you take in a fifth of a
      second, and a letterform built out of 1.4pt lamps is under the size that
-     grid can set. A pictogram survives it where a letter does not — a flat
-     mouth, a mouth turning up and a pair of shut eyes are all still
-     themselves at seven cells across.
+     grid can set. Then it was a little face, which was legible and was a
+     character from nowhere — it had no more to do with this app than with any
+     other. A split-flap cell has both: it is the object the rest of the app is
+     already made of, and it says the four states by doing what a board does.
 
-     Straight out of `ActivityFace`: seven wide, six down, `#` a lamp that
-     holds, `o` a lamp the chase runs through, `.` a lamp that stays dark.
-     The dark ones are painted too — they are what make it a plate of lamps
-     rather than a face floating in the menu bar. */
-  var FACES = {
-    ready:     [".......", ".#...#.", ".......", ".......", "..###..", "......."],
-    working:   [".......", ".#...#.", ".......", ".......", ".o.o.o.", "......."],
-    backToYou: [".......", ".#...#.", ".......", ".#...#.", "..###..", "......."],
-    stopped:   [".......", ".##.##.", ".......", ".......", "..###..", "......."]
+     The seam is the whole idea. A split-flap card is cut across its middle,
+     and that line has to be visible in every state or this is a box that fills
+     up — so it is a lit line when the cell is empty and a dark gap when the
+     cell is full, and row 3 is the seam in every grid below.
+
+     Straight out of `ActivityCard`: seven by seven, `#` a lamp that holds,
+     `.` a cell that stays dark. The dark ones are not painted — a face made of
+     five loose lamps needs a dark field to read as a panel, and a card does
+     not: it has a frame. */
+  var CARDS = {
+    ready:     [".......", ".......", ".......", "#######", ".......", ".......", "......."],
+    backToYou: ["..###..", ".#...#.", "#.....#", ".......", "#.....#", ".#...#.", "..###.."],
+    stopped:   ["#.....#", ".#...#.", "..#.#..", ".......", "..#.#..", ".#...#.", "#.....#"]
   };
-  /* The app's numbers. The mouth swings between `floor` and `steady` rather
-     than the near-full range the board used: every lamp in a word is part of
-     the word and a dim word is unreadable, but here the eyes hold at full
-     through the whole cycle, so the face never goes faint however far down
-     the mouth swings. `floor` is well clear of `dark` on purpose — at the
-     brightness of an unlit cell the face spends half of every cycle with no
-     mouth at all, which reads as a light going on and off rather than as one
-     travelling. */
-  var LAMP = { steady: 0.92, floor: 0.45, dark: 0.11 };
-  /* Six dwells to the pass — three lit, three dark — at the house 72ms a
-     lamp, which is 432ms and reads as a mouth working. The board's trail of
-     fifteen and rest of twenty-six were measured against a word with a
-     hundred lamps in it; three lamps under those numbers is a mouth that
-     flashes once every two seconds. */
-  var CHASE = { trail: 1.6, rest: 3, lead: 0.6 };
+  /* The turn, five frames: the card stands, folds through the seam, passes
+     edge-on, comes down the other side and lands. Frames rather than a chase,
+     because a chase is a lamp brightening and dimming — right for a mark that
+     is lit, wrong for a card, which does not glow, it moves. A departure board
+     clacks.
 
-  /* How hard one lamp is being driven, given where the head is. Wrapped here
-     rather than by the caller, which counts frames and never stops, and
-     pulled back by the lead first so a lamp about to be reached at the top of
-     the next pass is already coming up rather than snapping on. */
-  function drive(position, head, total) {
-    if (head == null) return 1;
-    var d = (head - position) % total;
-    if (d < 0) d += total;
-    if (d > total - CHASE.lead) d -= total;
-    if (d >= 0 && d < CHASE.trail) return 1 - d / CHASE.trail;
-    if (d < 0) return 1 + d / CHASE.lead;
-    return 0;
-  }
+     Five and not the six it takes to come back round to the seam: a sixth
+     would show the resting card once a pass, and the resting card is what
+     `ready` looks like. */
+  var TURN = [
+    ["#######", "#######", "#######", ".......", ".......", ".......", "......."],
+    [".......", ".......", "#######", ".......", ".......", ".......", "......."],
+    [".......", ".......", ".......", ".......", ".......", ".......", "......."],
+    [".......", ".......", ".......", ".......", "#######", ".......", "......."],
+    [".......", ".......", ".......", ".......", "#######", "#######", "#######"]
+  ];
+  var TURN_MS = 120;
+  var LAMP = { steady: 0.92, framing: 0.55 };
 
-  /* One expression, drawn as a plate of lamps. Rounded squares at three
-     tenths of a cell, the way the app draws them — the wordmark's dots are
-     circles and these are not, because these are cells of a panel. */
-  function drawFace(cv, plate, colour, head) {
+  /* One card, drawn as lamps inside a frame. Seven by seven and square,
+     because every other item in a menu bar is: a tall narrow one reads as
+     something squeezed rather than as something drawn to fit, and the
+     proportion of the real object is worth less than sitting properly in the
+     row it lives in.
+
+     Unlit cells are not painted. The face this replaced drew its whole grid
+     faintly, because a face made of five loose lamps needs the dark field to
+     read as a panel — a card does not: it has a frame, and the frame is what
+     says where the object stops. */
+  function drawCard(cv, plate, colour) {
     if (!cv) return;
-    var dpr = 2, pitch = cv.__pitch, cell = pitch * 1.6 / 2.3, gap = pitch - cell;
-    var w = 7 * pitch - gap, h = 6 * pitch - gap;
-    if (cv.width !== Math.round(w * dpr)) {
-      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    var dpr = 2, pitch = cv.__pitch;
+    var cell = pitch * 1.7 / 2.05, inset = pitch * 1.3 / 2.05, stroke = pitch * 1.15 / 2.05;
+    var side = 7 * pitch - (pitch - cell) + inset * 2;
+    if (cv.width !== Math.round(side * dpr)) {
+      cv.width = Math.round(side * dpr); cv.height = Math.round(side * dpr);
     }
     var g = cv.getContext("2d");
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.clearRect(0, 0, w, h);
+    g.clearRect(0, 0, side, side);
     g.fillStyle = colour;
-    // Ranked in the order the head travels: left to right along the mouth,
-    // the same direction it sweeps a word in the sidebar. Only chase cells
-    // are ranked, so the eyes hold while the mouth moves.
-    var rank = {}, chasing = 0, row, col;
-    for (col = 0; col < 7; col++) {
-      for (row = 0; row < 6; row++) {
-        if (plate[row][col] === "o") { rank[row * 7 + col] = chasing++; }
-      }
-    }
-    var total = chasing + CHASE.rest;
-    for (row = 0; row < 6; row++) {
-      for (col = 0; col < 7; col++) {
-        var lamp = plate[row][col], a;
-        if (lamp === "#") a = LAMP.steady;
-        else if (lamp === "o") {
-          a = LAMP.floor + (LAMP.steady - LAMP.floor) * drive(rank[row * 7 + col], head, total);
-        } else a = LAMP.dark;
-        g.globalAlpha = a;
+    g.globalAlpha = LAMP.steady;
+    for (var row = 0; row < 7; row++) {
+      for (var col = 0; col < 7; col++) {
+        if (plate[row][col] !== "#") continue;
+        var x = inset + col * pitch, y = inset + row * pitch, r = cell * 0.18;
         g.beginPath();
-        var x = col * pitch, y = row * pitch, r = cell * 0.3;
-        if (g.roundRect) g.roundRect(x, y, cell, cell, r);
-        else g.rect(x, y, cell, cell);
+        if (g.roundRect) g.roundRect(x, y, cell, cell, r); else g.rect(x, y, cell, cell);
         g.fill();
       }
     }
+    /* The frame, last, so it sits over anything that reaches the edge, and
+       quieter than the lamps: it is the thing that never changes, so it should
+       not be the thing that catches the eye. */
+    g.globalAlpha = LAMP.framing;
+    g.strokeStyle = colour;
+    g.lineWidth = stroke;
+    g.beginPath();
+    var f = stroke / 2, fs = side - stroke, fr = pitch * 3 / 2.05;
+    if (g.roundRect) g.roundRect(f, f, fs, fs, fr); else g.rect(f, f, fs, fs);
+    g.stroke();
     g.globalAlpha = 1;
   }
 
-  /* The four expressions beside the copy, at a size you can read one. A
-     template image has no colour of its own — the menu bar tints it — so on
-     the page these take the page's ink, and turn with it. */
-  var bigFaces = [].slice.call(document.querySelectorAll(".states .face"));
-  bigFaces.forEach(function (cv) { cv.__pitch = 9; });
-  var bigInk = "#D9DBDE", bigHead = null;
-  function paintBigFaces() {
+  /* What a state looks like when it is standing still. `working` has no still
+     of its own worth drawing — it is a turn — so it takes the frame the card
+     is standing up in. */
+  function cardPlate(name, frame) {
+    if (name !== "working") return CARDS[name];
+    return TURN[frame == null ? 0 : frame % TURN.length];
+  }
+
+  /* The four states beside the copy, at a size you can read one. A template
+     image has no colour of its own — the menu bar tints it — so on the page
+     these take the page's ink, and turn with it. */
+  var bigCards = [].slice.call(document.querySelectorAll(".states .card"));
+  bigCards.forEach(function (cv) { cv.__pitch = 9; });
+  var bigInk = "#D9DBDE", bigFrame = 0;
+  function paintBigCards() {
     bigInk = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || bigInk;
-    bigFaces.forEach(function (cv) {
-      drawFace(cv, FACES[cv.dataset.face], bigInk,
-               cv.dataset.face === "working" ? bigHead : null);
+    bigCards.forEach(function (cv) {
+      drawCard(cv, cardPlate(cv.dataset.card, bigFrame), bigInk);
     });
   }
-  if (bigFaces.length) {
-    paintBigFaces();
-    document.addEventListener("ocarina:theme", paintBigFaces);
-    /* The working face is the only one of the four that is a picture of
+  if (bigCards.length) {
+    paintBigCards();
+    document.addEventListener("ocarina:theme", paintBigCards);
+    /* The turning card is the only one of the four that is a picture of
        something moving, and a still of it says the least of the four. It runs
-       the same chase the bar's does, at the same clock — this is the size at
-       which you can see what the bar is doing. */
-    var working = bigFaces.filter(function (cv) { return cv.dataset.face === "working"; })[0];
-    if (working && !reduce) {
-      var bigSeen = false, bigT0 = 0, bigPrev = 0;
+       the same five frames the bar's does, at the same 120ms — this is the
+       size at which you can see what the bar is doing. */
+    var turning = bigCards.filter(function (cv) { return cv.dataset.card === "working"; })[0];
+    if (turning && !reduce) {
+      var bigSeen = false, bigT0 = 0, bigPrev = 0, bigLast = -1;
       requestAnimationFrame(function big(t) {
         requestAnimationFrame(big);
         if (!bigT0) { bigT0 = t; bigPrev = t; }
         if (swapHold || !bigSeen) { bigT0 += t - bigPrev; bigPrev = t; return; }
         bigPrev = t;
-        bigHead = (t - bigT0) / 72;
-        drawFace(working, FACES.working, bigInk, bigHead);
+        var f = Math.floor((t - bigT0) / TURN_MS) % TURN.length;
+        if (f === bigLast) return;
+        bigLast = f; bigFrame = f;
+        drawCard(turning, TURN[f], bigInk);
       });
       if ("IntersectionObserver" in window) {
         new IntersectionObserver(function (e) { bigSeen = e[0].isIntersecting; },
-          { threshold: 0.2 }).observe(working);
+          { threshold: 0.2 }).observe(turning);
       } else { bigSeen = true; }
     }
   }
@@ -2748,7 +2754,7 @@
      app's, the same picture on every theme. */
   var mbEl = document.getElementById("mbFace");
   if (mbEl) {
-    mbEl.__pitch = 2.3;
+    mbEl.__pitch = 2.05;
     var MBS = [
       { face: "working",   say: 0, task: "Fix the checkout page" },
       { face: "backToYou", say: 1, task: "Fix the checkout page" },
@@ -2771,10 +2777,10 @@
       mbTask.textContent = st.task || "";
       mbTask.hidden = !st.task;
     }
-    function mbPaint(head) {
+    function mbPaint(frame) {
       // white, because a template image on a dark menu bar is white — this is
       // the one mark on the page a theme does not reach
-      drawFace(mbEl, FACES[MBS[mbAt].face], "#FFFFFF", head);
+      drawCard(mbEl, cardPlate(MBS[mbAt].face, frame), "#FFFFFF");
     }
     function mbShow(i) {
       mbAt = i;
@@ -2790,9 +2796,10 @@
       }
     }
 
-    /* One lamp every 72ms, the house clock, held still through a theme wipe
-       for the same reason the wordmark is: those frames are behind two
-       snapshots and are spent on nobody. */
+    /* One frame every 120ms, which is 600ms to the flip — the rate a real
+       board runs at. Held still through a theme wipe for the same reason the
+       wordmark is: those frames are behind two snapshots and are spent on
+       nobody. */
     var mbT0 = 0, mbPrev = 0, mbLast = -1;
     function mbFrame(t) {
       requestAnimationFrame(mbFrame);
@@ -2800,10 +2807,10 @@
       if (swapHold || !mbSeen) { mbT0 += t - mbPrev; mbPrev = t; return; }
       mbPrev = t;
       if (MBS[mbAt].face !== "working") return;
-      var head = (t - mbT0) / 72;
-      if (head === mbLast) return;
-      mbLast = head;
-      mbPaint(head);
+      var f = Math.floor((t - mbT0) / TURN_MS) % TURN.length;
+      if (f === mbLast) return;
+      mbLast = f;
+      mbPaint(f);
     }
 
     mbShow(0);

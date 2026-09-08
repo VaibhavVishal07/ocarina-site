@@ -11,7 +11,7 @@ One static file. No build step, no dependencies, no images — open
 The interface on the page is not a screenshot of the app; it is rebuilt in
 markup. The window is HTML and CSS, and every dot-matrix thing on the page is
 generated — painted to a canvas cell by cell. The wordmark comes off the app's
-own 5x7 alphabet and the menu bar's face off `ActivityFace`, both copied from
+own 5x7 alphabet and the menu bar's card off `ActivityCard`, both copied from
 the app rather than drawn again here. They stay sharp at any size, weigh a
 fraction of a PNG, and do not go stale the day the interface changes.
 
@@ -23,28 +23,44 @@ One window, built once and framed on a different part of itself per section —
 the tab list, the settings card, the terminal, the task panel and the token
 meter, the ⌘K drawer, the error banner and its sheet, and the skills shelf.
 The last of those hangs off the window rather than off the terminal pane: it
-is 780 points wide in the app, which is wider than the pane, and it is a sheet
+is 600 points wide in the app, which is wider than the pane, and it is a sheet
 over the whole window there too.
 
+The shelf is drawn on its "Start here" tab, which is what it opens on for
+somebody who has installed nothing: eight picks led by a line written for the
+reader rather than the skill's own description, which is addressed to the agent
+that will follow it. Three tabs, and one skeleton under all of them — everything
+above them is constant and everything below them is cards.
+
 The menu bar is its own scene, and the only one that is not Ocarina's own
-surface. The face is drawn in the app's lamps; everything around it is the
+surface. The card is drawn in the app's lamps; everything around it is the
 system's, and the window under it is deliberately nobody's — the whole claim of
 that section is that the reading you want is the one you want while you are
 looking at something else.
 
-The face is fifteen points square there, which is what the bar gives it and too
-small to study, so the four expressions are drawn again beside the copy at six
-times the pitch. The working one runs the chase at both sizes: three lamps
-along the mouth at the house 72ms a lamp, six dwells to the pass. Only the
-mouth moves — eyes that chased as well would read as a face blinking, and a
-status item that blinks is asking for something.
+**One cell of a departure board.** The seam is the whole idea: a split-flap card
+is cut across its middle, and that line has to be visible in every state or it
+is a box that fills up. So it is a lit line when the cell is empty and a dark
+gap when the cell is full, and row 3 of every grid is the seam.
+
+It is sixteen and a half points square there — square because every other item
+in a menu bar is, and a tall narrow one reads as something squeezed rather than
+as something drawn to fit — which is too small to study, so the four states are
+drawn again beside the copy at four times the pitch. The turning one runs the
+same five frames at both sizes: stand, fold through the seam, edge-on, come down
+the other side, land. Frames rather than a chase, because a chase is a lamp
+brightening and dimming, and a card does not glow, it moves.
+
+It lands on a ring and never on a tick. A tick was the most readable answer in
+that slot and the only one that grades the work — an agent stopping means it
+stopped talking, not that it managed what you asked, which is why the words say
+*back to you* and never *done*.
 
 It is a template image in the app, which the menu bar tints, so it is the one
 mark on this page a theme does not reach: white on a dark bar whatever Ocarina
-is wearing, with the chase expressed as alpha rather than as colour. The
-enlarged four take the page's ink for the same reason — a template has no
-colour of its own. The line under it in the dropped menu *is* the theme's, so
-all fourteen voices are here too.
+is wearing. The enlarged four take the page's ink for the same reason — a
+template has no colour of its own. The line under it in the dropped menu *is*
+the theme's, so all fourteen voices are here too.
 
 ## Why it looks like this
 
