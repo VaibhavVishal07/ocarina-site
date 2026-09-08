@@ -51,6 +51,7 @@
     --ic-3:var(--accent-2);
     --ic-4:color-mix(in srgb,var(--accent-2) 46%,#000000);
     --r:16px; --r-sm:10px;
+    --apple:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 28'%3E%3Cpath fill='%23000' d='M19.3 21.4c-.5 1.2-.8 1.7-1.5 2.7-1 1.5-2.4 3.3-4.1 3.3-1.5 0-1.9-1-4-1-2 0-2.5 1-4 1-1.7 0-3-1.6-4-3.1-2.8-4.3-3.1-9.3-1.4-12 1.2-1.9 3.2-3 5-3 1.9 0 3 1 4.5 1 1.4 0 2.3-1 4.5-1 1.6 0 3.4.9 4.6 2.4-4 2.2-3.4 8 .4 9.7ZM15.6 5.2c.8-1 1.4-2.5 1.2-4-1.3.1-2.8.9-3.7 2-.8 1-1.5 2.5-1.2 3.9 1.4 0 2.9-.8 3.7-1.9Z'/%3E%3C/svg%3E");
     --mono:"Geist Mono",ui-monospace,Menlo,monospace;
     /* One rail for the whole page. Every block on the page — the nav pill,
        every section, the footer — is this wide and starts at this x. The
@@ -156,7 +157,8 @@
     display:flex; align-items:center; gap:24px; padding:0 14px 0 18px;
   }
   nav .spacer { flex:1; }
-  nav a.link { color:var(--muted); text-decoration:none; font-size:14.5px; padding:8px 10px; border-radius:8px; }
+  nav a.link { color:var(--muted); text-decoration:none; font-size:14.5px; padding:8px 7px;
+               border-radius:8px; white-space:nowrap; }
   nav a.link:hover { color:var(--ink); background:rgba(255,255,255,.05); }
   .btn { display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:450;
          padding:9px 17px; border-radius:var(--r-sm); text-decoration:none; white-space:nowrap;
@@ -178,11 +180,19 @@
   nav .navcta { display:flex; align-items:center; gap:9px; }
   /* links carry 10px of their own padding, so they group tighter than the bar gap */
   nav .navlinks { display:flex; align-items:center; gap:2px; }
-  /* Below the pill's own width the six links do not fit and were spilling
-     out of it — 804px of them in a 350px bar. This has to sit after the
-     rule above: a media query adds no specificity, and the hide was losing
-     to a base rule declared later in the sheet. */
-  @media (max-width:760px) { nav .navlinks { display:none; } }
+  /* Below the pill's own width the links do not fit and were spilling out
+     of it — 804px of them in a 350px bar. This has to sit after the rule
+     above: a media query adds no specificity, and the hide was losing to a
+     base rule declared later in the sheet.
+     Eight links now rather than six, which moves every number in here. They
+     give up their padding before they go — it is there to keep one link's
+     hover plate off its neighbour's, and there is more of it than that needs
+     — and the coffee button gives up its label at the same width, which is
+     worth more than all eight of them put together. Under 1040 the row is
+     wider than the space between the wordmark and the buttons whatever is
+     done to either. */
+  @media (max-width:1200px) { nav a.link { font-size:13.2px; padding:8px 6px; } }
+  @media (max-width:1040px) { nav .navlinks { display:none; } }
   /* With the links gone the pill still did not fit a phone: brand 118 plus
      controls 169 plus the bar's own padding and gaps is 367px, in 280 on a
      320. The wordmark is the part that is saying something the icon beside
@@ -275,6 +285,10 @@
     --wsi:var(--oc-si); --wsr:var(--oc-sr); --wsg:var(--oc-sg); --wsf:var(--oc-sf);
     --wline:color-mix(in srgb,var(--wfg) 13%,transparent);
     --wdim:color-mix(in srgb,var(--wfg) 55%,transparent);
+    /* The third weight. The app has three — primary, secondary, tertiary —
+       and the shelf is the first thing drawn here that needs all three at
+       once: a name, a publisher and a line, in that order of loudness. */
+    --wdim2:color-mix(in srgb,var(--wfg) 36%,transparent);
     --wground:var(--oc-ground); --wlit:var(--oc-lit); --wunlit:var(--oc-unlit);
     /* Fixed design size, scaled to whatever the stage is. Reflowing a
        three-pane desktop window into a phone gives you three crushed
@@ -335,9 +349,13 @@
   .side .fill { flex:1; min-height:8px; }
   .side .foot { flex:none; padding:8px 9px; }
   .side .foot .row { padding:6px 9px; gap:7px; }
-  /* the same 9pt symbol column the app lines Theme, Feedback, Tasks and
-     Keep Awake up in */
+  /* the same 9pt symbol column the app lines Skills, Theme, Feedback, Tasks
+     and Keep Awake up in */
   .fi { width:11px; height:11px; flex:none; display:block; opacity:.9; }
+  /* A row's trailing value, which on Skills is the agent it would install
+     for. Same place a shortcut sits, and quieter than the label it answers. */
+  .side .foot .row .v { margin-left:auto; padding-left:8px; font-size:11px;
+                        color:var(--wdim2); }
   .sw { margin-left:auto; width:28px; height:16px; border-radius:9px; flex:none;
         background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
   .sw::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
@@ -438,6 +456,101 @@
   .drawer .it { display:flex; align-items:baseline; gap:9px; padding:7px 15px; font-size:13.5px; }
   .drawer .it.sel { background:color-mix(in srgb,var(--wacc) 17%,transparent); }
   .drawer .it .b { color:var(--wdim); font-size:11.5px; }
+
+  /* ── the skills shelf ──────────────────────────────────
+     A shelf, not a list. Two columns of cards rather than one column of two
+     hundred rows, so the eye takes a pair at a time and the descriptions
+     stop being the widest thing on screen. Drawn at the size the app draws
+     it, 780 by 560, which is most of the window — because it is.
+
+     A card is calm until you point at it. The first version of this in the
+     app drew a border, a fill and a lit Install button on all two hundred
+     of them, so every card shouted at the same volume and the only way
+     through the page was to read all of it. Here one card is under the
+     pointer and carries all three; the rest are a mark, a name, a
+     publisher and a line. */
+  /* Hung off the window rather than off the terminal pane. In the app this
+     is a sheet over the whole window, and at 780 wide it does not fit inside
+     a pane that is 690 — the two ends of the head were being cut off by the
+     pane's own clip. */
+  .shelf { position:absolute; left:50%; top:50%; z-index:6; width:780px; height:560px;
+           translate:-50% -46%; opacity:0; pointer-events:none; font-family:"Geist",sans-serif;
+           display:flex; flex-direction:column; overflow:hidden;
+           background:var(--wtop); border:1px solid color-mix(in srgb,var(--wfg) 22%,transparent);
+           border-radius:12px; box-shadow:0 34px 68px -20px rgba(0,0,0,.9);
+           transition:translate .4s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
+  .win.skilled .shelf { translate:-50% -50%; opacity:1; }
+  .shelf .sf-head { flex:none; display:flex; align-items:baseline; gap:8px;
+                    padding:16px 18px 12px; }
+  .shelf .sf-head b { font-size:15px; font-weight:600; color:var(--wfg); }
+  /* Not decoration. A skill is instructions the agent will follow, so where
+     it is going is part of what you are agreeing to. */
+  .shelf .sf-for { font-size:11.5px; font-weight:500; color:var(--wdim2); }
+  /* What is on the shelf. A catalogue that never says how big it is reads as
+     a short list that happens to scroll. */
+  .shelf .sf-tally { margin-left:auto; font-size:10.5px; font-weight:500;
+                     color:var(--wdim2); font-variant-numeric:tabular-nums; }
+  .shelf .sf-x { font-size:11px; line-height:1; color:var(--wdim2); }
+  .shelf .sf-find { flex:none; display:flex; align-items:center; gap:8px; height:30px;
+                    margin:0 18px; padding:0 10px; border-radius:8px;
+                    background:color-mix(in srgb,var(--wfg) 7%,transparent);
+                    border:1px solid color-mix(in srgb,var(--wfg) 14%,transparent);
+                    font-size:12.5px; color:var(--wdim2); }
+  .shelf .sf-find svg { width:11px; height:11px; flex:none; }
+  .shelf .sf-chips { flex:none; display:flex; gap:6px; height:26px; align-items:center;
+                     margin:10px 18px 14px; overflow:hidden; }
+  .shelf .sf-chips i { flex:none; display:flex; align-items:center; height:24px; padding:0 10px;
+                       border-radius:12px; font-size:11px; font-weight:500; font-style:normal;
+                       color:var(--wdim); background:color-mix(in srgb,var(--wacc) 6%,transparent);
+                       box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 14%,transparent); }
+  /* Pressing the one already on clears it, so the filter never becomes a
+     thing you cannot get out of without finding "All" again. */
+  .shelf .sf-chips i.on { color:var(--wfg); background:color-mix(in srgb,var(--wacc) 22%,transparent);
+                          box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 50%,transparent); }
+  .shelf .sf-rule { flex:none; height:1px; background:color-mix(in srgb,var(--wfg) 12%,transparent); }
+  .shelf .sf-grid { flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr;
+                    gap:10px; padding:14px 18px; align-content:start; overflow:hidden; }
+  .sk { display:flex; align-items:flex-start; gap:11px; height:74px; padding:11px;
+        border-radius:10px; background:color-mix(in srgb,var(--wfg) 3%,transparent); }
+  /* The category, as a shape. It is what makes the grid scannable before a
+     word of it has been read — nine kinds, one mark each, in the same place
+     on every card. */
+  .sk .sk-m { flex:none; display:flex; align-items:center; justify-content:center;
+              width:30px; height:30px; border-radius:8px; color:var(--wdim2);
+              background:color-mix(in srgb,var(--wfg) 7%,transparent); }
+  .sk .sk-m svg { width:12px; height:12px; display:block; }
+  .sk .sk-b { min-width:0; flex:1; }
+  .sk .sk-t { display:flex; align-items:center; gap:6px; }
+  .sk .sk-n { font-size:12.5px; font-weight:600; color:var(--wfg);
+              overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* Who wrote it, always. A skill is instructions the agent will follow, so
+     the publisher is most of the decision. */
+  .sk .sk-a { margin-top:2px; font-size:10px; font-weight:500; color:var(--wdim2); }
+  /* One line, and a line that ends where a sentence does. These descriptions
+     are written for the agent, which reads all of them, and clipping the raw
+     text to the card's width broke every card mid-word. */
+  /* Half a point under the app's, because Geist is wider than the app's own
+     UI face at the same size and the card must let the headline's ellipsis
+     land before the label's does — one lands on a word, the other wherever
+     the pixels ran out. */
+  .sk .sk-d { margin-top:5px; font-size:10.5px; color:var(--wdim);
+              overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* Nothing at all until it is either installed or under the pointer. Two
+     hundred Install buttons drawn at once is two hundred things asking to be
+     pressed, and a shelf where everything is asking is a shelf you cannot
+     read. */
+  .sk .sk-go { margin-left:auto; flex:none; display:none; align-items:center; height:19px;
+               padding:0 9px; border-radius:10px; font-size:9.5px; font-weight:600;
+               color:var(--wfg); background:color-mix(in srgb,var(--wacc) 26%,transparent); }
+  .sk.hov { background:color-mix(in srgb,var(--wfg) 7%,transparent);
+            box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 18%,transparent); }
+  .sk.hov .sk-go { display:flex; }
+  /* Installed is a state the card wears, not a second control beside the
+     first: the mark lights, and the word at the end of the title becomes the
+     way back out when you point at it. */
+  .sk.here .sk-m { color:var(--wlit); }
+  .sk .sk-in { margin-left:auto; flex:none; font-size:9.5px; font-weight:500;
+               color:var(--wdim2); }
 
   .right { width:0; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:hidden;
            transition:width .5s cubic-bezier(.16,1,.3,1); }
@@ -776,6 +889,91 @@
          text-transform:uppercase; color:var(--accent); }
   .try span { color:var(--ink); }
   @media (max-width:920px) { .try { display:none; } }
+  /* ── the menu bar, and what it drops ──────────────────
+     Drawn at a fixed size and scaled to the stage, like every window on this
+     page: a menu bar reflowed onto a phone is a menu bar with the clock on
+     the second line. */
+  .mbstage { background:
+      radial-gradient(120% 90% at 22% 0%, color-mix(in srgb,var(--accent) 22%,transparent), transparent 62%),
+      linear-gradient(170deg, var(--raise-2), var(--ground)); }
+  /* Scaled to the stage, and on a phone slid so the stage is filled by the
+     slice the section is about. The window scenes answer a 352px stage the
+     same way: crop instead of shrink, because 780 into 352 puts a fifteen
+     point face at seven. */
+  .mbscene { position:absolute; top:0; left:0; width:780px; height:419px;
+             transform-origin:0 0;
+             transform:scale(var(--fit,1)) translate(var(--slide,0px),0); }
+  /* Nobody in particular, and deliberately so: what it is does not matter,
+     only that it is not Ocarina and it is covering the whole screen. */
+  .mb-other { position:absolute; left:74px; top:64px; width:632px; height:392px;
+              border-radius:11px; overflow:hidden; opacity:.5;
+              background:var(--raise); border:1px solid var(--line-2);
+              box-shadow:0 30px 60px -24px rgba(0,0,0,.9); }
+  .mb-other .mo-bar { height:26px; display:flex; align-items:center; gap:6px; padding:0 11px;
+                      background:color-mix(in srgb,var(--ink) 7%,transparent); }
+  .mb-other .mo-bar i { width:8px; height:8px; border-radius:50%;
+                        background:color-mix(in srgb,var(--ink) 22%,transparent); }
+  .mb-other .mo-body { display:flex; height:calc(100% - 26px); }
+  .mb-other .mo-rail { width:132px; flex:none; padding:16px 12px; display:grid; gap:11px;
+                       align-content:start; border-right:1px solid var(--line); }
+  .mb-other .mo-main { flex:1; padding:18px 20px; display:grid; gap:11px; align-content:start; }
+  .mb-other span, .mb-other b, .mb-other em { display:block; height:8px; border-radius:4px;
+                        background:color-mix(in srgb,var(--ink) 11%,transparent); }
+  .mb-other .mo-main b { height:14px; width:56%; }
+  .mb-other .mo-main em { height:74px; border-radius:8px; }
+  .mb-other .short { width:62%; }
+  .mbar { position:absolute; inset:0 0 auto; z-index:2; height:28px; display:flex; align-items:center;
+          gap:15px; padding:0 13px; font-size:12px; color:rgba(255,255,255,.82);
+          background:rgba(10,14,20,.55); backdrop-filter:blur(18px);
+          border-bottom:1px solid rgba(255,255,255,.07); }
+  .mb-apple { width:12px; height:14px; flex:none; background:currentColor; opacity:.9;
+              -webkit-mask:var(--apple) center/contain no-repeat; mask:var(--apple) center/contain no-repeat; }
+  .mb-app { width:46px; height:8px; border-radius:4px; background:rgba(255,255,255,.42); }
+  .mb-m { width:30px; height:7px; border-radius:4px; background:rgba(255,255,255,.2); }
+  .mb-gap { flex:1; }
+  /* The face, at the size the bar actually gives it: six rows of 1.6pt lamp
+     on a 2.3pt pitch is thirteen points tall, which is what a 22pt menu bar
+     has room for once the item's own padding is off. Small on purpose — every
+     other item up there is one glyph wide, and this one is square. */
+  .mb-face { display:block; height:13px; width:auto; flex:none; }
+  .mb-i { height:13px; width:auto; flex:none; opacity:.85; }
+  .mb-clock { font-variant-numeric:tabular-nums; opacity:.9; }
+  /* Dropped from the board, and pinned to it: the item it belongs to is the
+     one thing on the bar that moves when the words change length. */
+  .mb-menu { position:absolute; top:34px; z-index:3; width:266px; padding:5px 0; border-radius:9px;
+             background:rgba(24,28,34,.86); backdrop-filter:blur(26px);
+             border:1px solid rgba(255,255,255,.1);
+             box-shadow:0 24px 48px -16px rgba(0,0,0,.8); font-size:12.5px;
+             color:rgba(255,255,255,.62); }
+  .mb-row { padding:3px 14px; line-height:1.5; }
+  .mb-row.lead { color:rgba(255,255,255,.95); }
+  .mb-row.quiet { font-size:11px; color:rgba(255,255,255,.4); padding-top:4px; }
+  .mb-sep { height:1px; margin:5px 12px; background:rgba(255,255,255,.11); }
+
+  /* The four words, and what each of them answers. A definition list, because
+     that is what it is: the board says one of these and nothing else. */
+  .states { margin:0; display:grid; gap:9px; }
+  .states div { display:flex; align-items:baseline; gap:11px; }
+  .states dt { flex:none; width:9.6em; font-family:var(--mono); font-size:11.5px;
+               letter-spacing:.07em; color:var(--ink); }
+  .states dd { margin:0; font-size:14.5px; color:var(--muted); }
+  .states.homes dt { width:8.4em; font-family:inherit; font-size:14.5px; letter-spacing:0; }
+  .states.homes dd { font-family:var(--mono); font-size:12.5px; color:var(--accent); }
+  /* The four expressions, at a size you can read one. In the bar they are
+     fifteen points square and the plate is the point; here the plate is what
+     makes the shape legible, so it is the same grid blown up rather than a
+     drawing of a face. */
+  .states.faces { gap:14px; }
+  .states.faces div { align-items:center; gap:16px; }
+  .states.faces dt { width:auto; flex:none; }
+  .states.faces .face { display:block; width:60px; height:auto; }
+  .states.faces dd b { display:block; font-weight:500; color:var(--ink); font-size:14.5px; }
+  @media (max-width:520px) {
+    .states div { display:block; }
+    .states dt { width:auto; }
+    .states dd { margin-top:1px; }
+  }
+
   .takeaway { margin:26px 0 0; font-size:17px; color:var(--muted); max-width:62ch; }
   .takeaway b { color:var(--ink); font-weight:500; }
 
@@ -998,9 +1196,11 @@
     <span class="navlinks">
       <a class="link" href="#one">One window</a>
       <a class="link" href="#awake">Keep awake</a>
+      <a class="link" href="#status">Menu bar</a>
       <a class="link" href="#kit">&#8984;K menu</a>
       <a class="link" href="#errors">Explain this</a>
       <a class="link" href="#tasks">Your tasks</a>
+      <a class="link" href="#skills">Skills</a>
       <a class="link" href="#faq">Questions</a>
     </span>
     <span class="navcta">
@@ -1067,10 +1267,23 @@
                         <div class="fill"></div>
                       </div>
                       <div class="card down foot">
-                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 1 0 0 17.6c1 0 1.7-.75 1.7-1.6 0-.4-.16-.78-.42-1.05-.27-.28-.43-.64-.43-1.05 0-.85.72-1.55 1.6-1.55h1.85A4.9 4.9 0 0 0 21 10.6c0-4.1-4-7.4-9-7.4Z"/><circle cx="7.6" cy="11.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="11" cy="7.7" r="1.05" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.8" r="1.05" fill="currentColor" stroke="none"/></svg>Theme</div>
+                        <!-- Five rows with an agent running, four without. Skills
+                             is the one row here that is about the work rather than
+                             about the app, so it goes on top — and it is only true
+                             while there is an agent to read them: on a plain shell
+                             there is no directory to install into. Its trailing
+                             value names the agent, which is the answer to the
+                             question the row raises: skills for what. -->
+                        <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">Claude Code</span></div>
+                        <!-- The marks are deliberately plain: a half-filled circle,
+                             a bubble, three lines, a bolt. They were a paint
+                             palette, a cup on a saucer and a checklist, which is
+                             detail that reads as noise at ten points and detail
+                             nobody needs when every row is captioned. -->
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor" stroke="none"/></svg>Theme</div>
                         <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.1c0 3.5-3.4 6.4-7.6 6.4-.9 0-1.8-.13-2.6-.37L5.2 20.4l1.4-3.5c-1.1-1.15-1.8-2.6-1.8-4.8 0-3.53 3.4-6.4 7.6-6.4s8 2.87 8 6.4Z"/></svg>Share Feedback</div>
-                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 6.9l1.8 1.8 3-3"/><path d="M11 7.4h9.4"/><path d="M3.6 15.9l1.8 1.8 3-3"/><path d="M11 16.4h9.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
-                        <div class="row" id="awakeRow"><svg class="fi cupfi" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.2 17.4h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Keep Awake<span class="sw on"></span></div>
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4.4" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="17.6" r="1.15" fill="currentColor" stroke="none"/><path d="M9 6.4h11.4M9 12h11.4M9 17.6h11.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
+                        <div class="row" id="awakeRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M13.7 2.6 5.4 13.5h5.4l-.5 7.9 8.3-10.9h-5.4l.5-7.9Z"/></svg>Keep Awake<span class="sw on"></span></div>
                       </div>
                     </div>
 
@@ -1157,6 +1370,32 @@
                       </div>
                     </div>
                   </div>
+                    <!-- The skills shelf. It opens on a tab running an agent and
+                         nowhere else, because everything in it is answered by
+                         which agent that is: the same skill installs to a
+                         different directory for Claude Code than for Codex, so
+                         on a plain shell the way in is simply not there. -->
+                    <div class="shelf">
+                      <div class="sf-head">
+                        <b>Skills</b><span class="sf-for">for Claude Code</span>
+                        <span class="sf-tally">216 skills</span><span class="sf-x">&#10005;</span>
+                      </div>
+                      <div class="sf-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.2"/><path d="m15.3 15.3 4.7 4.7"/></svg>Search skills</div>
+                      <div class="sf-chips"><i class="on">All</i><i>Workflow</i><i>Testing</i><i>Cloud</i><i>Data</i><i>Web</i><i>Security</i><i>Writing</i><i>Design</i><i>Documents</i></div>
+                      <div class="sf-rule"></div>
+                      <div class="sf-grid">
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M12 3.6a8.4 8.4 0 0 0 0 16.8Z" fill="currentColor" stroke="none"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">grill-with-docs</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">A relentless interview to sharpen a plan or…</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.6 3.6 5.4 3.6 8.4S14.4 17.8 12 20.4C9.6 17.8 8.4 15 8.4 12S9.6 6.2 12 3.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">improve-codebase-architecture</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Scan a codebase for deepening opportunities,…</div></div></div>
+                      <div class="sk hov"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.6 3.6 5.4 3.6 8.4S14.4 17.8 12 20.4C9.6 17.8 8.4 15 8.4 12S9.6 6.2 12 3.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">frontend-design</span><span class="sk-go">Install</span></div><div class="sk-a">Anthropic</div><div class="sk-d">Guidance for distinctive, intentional visual…</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.6 3.6 5.4 3.6 8.4S14.4 17.8 12 20.4C9.6 17.8 8.4 15 8.4 12S9.6 6.2 12 3.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">web-design-guidelines</span></div><div class="sk-a">Vercel</div><div class="sk-d">Review UI code for Web Interface Guidelines…</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><path d="M12 3.6a8.4 8.4 0 0 0 0 16.8Z" fill="currentColor" stroke="none"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">codebase-design</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Shared vocabulary for designing deep modules</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M7.2 18.4h9.9a4.1 4.1 0 0 0 .5-8.2 5.6 5.6 0 0 0-10.8-.6 4.4 4.4 0 0 0 .4 8.8Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">azure-deploy</span></div><div class="sk-a">Microsoft</div><div class="sk-d">Execute Azure deployments for ALREADY-PREPARED…</div></div></div>
+                      <div class="sk here"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13.5 6.5 20 12l-6.5 5.5"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">code-review</span><span class="sk-in">Installed</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Review the changes since a fixed point (commit,…</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M16.4 3.9 20.1 7.6 8.3 19.4l-4.6.9.9-4.6Z"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">research</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Investigate a question against high-trust…</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.6 9.6 18 19.5 6.6"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">supabase-postgres-best-practices</span></div><div class="sk-a">Supabase</div><div class="sk-d">Postgres best practices maintained by Supabase,…</div></div></div>
+                      <div class="sk"><span class="sk-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13.5 6.5 20 12l-6.5 5.5"/></svg></span><div class="sk-b"><div class="sk-t"><span class="sk-n">git-guardrails-claude-code</span></div><div class="sk-a">Matt Pocock</div><div class="sk-d">Set up Claude Code hooks to block dangerous git…</div></div></div>
+                      </div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -1285,6 +1524,82 @@
   </div>
 </section>
 
+
+<!-- The one surface Ocarina owns that is read from outside Ocarina. No
+     window, no icon, no context — so it is drawn in the app's own lamps
+     rather than in the system's symbols.
+     It was the whole line — STILL GOING, BACK TO YOU, STOPPED 127 — set in
+     the same 5x7 grid the wordmark is. That was right about the alphabet and
+     wrong about what it cost: eleven characters at six columns each is 136
+     points of menu bar, wider than the clock and the Wi-Fi and the battery
+     together, for a reading you take in a fifth of a second — and a letter
+     built out of 1.4pt lamps is under the size that grid can set, so it was
+     a word you could not read taking the room of a sentence. A face survives
+     the size where a letterform does not. -->
+<section id="status">
+  <div class="wrap">
+    <h2 class="rise">Whether it is still going, <span class="soft">without the window.</span></h2>
+    <p class="sub rise">Beside the Wi-Fi, as a small face on a plate of the app&rsquo;s own lamps.</p>
+    <div class="feat">
+      <div class="feat-say">
+        <p class="takeaway rise"><b>Still going</b> means an ask that has not come back yet &mdash; read from the agent&rsquo;s conversation, not from what the screen is repainting.</p>
+        <!-- The words did not go anywhere: a face has nothing to say about an
+             exit code, so they are the item's tooltip and the line the menu
+             opens on. Here they are captions, which is the same job. -->
+        <dl class="states faces rise d1">
+          <div><dt><canvas class="face" data-face="working" role="img" aria-label="Three lamps travelling along a flat mouth"></canvas></dt>
+               <dd><b>Still going</b>your ask has not come back yet</dd></div>
+          <div><dt><canvas class="face" data-face="backToYou" role="img" aria-label="A smile"></canvas></dt>
+               <dd><b>Back to you</b>it stopped, and it is your move</dd></div>
+          <div><dt><canvas class="face" data-face="ready" role="img" aria-label="A flat mouth"></canvas></dt>
+               <dd><b>Ready</b>nothing has been asked in this tab</dd></div>
+          <div><dt><canvas class="face" data-face="stopped" role="img" aria-label="Shut eyes"></canvas></dt>
+               <dd><b>Stopped (127)</b>it exited, and the number is in the words</dd></div>
+        </dl>
+      </div>
+      <div class="stage mbstage rise d1" id="mbStage">
+       <div class="mbscene">
+        <div class="mb-other" aria-hidden="true">
+          <div class="mo-bar"><i></i><i></i><i></i></div>
+          <div class="mo-body">
+            <div class="mo-rail"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="mo-main"><b></b><span></span><span></span><span class="short"></span><em></em><span></span><span class="short"></span></div>
+          </div>
+        </div>
+        <div class="mbar">
+          <span class="mb-apple" aria-hidden="true"></span>
+          <span class="mb-app" aria-hidden="true"></span>
+          <span class="mb-m" aria-hidden="true"></span><span class="mb-m" aria-hidden="true"></span><span class="mb-m" aria-hidden="true"></span>
+          <span class="mb-gap"></span>
+          <canvas class="mb-face" id="mbFace" role="img" aria-label="Ocarina"></canvas>
+          <svg class="mb-i" viewBox="0 0 26 14" aria-hidden="true"><rect x=".8" y="1.4" width="20.4" height="11.2" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".55"/><rect x="2.6" y="3.2" width="13.4" height="7.6" rx="1.8" fill="currentColor"/><path d="M23 5.2v3.6a2.6 2.6 0 0 0 0-3.6Z" fill="currentColor" opacity=".55"/></svg>
+          <svg class="mb-i" viewBox="0 0 18 14" aria-hidden="true"><path d="M1 5.1a11.4 11.4 0 0 1 16 0M3.7 8a7.6 7.6 0 0 1 10.6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="11.2" r="1.4" fill="currentColor"/></svg>
+          <svg class="mb-i" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 4.4h12M2 9.6h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10.4" cy="4.4" r="1.9" fill="currentColor"/><circle cx="5.6" cy="9.6" r="1.9" fill="currentColor"/></svg>
+          <span class="mb-clock">Tue 8 Sep&nbsp; 09:41</span>
+        </div>
+        <!-- One click down, where you have already pressed something belonging
+             to Ocarina and know whose voice you are reading, the wording is the
+             theme's. The board above it is the app's, in the same form for
+             every theme: a theme being arch in the menu bar costs somebody the
+             one reading they went up there for. -->
+        <div class="mb-menu">
+          <div class="mb-row lead" id="mbLine">Something is building</div>
+          <div class="mb-row" id="mbTask">Fix the checkout page</div>
+          <div class="mb-sep"></div>
+          <div class="mb-row">1,412,908 tokens used</div>
+          <div class="mb-row">Window opened 09:00</div>
+          <div class="mb-row">Resets in 3h 12m</div>
+          <div class="mb-sep"></div>
+          <div class="mb-row quiet">Tokens remaining are not shown: nothing on<br>this Mac records the size of the allowance.</div>
+        </div>
+       </div>
+      </div>
+    </div>
+    <p class="takeaway rise">Only the mouth moves. <b>Eyes that chased as well would read as a face blinking at you</b>, and something that blinks is asking for attention &mdash; this is reporting.</p>
+    <p class="takeaway rise">The token figure moved up here when the task panel learned to close: <b>&#8984;J shuts the column, and the number is one click down</b>.</p>
+  </div>
+</section>
+
 <!-- Four features, four sections. They were two, each holding a pair of
      them behind a chip you had to press: a feature that lives behind a tab
      is a feature most people never find. Each window below is the same one
@@ -1326,6 +1641,27 @@
       </div>
       <div class="stage rise d1" id="taskStage"></div>
     </div>
+  </div>
+</section>
+
+
+<section id="skills">
+  <div class="wrap">
+    <h2 class="rise">Two hundred agent skills, <span class="soft">already in the app.</span></h2>
+    <p class="sub rise">A skill is a folder of instructions your agent loads when a task calls for it. 216 of them, bundled &mdash; so the shelf opens instantly and offline.</p>
+    <div class="feat">
+      <div class="feat-say">
+        <p class="takeaway rise">Installed into the directory <b>the agent in front of you actually reads</b> &mdash; which is not the same directory for all four.</p>
+        <dl class="states homes rise d1">
+          <div><dt>Claude&nbsp;Code</dt><dd>~/.claude/skills</dd></div>
+          <div><dt>Codex</dt><dd>~/.agents/skills</dd></div>
+          <div><dt>Gemini&nbsp;CLI</dt><dd>~/.agents/skills</dd></div>
+          <div><dt>OpenCode</dt><dd>~/.agents/skills</dd></div>
+        </dl>
+      </div>
+      <div class="stage rise d1" id="skillStage"></div>
+    </div>
+    <p class="takeaway rise">Who published a skill sits next to what it is called, on every card. <b>It is instructions an agent will follow</b>, so that is most of what you are deciding.</p>
   </div>
 </section>
 
@@ -1435,7 +1771,7 @@
   function cells(text) {
     var out = [], x = 0;
     for (var i = 0; i < text.length; i++) {
-      var ch = text[i], w = ch === " " ? 2 : 5;
+      var ch = text[i], w = 5;
       var rows = F[ch] ? F[ch].split(",") : ["00000","00000","00000","00000","00000","00000","00000"];
       for (var cx = 0; cx < w; cx++) for (var cy = 0; cy < 7; cy++)
         out.push({ x: x + cx, y: cy, on: ch !== " " && rows[cy][cx] === "1" });
@@ -1824,6 +2160,7 @@
       });
     fit(document.querySelector(".awin"), 520, 300);
     fit(document.querySelector(".twin"), 520, 300);
+    fit(document.querySelector(".mbscene"), 780, 419);
   }
 
   /* ── the tour ─────────────────────────────────────────────
@@ -1833,8 +2170,8 @@
   function makeWindow() {
     var c = win.cloneNode(true);
     Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (n) { n.removeAttribute("id"); });
-    mark(c.querySelector(".board canvas"), { pitch: 7, color: "#64B2D8" }, "lit", true);
-    mark(c.querySelector(".sidemark"), { pitch: 3.2, color: "#64B2D8" }, "lit", true);
+    mark(c.querySelector(".board canvas"), { pitch: 7, color: "#64B2D8" }, "lit");
+    mark(c.querySelector(".sidemark"), { pitch: 3.2, color: "#64B2D8" }, "lit");
     return c;
   }
 
@@ -1944,7 +2281,13 @@
                       into this slice — the two things the section is about. */
                    nar: { w: 520, h: 280, rect: [2, 1, 34, 28] } },
     taskStage:   { cls: "shelled tasked", sel: ".panel .inner", pad: 26, max: 2.1,
-                   nar: { w: 290, h: 280, sel: ".panel .inner" } }
+                   nar: { w: 290, h: 280, sel: ".panel .inner" } },
+    /* The shelf is 780 by 560 in a window that is 1180 by 634, so there is
+       nothing to zoom into: it is most of the window, because in the app it
+       is. The phone crop takes the top left of it — the head, which says
+       which agent this is for, and the first cards under it. */
+    skillStage:  { cls: "shelled tasked skilled", sel: ".shelf", pad: 22, max: 1.3,
+                   nar: { w: 430, h: 330, rect: [17, 6, 37, 52] } }
   };
 
   /* Both sections are the same machine: one drawn window, framed on a different
@@ -2029,7 +2372,7 @@
     if ("ResizeObserver" in window) new ResizeObserver(reframe).observe(stage);
   }
 
-  ["kitStage", "errStage", "taskStage"].forEach(buildScene);
+  ["kitStage", "errStage", "taskStage", "skillStage"].forEach(buildScene);
 
   /* ── themes, straight out of the app's own JSON ───────────
      Twenty-one colours per theme because that is what the app's theme file
@@ -2040,84 +2383,98 @@
      had its way with red and green. */
   var THEMES = {
     "ocarina": { name:"Ocarina",
+      voice:["Something is building", "A build has completed", "A build stopped short", "All the items are closed"],
       bg:"#060B10", fg:"#C9D4E0", top:"#101721", bot:"#0B1019", bed:"#04070B",
       red:"#F06C86", grn:"#5FC9A2", yel:"#E5CE5A", blu:"#5A96F0", acc:"#31789B",
       lit:"#64B2D8", unlit:"#0A0E14", bd:"#97A9C4",
       t1:"#D9DBDE", t2:"#999FA9", t3:"#68717E",
       si:"#87C7FF", sr:"#5CA8FF", sg:"#4CC773", sf:"#F25959" },
     "sakura": { name:"Sakura",
+      voice:["Opening", "In full bloom", "It fell early", "The branches are bare"],
       bg:"#12070C", fg:"#EBD3DF", top:"#231119", bot:"#1A0C12", bed:"#0C0408",
       red:"#FF80AE", grn:"#7FD894", yel:"#EFAB7A", blu:"#9FA6F0", acc:"#B34268",
       lit:"#DC89A5", unlit:"#150A0F", bd:"#C695AC",
       t1:"#DED9DB", t2:"#A998A0", t3:"#7E6772",
       si:"#D79BB4", sr:"#FF8FB8", sg:"#7FD8A6", sf:"#FF8095" },
     "matrix": { name:"Matrix",
+      voice:["It is running", "Returned clean", "Connection lost", "The line is quiet"],
       bg:"#040C06", fg:"#8CF5A3", top:"#091A0E", bot:"#051008", bed:"#020703",
       red:"#7ADF95", grn:"#5CFF87", yel:"#A8F5BD", blu:"#66E387", acc:"#24893C",
       lit:"#44D967", unlit:"#040B06", bd:"#8BD09D",
       t1:"#D8DFDA", t2:"#95AD9B", t3:"#62836B",
       si:"#5FA872", sr:"#5CFF8A", sg:"#8CF5A3", sf:"#F57A7A" },
     "ember": { name:"Ember",
+      voice:["Fanning the coals", "Burned clean", "The fire went out", "Banked for the night"],
       bg:"#120906", fg:"#EDDCCB", top:"#22150F", bot:"#190E0A", bed:"#0B0604",
       red:"#FF976B", grn:"#9ED48A", yel:"#F0A263", blu:"#8FA4E8", acc:"#9F572D",
       lit:"#DC8E60", unlit:"#140C09", bd:"#C7A394",
       t1:"#DEDAD9", t2:"#A99D98", t3:"#7F6E67",
       si:"#D9A277", sr:"#FFA35C", sg:"#8FD48A", sf:"#FF8A6B" },
     "blueprint": { name:"Blueprint",
+      voice:["Drawing it up", "Drawn to spec", "Off the drawing", "The board is clear"],
       bg:"#070D13", fg:"#CFE1EF", top:"#0F1A23", bot:"#0A121A", bed:"#04080C",
       red:"#F0889F", grn:"#71D3BA", yel:"#E2D776", blu:"#6FB4F0", acc:"#3186A5",
       lit:"#6ABEDC", unlit:"#090F15", bd:"#93AFC8",
       t1:"#D9DBDE", t2:"#98A1AA", t3:"#66747F",
       si:"#8FBBD6", sr:"#6FC6F5", sg:"#71D3A6", sf:"#F0888A" },
     "lavender": { name:"Lavender",
+      voice:["Taking its time", "All settled", "Lost the thread", "Nothing is pending"],
       bg:"#0B0712", fg:"#D9D3EC", top:"#191223", bot:"#120C1B", bed:"#08050C",
       red:"#F080A5", grn:"#7ED6B6", yel:"#E4AA77", blu:"#8F9AF2", acc:"#7345B0",
       lit:"#AD8BDA", unlit:"#0F0B16", bd:"#A895C6",
       t1:"#DBD9DE", t2:"#9F98A9", t3:"#70677E",
       si:"#A99BE0", sr:"#B79BFF", sg:"#7ED6A4", sf:"#F0808F" },
     "matcha": { name:"Matcha",
+      voice:["Steeping", "Steeped through", "It went bitter", "The cup is empty"],
       bg:"#060E08", fg:"#CFDCC9", top:"#101F13", bot:"#0A160D", bed:"#040A05",
       red:"#EE9472", grn:"#7FD690", yel:"#DBDB6A", blu:"#79CDE0", acc:"#398452",
       lit:"#65C886", unlit:"#09110B", bd:"#97C3A0",
       t1:"#D9DEDA", t2:"#99A89C", t3:"#687D6C",
       si:"#9FD6A6", sr:"#7FD68A", sg:"#68C77A", sf:"#EE7B72" },
     "ocean": { name:"Ocean",
+      voice:["Down there working", "Surfaced", "Lost the line", "Still water"],
       bg:"#060F11", fg:"#CFE0E4", top:"#0E1E22", bot:"#091618", bed:"#040A0B",
       red:"#F07F93", grn:"#6FD3B8", yel:"#DFD472", blu:"#74CEEC", acc:"#31838C",
       lit:"#5CC6D1", unlit:"#081113", bd:"#93BEC8",
       t1:"#D9DDDE", t2:"#98A6AA", t3:"#667B7F",
       si:"#8FC9D2", sr:"#5FD6E0", sg:"#6FD3A4", sf:"#F0827F" },
     "mocha": { name:"Mocha",
+      voice:["Brewing", "Poured", "It went cold", "The cup is down"],
       bg:"#110C07", fg:"#E4D7CB", top:"#221912", bot:"#1A120C", bed:"#0C0805",
       red:"#EEA27E", grn:"#8DCF8A", yel:"#E0A979", blu:"#94A5DE", acc:"#8F633D",
       lit:"#CD9B6F", unlit:"#150F0B", bd:"#C3AA97",
       t1:"#DEDBD9", t2:"#A8A099", t3:"#7D7168",
       si:"#C1A188", sr:"#D3A47A", sg:"#8ACF95", sf:"#EE8C7E" },
     "midnight": { name:"Midnight",
+      voice:["Still building", "Finished before dawn", "It gave out", "Everything is quiet"],
       bg:"#070811", fg:"#D3D7E4", top:"#0F1322", bot:"#0A0D19", bed:"#04050B",
       red:"#EE88A8", grn:"#77D3B6", yel:"#DFAF7C", blu:"#8A9DE8", acc:"#4253B3",
       lit:"#8996DC", unlit:"#090B14", bd:"#959FC6",
       t1:"#D9DADE", t2:"#989CA9", t3:"#676C7E",
       si:"#9099C6", sr:"#8AAEE8", sg:"#77D3A4", sf:"#EE8894" },
     "steel": { name:"Steel",
+      voice:["At work", "Passed", "Threw a fault", "The line is stopped"],
       bg:"#080D10", fg:"#D5DBE0", top:"#141A1F", bot:"#0D1317", bed:"#05090B",
       red:"#EE8FA2", grn:"#84D2B2", yel:"#DFD783", blu:"#8FBCDE", acc:"#507C95",
       lit:"#8AB3CB", unlit:"#0C1013", bd:"#9DB0BE",
       t1:"#DADCDD", t2:"#9BA1A6", t3:"#6B747B",
       si:"#9FB4C4", sr:"#8FB6DE", sg:"#84D2A2", sf:"#EE8F8F" },
     "superman": { name:"Superman",
+      voice:["Up and away", "Saved the day", "Hit kryptonite", "All quiet in the city"],
       bg:"#060913", fg:"#DCE4F7", top:"#0E1426", bot:"#090E1C", bed:"#03060D",
       red:"#FF7A95", grn:"#6FD7AF", yel:"#F2E73C", blu:"#6F93F5", acc:"#9B313A",
       lit:"#D8646E", unlit:"#090C17", bd:"#92A0C9",
       t1:"#D8DADE", t2:"#979CAA", t3:"#656D80",
       si:"#8FA8E0", sr:"#F2C33C", sg:"#6FD79A", sf:"#FF7A7A" },
     "mono": { name:"Mono",
+      voice:["Working", "Done", "Stopped", "Idle"],
       bg:"#0E0C0A", fg:"#D2D2D4", top:"#1B1A19", bot:"#151311", bed:"#090806",
       red:"#9A9A9E", grn:"#B4B4B8", yel:"#C2C2C6", blu:"#8E8E92", acc:"#877D6E",
       lit:"#C0B5A5", unlit:"#11100F", bd:"#B1AEA9",
       t1:"#DCDBDB", t2:"#A2A19F", t3:"#757371",
       si:"#9A9A9E", sr:"#D2D2D4", sg:"#B4B4B8", sf:"#EFEFF1" },
     "high-contrast": { name:"High Contrast",
+      voice:["Building", "Build complete", "Build failed", "Nothing is running"],
       bg:"#000000", fg:"#FFFFFF", top:"#141414", bot:"#0A0A0A", bed:"#000000",
       red:"#FF8A80", grn:"#69F0AE", yel:"#FFE14D", blu:"#82B9FF", acc:"#4DD8F0",
       lit:"#5CE8E8", unlit:"#1A1A1A", bd:"#FFFFFF",
@@ -2254,6 +2611,239 @@
   if (cold.length) { repaintMarks(THEMES["ocarina"], cold); cold.length = 0; }
   current = "ocarina";
   light("ocarina");
+
+  /* ── the menu bar's face ───────────────────────────────────
+     The one surface the app owns that is read from outside the app. It was
+     the whole line set in the app's 5x7 alphabet, which was right about the
+     language and wrong about what it cost: eleven characters at six columns
+     each is 136 points of menu bar for a reading you take in a fifth of a
+     second, and a letterform built out of 1.4pt lamps is under the size that
+     grid can set. A pictogram survives it where a letter does not — a flat
+     mouth, a mouth turning up and a pair of shut eyes are all still
+     themselves at seven cells across.
+
+     Straight out of `ActivityFace`: seven wide, six down, `#` a lamp that
+     holds, `o` a lamp the chase runs through, `.` a lamp that stays dark.
+     The dark ones are painted too — they are what make it a plate of lamps
+     rather than a face floating in the menu bar. */
+  var FACES = {
+    ready:     [".......", ".#...#.", ".......", ".......", "..###..", "......."],
+    working:   [".......", ".#...#.", ".......", ".......", ".o.o.o.", "......."],
+    backToYou: [".......", ".#...#.", ".......", ".#...#.", "..###..", "......."],
+    stopped:   [".......", ".##.##.", ".......", ".......", "..###..", "......."]
+  };
+  /* The app's numbers. The mouth swings between `floor` and `steady` rather
+     than the near-full range the board used: every lamp in a word is part of
+     the word and a dim word is unreadable, but here the eyes hold at full
+     through the whole cycle, so the face never goes faint however far down
+     the mouth swings. `floor` is well clear of `dark` on purpose — at the
+     brightness of an unlit cell the face spends half of every cycle with no
+     mouth at all, which reads as a light going on and off rather than as one
+     travelling. */
+  var LAMP = { steady: 0.92, floor: 0.45, dark: 0.11 };
+  /* Six dwells to the pass — three lit, three dark — at the house 72ms a
+     lamp, which is 432ms and reads as a mouth working. The board's trail of
+     fifteen and rest of twenty-six were measured against a word with a
+     hundred lamps in it; three lamps under those numbers is a mouth that
+     flashes once every two seconds. */
+  var CHASE = { trail: 1.6, rest: 3, lead: 0.6 };
+
+  /* How hard one lamp is being driven, given where the head is. Wrapped here
+     rather than by the caller, which counts frames and never stops, and
+     pulled back by the lead first so a lamp about to be reached at the top of
+     the next pass is already coming up rather than snapping on. */
+  function drive(position, head, total) {
+    if (head == null) return 1;
+    var d = (head - position) % total;
+    if (d < 0) d += total;
+    if (d > total - CHASE.lead) d -= total;
+    if (d >= 0 && d < CHASE.trail) return 1 - d / CHASE.trail;
+    if (d < 0) return 1 + d / CHASE.lead;
+    return 0;
+  }
+
+  /* One expression, drawn as a plate of lamps. Rounded squares at three
+     tenths of a cell, the way the app draws them — the wordmark's dots are
+     circles and these are not, because these are cells of a panel. */
+  function drawFace(cv, plate, colour, head) {
+    if (!cv) return;
+    var dpr = 2, pitch = cv.__pitch, cell = pitch * 1.6 / 2.3, gap = pitch - cell;
+    var w = 7 * pitch - gap, h = 6 * pitch - gap;
+    if (cv.width !== Math.round(w * dpr)) {
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    }
+    var g = cv.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, w, h);
+    g.fillStyle = colour;
+    // Ranked in the order the head travels: left to right along the mouth,
+    // the same direction it sweeps a word in the sidebar. Only chase cells
+    // are ranked, so the eyes hold while the mouth moves.
+    var rank = {}, chasing = 0, row, col;
+    for (col = 0; col < 7; col++) {
+      for (row = 0; row < 6; row++) {
+        if (plate[row][col] === "o") { rank[row * 7 + col] = chasing++; }
+      }
+    }
+    var total = chasing + CHASE.rest;
+    for (row = 0; row < 6; row++) {
+      for (col = 0; col < 7; col++) {
+        var lamp = plate[row][col], a;
+        if (lamp === "#") a = LAMP.steady;
+        else if (lamp === "o") {
+          a = LAMP.floor + (LAMP.steady - LAMP.floor) * drive(rank[row * 7 + col], head, total);
+        } else a = LAMP.dark;
+        g.globalAlpha = a;
+        g.beginPath();
+        var x = col * pitch, y = row * pitch, r = cell * 0.3;
+        if (g.roundRect) g.roundRect(x, y, cell, cell, r);
+        else g.rect(x, y, cell, cell);
+        g.fill();
+      }
+    }
+    g.globalAlpha = 1;
+  }
+
+  /* The four expressions beside the copy, at a size you can read one. A
+     template image has no colour of its own — the menu bar tints it — so on
+     the page these take the page's ink, and turn with it. */
+  var bigFaces = [].slice.call(document.querySelectorAll(".states .face"));
+  bigFaces.forEach(function (cv) { cv.__pitch = 9; });
+  var bigInk = "#D9DBDE", bigHead = null;
+  function paintBigFaces() {
+    bigInk = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || bigInk;
+    bigFaces.forEach(function (cv) {
+      drawFace(cv, FACES[cv.dataset.face], bigInk,
+               cv.dataset.face === "working" ? bigHead : null);
+    });
+  }
+  if (bigFaces.length) {
+    paintBigFaces();
+    document.addEventListener("ocarina:theme", paintBigFaces);
+    /* The working face is the only one of the four that is a picture of
+       something moving, and a still of it says the least of the four. It runs
+       the same chase the bar's does, at the same clock — this is the size at
+       which you can see what the bar is doing. */
+    var working = bigFaces.filter(function (cv) { return cv.dataset.face === "working"; })[0];
+    if (working && !reduce) {
+      var bigSeen = false, bigT0 = 0, bigPrev = 0;
+      requestAnimationFrame(function big(t) {
+        requestAnimationFrame(big);
+        if (!bigT0) { bigT0 = t; bigPrev = t; }
+        if (swapHold || !bigSeen) { bigT0 += t - bigPrev; bigPrev = t; return; }
+        bigPrev = t;
+        bigHead = (t - bigT0) / 72;
+        drawFace(working, FACES.working, bigInk, bigHead);
+      });
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (e) { bigSeen = e[0].isIntersecting; },
+          { threshold: 0.2 }).observe(working);
+      } else { bigSeen = true; }
+    }
+  }
+
+  /* And the one in the bar, taken through all four in turn — the whole of
+     what this is worth is the difference between them, and one of them held
+     still answers nothing. The line under it is the theme's; the face is the
+     app's, the same picture on every theme. */
+  var mbEl = document.getElementById("mbFace");
+  if (mbEl) {
+    mbEl.__pitch = 2.3;
+    var MBS = [
+      { face: "working",   say: 0, task: "Fix the checkout page" },
+      { face: "backToYou", say: 1, task: "Fix the checkout page" },
+      { face: "stopped",   say: 2, task: "Rename the theme files" },
+      { face: "ready",     say: 3, task: null }
+    ];
+    var mbMenu = document.querySelector(".mb-menu");
+    var mbBar  = mbEl.parentElement;
+    var mbLine = document.getElementById("mbLine");
+    var mbTask = document.getElementById("mbTask");
+    var mbAt = -1, mbSeen = false, mbTurn = null;
+
+    function mbSay() {
+      var st = MBS[mbAt];
+      var v = (themeNow && themeNow.voice) || THEMES.ocarina.voice;
+      // the code is appended after whatever the theme wrote, so a theme is
+      // free to be as arch as it likes and cannot produce a failure that
+      // reads as anything else
+      mbLine.textContent = st.say === 2 ? v[2] + " (127)" : v[st.say];
+      mbTask.textContent = st.task || "";
+      mbTask.hidden = !st.task;
+    }
+    function mbPaint(head) {
+      // white, because a template image on a dark menu bar is white — this is
+      // the one mark on the page a theme does not reach
+      drawFace(mbEl, FACES[MBS[mbAt].face], "#FFFFFF", head);
+    }
+    function mbShow(i) {
+      mbAt = i;
+      mbSay();
+      mbPaint(MBS[i].face === "working" && !reduce ? 0 : null);
+      // The menu drops from the item, held inside the screen. macOS does the
+      // same: a menu opens under the thing you pressed unless that would put
+      // it off the edge, and this item is far enough right that it would.
+      if (mbMenu) {
+        var want = mbBar.offsetLeft + mbEl.offsetLeft;
+        var most = 780 - mbMenu.offsetWidth - 10;
+        mbMenu.style.left = Math.min(want, most) + "px";
+      }
+    }
+
+    /* One lamp every 72ms, the house clock, held still through a theme wipe
+       for the same reason the wordmark is: those frames are behind two
+       snapshots and are spent on nobody. */
+    var mbT0 = 0, mbPrev = 0, mbLast = -1;
+    function mbFrame(t) {
+      requestAnimationFrame(mbFrame);
+      if (!mbT0) { mbT0 = t; mbPrev = t; }
+      if (swapHold || !mbSeen) { mbT0 += t - mbPrev; mbPrev = t; return; }
+      mbPrev = t;
+      if (MBS[mbAt].face !== "working") return;
+      var head = (t - mbT0) / 72;
+      if (head === mbLast) return;
+      mbLast = head;
+      mbPaint(head);
+    }
+
+    mbShow(0);
+    document.addEventListener("ocarina:theme", mbSay);
+    /* The stage can change size without the page doing so — a late font, or
+       the copy beside it reflowing — and the scene is scaled off it. */
+    var mbStage = document.getElementById("mbStage");
+    var mbScene = mbEl.closest(".mbscene");
+    var mbFit = function () {
+      if (narrow.matches) {
+        // the right end of the bar and the menu under it, which is the whole
+        // of what this section is about
+        mbStage.style.aspectRatio = "310/235";
+        mbScene.style.setProperty("--slide", "-470px");
+        fit(mbScene, 310, 235);
+      } else {
+        mbStage.style.aspectRatio = "";
+        mbScene.style.setProperty("--slide", "0px");
+        fit(mbScene, 780, 419);
+      }
+    };
+    mbFit();
+    addEventListener("resize", mbFit);
+    addEventListener("load", mbFit);
+    narrow.addEventListener("change", mbFit);
+    if ("ResizeObserver" in window) new ResizeObserver(mbFit).observe(mbStage);
+    if (!reduce) {
+      requestAnimationFrame(mbFrame);
+      var mbStep = function () { mbShow((mbAt + 1) % MBS.length); };
+      var mbGo = function (on) {
+        mbSeen = on;
+        clearInterval(mbTurn); mbTurn = null;
+        if (on) mbTurn = setInterval(mbStep, 3600);
+      };
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (e) { mbGo(e[0].isIntersecting); },
+          { threshold: 0.3 }).observe(mbStage);
+      } else { mbGo(true); }
+    }
+  }
 
 })();
 </script>
