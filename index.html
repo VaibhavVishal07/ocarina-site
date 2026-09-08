@@ -583,8 +583,16 @@
   .tokencard { flex:none; padding:8px 11px; font-family:"Geist",sans-serif; }
   .tokencard .lamps i.on { background:var(--wlit); box-shadow:0 0 3px var(--wlit); }
   .tokencard .tl1 { display:flex; align-items:baseline; gap:6px; font-size:10.5px; color:var(--wdim); }
-  .tokencard .tl1 b { margin-left:auto; font-size:12.5px; font-weight:600; color:var(--wfg); }
+  .tokencard .tl1 b { font-size:12.5px; font-weight:600; color:var(--wfg); }
+  .tokencard .tl-left { margin-left:auto; }
   .tokencard .tl2 { display:flex; align-items:center; gap:8px; margin-top:5px; }
+  /* The refresh time under a hairline: how much is gone and when it comes
+     back are two readings, not one sentence. */
+  .tokencard .tl3 { display:flex; align-items:baseline; gap:8px; margin-top:6px;
+                    padding-top:5px; border-top:1px solid var(--wline);
+                    font-size:10.5px; color:var(--wdim); }
+  .tokencard .tl-when { margin-left:auto; font-family:var(--mono); font-size:11px;
+                        font-weight:600; color:var(--wlit); letter-spacing:.04em; }
   .lamps { flex:1; display:grid; grid-template-columns:repeat(20,1fr); gap:1.6px; }
   .lamps i { display:block; height:3px; border-radius:1px;
              background:color-mix(in srgb,var(--wfg) 14%,transparent); }
@@ -1410,11 +1418,11 @@
                         </div>
                       </div>
                       <div class="card down tokencard">
-                        <div class="tl1">This window <b>1.4M</b> <span>tokens</span></div>
+                        <div class="tl1"><b>1.4M</b> <span>tokens</span><span class="rem tl-left">3h 12m left</span></div>
                         <div class="tl2">
                           <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-                          <span class="rem">3h 12m</span>
                         </div>
+                        <div class="tl3"><span>Refreshes</span><b class="tl-when">22:43</b></div>
                       </div>
                     </div>
                   </div>
@@ -1582,18 +1590,19 @@
 <!-- The one surface Ocarina owns that is read from outside Ocarina. No
      window, no icon, no context — so it is drawn in the app's own lamps
      rather than in the system's symbols.
-     It was the whole line — STILL GOING, BACK TO YOU, STOPPED 127 — set in
-     the same 5x7 grid the wordmark is. That was right about the alphabet and
-     wrong about what it cost: eleven characters at six columns each is 136
-     points of menu bar, wider than the clock and the Wi-Fi and the battery
-     together, for a reading you take in a fifth of a second — and a letter
-     built out of 1.4pt lamps is under the size that grid can set, so it was
-     a word you could not read taking the room of a sentence. A face survives
-     the size where a letterform does not. -->
+     The words are in that alphabet too now, which took two goes. The first
+     set them at the card's own lamp size and came to 136 points of menu bar
+     — wider than the clock, the Wi-Fi and the battery together, for a
+     reading you take in a fifth of a second. The letters are 1.3pt against
+     the card's 1.7, a word space is cut from seven blank columns to four,
+     and the widest thing the bar can be asked to say — STOPPED 127 — comes
+     to 102. The plate and its caption are one picture; a card in the app's
+     hand with a label beside it in San Francisco was two hands writing one
+     line. -->
 <section id="status">
   <div class="wrap">
     <h2 class="rise">Still going, <span class="soft">without the window.</span></h2>
-    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in. <b>One click down, your last five asks and what became of each.</b></p>
+    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; and the word beside it in the same lamps. <b>One click down, your last five asks and what became of each.</b></p>
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise"><b>Still going</b> means an ask that has not come back yet &mdash; read from the agent&rsquo;s conversation, not from what the screen is repainting.</p>
