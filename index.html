@@ -979,11 +979,19 @@
   .states.homes dd { font-family:var(--mono); font-size:12.5px; color:var(--accent); }
   /* The four states, at a size you can read one. In the bar they are sixteen
      points square; here it is the same grid blown up rather than a drawing of
-     a card, because what the seam is doing is the whole of what this is. */
+     a card, because what the seam is doing is the whole of what this is.
+
+     48, not the 69 it started at. Blown up that far the card stopped being an
+     icon beside its caption and became the subject of the row, four times over
+     — and what it is illustrating is a sixteen-point mark. 48 is the size at
+     which the seam still reads and the words are still what you look at.
+     Matched to a pitch of 6: the canvas draws itself at 7 pitches plus its
+     inset, so any other pair here is the grid being scaled by CSS after the
+     fact, which is what softened the lamps. */
   .states.faces { gap:14px; }
-  .states.faces div { align-items:center; gap:16px; }
+  .states.faces div { align-items:center; gap:13px; }
   .states.faces dt { width:auto; flex:none; }
-  .states.faces .card { display:block; width:69px; height:69px; }
+  .states.faces .card { display:block; width:48px; height:48px; }
   .states.faces dd b { display:block; font-weight:500; color:var(--ink); font-size:14.5px; }
   @media (max-width:520px) {
     .states div { display:block; }
@@ -1585,8 +1593,8 @@
      the size where a letterform does not. -->
 <section id="status">
   <div class="wrap">
-    <h2 class="rise">Whether it is still going, <span class="soft">without the window.</span></h2>
-    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in. <b>One click down, the last five things you asked for and what became of each.</b></p>
+    <h2 class="rise">Still going, <span class="soft">without the window.</span></h2>
+    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in. <b>One click down, your last five asks and what became of each.</b></p>
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise"><b>Still going</b> means an ask that has not come back yet &mdash; read from the agent&rsquo;s conversation, not from what the screen is repainting.</p>
@@ -2767,7 +2775,7 @@
      image has no colour of its own — the menu bar tints it — so on the page
      these take the page's ink, and turn with it. */
   var bigCards = [].slice.call(document.querySelectorAll(".states .card"));
-  bigCards.forEach(function (cv) { cv.__pitch = 9; });
+  bigCards.forEach(function (cv) { cv.__pitch = 6; });
   var bigInk = "#D9DBDE", bigFrame = 0;
   function paintBigCards() {
     bigInk = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || bigInk;
