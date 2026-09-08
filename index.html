@@ -317,6 +317,13 @@
      which is not what a light source does. */
   .card.up   { background:linear-gradient(var(--wtop),var(--wbot)); }
   .card.down { background:linear-gradient(var(--wbot),var(--wground)); }
+  /* The sidebar is three cards where the right-hand column is two, so its
+     fall is cut in three — handing over halfway along the run .down crosses
+     in one go, which is what keeps the two sides of the window matching. */
+  .card.middle { background:linear-gradient(var(--wbot),
+                            color-mix(in srgb,var(--wbot) 50%,var(--wground))); }
+  .card.base   { background:linear-gradient(color-mix(in srgb,var(--wbot) 50%,var(--wground)),
+                            var(--wground)); }
 
   .side { width:230px; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; }
   .side .tabs { flex:1; min-height:0; display:flex; flex-direction:column; padding:11px 9px; gap:2px; overflow:hidden; }
@@ -327,12 +334,13 @@
   .side .sidemark { width:98px; height:auto; display:block; margin:4px 0 20px 8px; }
   .row { display:flex; align-items:center; gap:9px; padding:10px 9px; border-radius:9px;
          font-size:13px; color:var(--wdim); white-space:nowrap; overflow:hidden; }
-  /* what the tab is running, when that is worth a picture. A shell at a
-     prompt gets none — every tab in this app is a terminal. */
+  /* What the tab is running, when that is worth a picture — which an agent
+     is not. It wore its maker's mark here and that was a fourth copy of a
+     fact the tab's own name, its dot and the menu bar already carry, in the
+     one part of the row that costs the name its width. A shell gets none
+     either: every tab in this app is a terminal. */
   .row .g { font-family:var(--mono); font-size:11px; width:14px; flex:none; text-align:center;
             color:var(--tint,inherit); }
-  .row .g.cl { --tint:#D97857; }   /* Claude Code */
-  .row .g.gm { --tint:#7399F2; }   /* Gemini CLI */
   .row .g.pl { --tint:inherit; font-weight:600; }
   .row .t { overflow:hidden; text-overflow:ellipsis; }
   /* The selected tab wears the theme's accent, fill and edge — it was a
@@ -356,6 +364,11 @@
      for. Same place a shortcut sits, and quieter than the label it answers. */
   .side .foot .row .v { margin-left:auto; padding-left:8px; font-size:11px;
                         color:var(--wdim2); }
+  /* The mark that says a row goes somewhere. Quieter than the label and than
+     the value, because it is the part of the row that never changes. */
+  .side .foot .row .ch { margin-left:auto; padding-left:8px; font-size:11px;
+                         color:var(--wdim2); opacity:.75; }
+  .side .foot .row .v + .ch { margin-left:0; padding-left:7px; }
   .sw { margin-left:auto; width:28px; height:16px; border-radius:9px; flex:none;
         background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
   .sw::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
@@ -939,6 +952,21 @@
   .mb-row.lead { color:rgba(255,255,255,.95); }
   .mb-row.quiet { font-size:11px; color:rgba(255,255,255,.4); padding-top:4px; }
   .mb-sep { height:1px; margin:5px 12px; background:rgba(255,255,255,.11); }
+  /* The last five asks, marked the way the panel marks them: a quiet tick on
+     one the agent has stopped on, an empty box on one still open — so the eye
+     lands on the row still outstanding rather than on the ones dealt with. */
+  .mb-task { display:flex; align-items:flex-start; gap:9px; padding:3px 14px; line-height:1.5;
+             color:rgba(255,255,255,.88); }
+  .mb-task .mk { flex:none; width:9px; height:19px; display:flex;
+                 align-items:center; justify-content:center; }
+  .mb-task .mk::before { content:""; width:7px; height:7px; border-radius:1.5px;
+                         border:1px solid currentColor; opacity:.5; }
+  .mb-task.done { color:rgba(255,255,255,.5); }
+  .mb-task.done .mk::before { width:4px; height:7.5px; border:0; border-radius:0;
+                              border-right:1.5px solid currentColor;
+                              border-bottom:1.5px solid currentColor;
+                              opacity:.85; rotate:45deg; translate:0 -1px; }
+  .mb-more { padding:3px 14px 3px 32px; font-size:11.5px; color:rgba(255,255,255,.38); }
 
   /* The four words, and what each of them answers. A definition list, because
      that is what it is: the board says one of these and nothing else. */
@@ -1246,36 +1274,56 @@
                       <div class="card up tabs">
                         <canvas class="mark sidemark" aria-hidden="true"></canvas>
                         <div id="tablist">
-                          <div class="row on"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Fix the checkout page</span></div>
-                          <div class="row"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Write the sign-up tests</span></div>
-                          <div class="row"><span class="dot bad"></span><span class="g gm">&#9671;</span><span class="t">Rename the theme files</span></div>
-                          <div class="row"><span class="dot ok"></span><span class="g cl">&#10043;</span><span class="t">Add a dark mode toggle</span></div>
+                          <div class="row on"><span class="dot run"></span><span class="t">Fix the checkout page</span></div>
+                          <div class="row"><span class="dot run"></span><span class="t">Write the sign-up tests</span></div>
+                          <div class="row"><span class="dot bad"></span><span class="t">Rename the theme files</span></div>
+                          <div class="row"><span class="dot ok"></span><span class="t">Add a dark mode toggle</span></div>
                           <div class="row"><span class="dot"></span><span class="t">portfolio-site</span></div>
                           <div class="row"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
                         </div>
                         <div class="fill"></div>
                       </div>
-                      <div class="card down foot">
-                        <!-- Always, and on top: Skills is the one row here that
-                             is about the work rather than about the app. It used
-                             to appear only with an agent running, on the
-                             reasoning that a skill installs into an agent's
-                             directory and a plain shell has none — which made it
-                             missing on the day somebody most needed it. You find
-                             out what a skill is by opening this, and you could
-                             not open it until you had already started the agent
-                             the skills are for. Its trailing value is how many
-                             you have, counting the ones waiting for an agent. -->
-                        <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">4</span></div>
-                        <!-- The marks are deliberately plain: a half-filled circle,
-                             a bubble, three lines, a bolt. They were a paint
-                             palette, a cup on a saucer and a checklist, which is
-                             detail that reads as noise at ten points and detail
-                             nobody needs when every row is captioned. -->
-                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor" stroke="none"/></svg>Theme</div>
-                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.1c0 3.5-3.4 6.4-7.6 6.4-.9 0-1.8-.13-2.6-.37L5.2 20.4l1.4-3.5c-1.1-1.15-1.8-2.6-1.8-4.8 0-3.53 3.4-6.4 7.6-6.4s8 2.87 8 6.4Z"/></svg>Share Feedback</div>
+                      <!-- Two cards, because a switch is not a door. These were
+                           one card of five rows, and the five were two kinds of
+                           thing wearing one shape: three that opened something,
+                           two that were simply on or off, and nothing about a row
+                           said which. The window had already answered exactly this
+                           one level up, when the settings stopped being a box
+                           nested inside the tab card. -->
+                      <!-- What is true right now, next to the list it is true
+                           about: one says whether the panel listing that tab's
+                           asks is up, the other whether the Mac those asks run on
+                           may sleep. -->
+                      <div class="card middle foot">
                         <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4.4" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="17.6" r="1.15" fill="currentColor" stroke="none"/><path d="M9 6.4h11.4M9 12h11.4M9 17.6h11.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
                         <div class="row" id="awakeRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M13.7 2.6 5.4 13.5h5.4l-.5 7.9 8.3-10.9h-5.4l.5-7.9Z"/></svg>Keep Awake<span class="sw on"></span></div>
+                      </div>
+                      <!-- What opens, at the foot, where a row you press to leave
+                           the column belongs. Both open a sheet over the window,
+                           and the chevron is what says so.
+
+                           Skills is first: it is the one row in the sidebar about
+                           the work rather than about the app. It used to appear
+                           only with an agent running, on the reasoning that a
+                           skill installs into an agent's directory and a plain
+                           shell has none — which made it missing on the day
+                           somebody most needed it. You find out what a skill is by
+                           opening this, and you could not open it until you had
+                           already started the agent the skills are for. Its
+                           trailing value is how many you have, counting the ones
+                           waiting for an agent.
+
+                           Share Feedback is not here any more. It went to the app's
+                           own menu, which is what pays for the split: four rows
+                           divide cleanly into two and two, five did not. The marks
+                           that are left are deliberately plain — a stack, a
+                           half-filled circle, three lines, a bolt. They were a
+                           paint palette, a cup on a saucer and a checklist, which
+                           is detail that reads as noise at ten points and detail
+                           nobody needs when every row is captioned. -->
+                      <div class="card base foot">
+                        <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">4</span><span class="ch" aria-hidden="true">&#8250;</span></div>
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor" stroke="none"/></svg>Theme<span class="ch" aria-hidden="true">&#8250;</span></div>
                       </div>
                     </div>
 
@@ -1447,9 +1495,9 @@
           <div class="ob">
             <div class="os">
               <canvas class="mark osmark" aria-hidden="true"></canvas>
-              <div class="row on"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Fix the checkout page</span></div>
-              <div class="row"><span class="dot run"></span><span class="g cl">&#10043;</span><span class="t">Write the sign-up tests</span></div>
-              <div class="row"><span class="dot bad"></span><span class="g gm">&#9671;</span><span class="t">Rename the theme files</span></div>
+              <div class="row on"><span class="dot run"></span><span class="t">Fix the checkout page</span></div>
+              <div class="row"><span class="dot run"></span><span class="t">Write the sign-up tests</span></div>
+              <div class="row"><span class="dot bad"></span><span class="t">Rename the theme files</span></div>
               <div class="row newtab"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
             </div>
             <div class="om">
@@ -1538,7 +1586,7 @@
 <section id="status">
   <div class="wrap">
     <h2 class="rise">Whether it is still going, <span class="soft">without the window.</span></h2>
-    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in.</p>
+    <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in. <b>One click down, the last five things you asked for and what became of each.</b></p>
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise"><b>Still going</b> means an ask that has not come back yet &mdash; read from the agent&rsquo;s conversation, not from what the screen is repainting.</p>
@@ -1583,7 +1631,11 @@
              one reading they went up there for. -->
         <div class="mb-menu">
           <div class="mb-row lead" id="mbLine">Something is building</div>
-          <div class="mb-row" id="mbTask">Fix the checkout page</div>
+          <!-- The last five asks, and what became of each. The single task row
+               that used to sit here named the newest open one, which is the
+               first row of this list under another name — one bare line above
+               its own unmarked twin reads as two different tasks. -->
+          <div id="mbTasks"></div>
           <div class="mb-sep"></div>
           <div class="mb-row">1,412,908 tokens used</div>
           <div class="mb-row">Window opened 09:00</div>
@@ -1595,6 +1647,8 @@
       </div>
     </div>
     <p class="takeaway rise">It lands on a ring and never on a tick. An agent stopping means it stopped talking, not that it managed what you asked &mdash; <b>so the card claims nothing, and the one state you most want to catch is also the one place the bar says whose it is</b>.</p>
+    <p class="takeaway rise">The menu carries the task list, marked the way the panel marks it &mdash; a quiet tick on an ask the agent has stopped on, an empty box on one still open, so the eye lands on the row still outstanding. <b>The panel answers that question with Ocarina&rsquo;s window in front of you, which is the moment you least need to ask.</b></p>
+    <p class="takeaway rise">Five, and the rest are counted rather than dropped. A menu that ran to the twenty asks a long session gathers would cover the window it is meant to save you opening &mdash; so it stops at five and says <b>how many it left off</b>.</p>
     <p class="takeaway rise">The token figure moved up here when the task panel learned to close: <b>&#8984;J shuts the column, and the number is one click down</b>.</p>
   </div>
 </section>
@@ -2755,16 +2809,31 @@
   var mbEl = document.getElementById("mbFace");
   if (mbEl) {
     mbEl.__pitch = 2.05;
+    // done: what the agent has stopped on. Never "succeeded" — an agent
+    // stopping means it stopped talking, which is the same reason nothing on
+    // the board says done either.
     var MBS = [
-      { face: "working",   say: 0, task: "Fix the checkout page" },
-      { face: "backToYou", say: 1, task: "Fix the checkout page" },
-      { face: "stopped",   say: 2, task: "Rename the theme files" },
-      { face: "ready",     say: 3, task: null }
+      { face: "working", say: 0, more: 2, tasks: [
+        { t: "Fix the checkout page",     done: false },
+        { t: "Add a dark mode toggle",    done: true  },
+        { t: "Rename the theme files",    done: true  },
+        { t: "Write the sign-up tests",   done: true  },
+        { t: "Read the deploy log",       done: true  } ] },
+      { face: "backToYou", say: 1, more: 2, tasks: [
+        { t: "Fix the checkout page",     done: true  },
+        { t: "Add a dark mode toggle",    done: true  },
+        { t: "Rename the theme files",    done: true  },
+        { t: "Write the sign-up tests",   done: true  },
+        { t: "Read the deploy log",       done: true  } ] },
+      { face: "stopped", say: 2, more: 0, tasks: [
+        { t: "Rename the theme files",    done: true  },
+        { t: "Write the sign-up tests",   done: true  } ] },
+      { face: "ready", say: 3, more: 0, tasks: [] }
     ];
     var mbMenu = document.querySelector(".mb-menu");
     var mbBar  = mbEl.parentElement;
     var mbLine = document.getElementById("mbLine");
-    var mbTask = document.getElementById("mbTask");
+    var mbTasks = document.getElementById("mbTasks");
     var mbAt = -1, mbSeen = false, mbTurn = null;
 
     function mbSay() {
@@ -2774,8 +2843,24 @@
       // free to be as arch as it likes and cannot produce a failure that
       // reads as anything else
       mbLine.textContent = st.say === 2 ? v[2] + " (127)" : v[st.say];
-      mbTask.textContent = st.task || "";
-      mbTask.hidden = !st.task;
+
+      // Newest first, because the menu is read from the top and the ask you
+      // are waiting on is the last one you made — the same order the panel
+      // keeps, so the two surfaces cannot read as two accounts of the tab.
+      var out = "";
+      if (st.tasks.length) {
+        out = '<div class="mb-sep"></div>';
+        for (var i = 0; i < st.tasks.length; i++) {
+          var a = st.tasks[i];
+          out += '<div class="mb-task' + (a.done ? " done" : "") + '">' +
+                 '<span class="mk" aria-hidden="true"></span>' +
+                 '<span>' + a.t + "</span></div>";
+        }
+        // Said rather than left to be assumed: a list that stops at five with
+        // no sign it stopped is a list claiming the sixth ask was never made.
+        if (st.more) out += '<div class="mb-more">and ' + st.more + " more in the panel</div>";
+      }
+      mbTasks.innerHTML = out;
     }
     function mbPaint(frame) {
       // white, because a template image on a dark menu bar is white — this is
