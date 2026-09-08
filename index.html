@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ocarina</title>
-<meta name="description" content="A macOS terminal that does not assume you already know. Run as many coding agents as you like in one window, and it explains what breaks.">
+<meta name="description" content="A simple macOS terminal for coding agents. Run Claude Code, Codex, Gemini CLI and everything else you use from the command line, without juggling terminal windows.">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Ocarina">
-<meta property="og:description" content="A terminal you don't have to learn.">
+<meta property="og:description" content="Your coding agents. One clean terminal.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vaibhavvishal07.github.io/ocarina-site/">
 <meta property="og:image" content="https://vaibhavvishal07.github.io/ocarina-site/og.png">
@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ocarina">
-<meta name="twitter:description" content="A terminal you don't have to learn.">
+<meta name="twitter:description" content="Your coding agents. One clean terminal.">
 <meta name="twitter:image" content="https://vaibhavvishal07.github.io/ocarina-site/og.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
@@ -256,8 +256,7 @@
           background:rgba(255,255,255,.028); border:1px solid rgba(255,255,255,.075);
           box-shadow:inset 0 1px 0 rgba(255,255,255,.10); max-width:100%; }
   .flip .pr { color:var(--accent); flex:none; }
-  .flip-lead { color:var(--muted); flex:none; white-space:nowrap; }
-  .roll { display:block; width:36ch; max-width:100%; height:1.6em; overflow:hidden; text-align:left; }
+  .roll { display:block; width:16ch; max-width:100%; height:1.6em; overflow:hidden; text-align:left; }
   .roll-in { display:block; transition:transform .6s cubic-bezier(.16,1,.3,1); }
   .roll-in i { display:block; height:1.6em; line-height:1.6em; color:var(--ink);
                font-style:normal; white-space:nowrap; opacity:.35;
@@ -1103,10 +1102,6 @@
   .btn-bmc { background:#FFDD00; color:#0B0B0B; font-weight:600; }
   .btn-bmc:hover { background:#FFE84D; }
   .btn-bmc .cup, .btn-ghost .cup { width:17px; height:17px; display:block; flex:none; }
-  .btn-soon { background:rgba(255,255,255,.07); border:1px solid var(--line-2);
-              color:var(--ink); cursor:default; gap:10px; }
-  .btn-soon i { width:7px; height:7px; border-radius:50%; background:var(--accent);
-                display:block; flex:none; animation:pulse 1.9s ease-in-out infinite; }
   .btn-sm { padding:8px 13px; font-size:13.5px; }
   @media (max-width:1200px) { nav .btn-sm .lbl { display:none; } nav .btn-sm { padding:8px 10px; } }
 
@@ -1230,7 +1225,7 @@
     </span>
     <span class="navcta">
       <a class="btn btn-ghost btn-sm" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg><span class="lbl">Buy me a coffee</span></a>
-      <span class="btn btn-soon btn-sm"><i></i>Coming soon</span>
+      <a class="btn btn-primary btn-sm" href="https://github.com/VaibhavVishal07/Ocarina-Terminal/releases/latest">Download</a>
     </span>
   </div>
 </nav>
@@ -1241,16 +1236,15 @@
       <svg class="app-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
       <canvas class="mark hero-mark" id="heroMark" role="img" aria-label="Ocarina"></canvas>
     </div>
-    <h1>A terminal<br><span class="soft">you don't have to learn.</span></h1>
-    <div class="flip" aria-label="Ocarina is built for people who opened Terminal once and closed it, were told to just run this command, paste commands they cannot read, build with agents rather than shells, have never written a line of bash, design and ship without writing code, gave up the first time they tried, learned all of it from a tutorial, or do not know where to start.">
+    <h1>Your coding agents.<br><span class="soft">One clean terminal.</span></h1>
+    <div class="flip" aria-label="Ocarina runs claude, codex, gemini, opencode, and every other command you already type.">
       <span class="pr">~ &rsaquo;</span>
-      <span class="flip-lead">built for people who</span>
       <span class="roll" id="roll"></span>
     </div>
-    <p class="hero-sub">A macOS terminal for AI coding agents. Many at once, in one window, each tab named after its ask.</p>
+    <p class="hero-sub">Run Claude Code, Codex, Gemini CLI and everything else you use from the command line &mdash; without juggling terminal windows.</p>
     <div class="cta">
-      <span class="btn btn-soon"><i></i>Coming soon</span>
-      <a class="btn btn-ghost" href="https://buymeacoffee.com/ocarina" target="_blank" rel="noopener noreferrer"><svg class="cup" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.6 3.4h11.2v7.2a4.4 4.4 0 0 1-4.4 4.4H7a4.4 4.4 0 0 1-4.4-4.4V3.4Z" fill="currentColor"/><path d="M14.2 5.6h1.5a2.5 2.5 0 0 1 0 5h-1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="1.7" y="16.4" width="13" height="1.9" rx=".95" fill="currentColor"/></svg>Buy me a coffee</a>
+      <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal/releases/latest">Download Ocarina</a>
+      <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">View on GitHub</a>
     </div>
     <p class="under">Free and open source &nbsp;&middot;&nbsp; macOS 14+</p>
   </div>
@@ -1472,10 +1466,20 @@
      moment it is let go. -->
 
 
+<!-- The why, before the what. Five windows is not a taste in software; it
+     is one ask per window, and the windows are the part that does not scale. -->
+<section id="why">
+  <div class="wrap">
+    <h2 class="rise">Built for the way <span class="soft">terminals are used now.</span></h2>
+    <p class="sub rise">You don&rsquo;t open five terminals because you love terminals. You open them because one agent is fixing checkout, another is writing tests, and another is still figuring something out.</p>
+    <p class="takeaway rise">Ocarina keeps them together.</p>
+  </div>
+</section>
+
 <section id="one">
   <div class="wrap">
-    <h2 class="rise">All your terminals <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Each tab named after the ask that opened it. Nothing called <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
+    <h2 class="rise">Every terminal, <span class="soft">named by what it&rsquo;s doing.</span></h2>
+    <p class="sub rise">Open as many sessions as you need. Each tab is named after the ask that opened it, not <span style="font-family:var(--mono);font-size:15.5px;color:var(--ink)">zsh</span>.</p>
 
     <div class="versus">
       <div class="vs glass rise d1">
@@ -1526,8 +1530,8 @@
 
 <section id="awake">
   <div class="wrap">
-    <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-    <p class="sub rise">The display stays on while a run is going, so a long task finishes.</p>
+    <h2 class="rise">Long task? <span class="soft">Let it finish.</span></h2>
+    <p class="sub rise">Ocarina keeps your Mac awake while an agent is working. When the run ends it stops on its own &mdash; no separate utility, no manual toggle.</p>
   </div>
 
   <div class="wrap awake-pair">
@@ -1593,7 +1597,7 @@
      the size where a letterform does not. -->
 <section id="status">
   <div class="wrap">
-    <h2 class="rise">Still going, <span class="soft">without the window.</span></h2>
+    <h2 class="rise">Know which ones <span class="soft">need you.</span></h2>
     <p class="sub rise">Beside the Wi-Fi, as one cell of a departure board &mdash; the same lamps the wordmark is set in. <b>One click down, your last five asks and what became of each.</b></p>
     <div class="feat">
       <div class="feat-say">
@@ -1693,8 +1697,8 @@
 
 <section id="tasks">
   <div class="wrap">
-    <h2 class="rise">All your prompted tasks <span class="soft">in a single place.</span></h2>
-    <p class="sub rise">Every ask in one list, ticked off when the agent stops.</p>
+    <h2 class="rise">Your asks don&rsquo;t <span class="soft">disappear into scrollback.</span></h2>
+    <p class="sub rise">Every prompt in one list, ticked off when the agent stops &mdash; including what you asked three tabs ago.</p>
     <div class="feat">
       <div class="feat-say">
       <p class="takeaway rise">Read from <b>your agent&rsquo;s own transcript</b>, so the list outlives the scrollback.</p>
@@ -1726,13 +1730,34 @@
   </div>
 </section>
 
+<!-- The boundary, said out loud. Everything above is a thing Ocarina adds
+     around a session; this is the list of things it deliberately is not,
+     because the restraint is the product and not a gap in it. -->
+<section id="terminal">
+  <div class="wrap">
+    <h2 class="rise">Still <span class="soft">a terminal.</span></h2>
+    <p class="sub rise">Normal commands work exactly the way you expect. Ocarina makes several terminal sessions easier to keep track of, and stops there.</p>
+    <div class="bento">
+      <div class="q glass w3 rise">
+        <h3>What it doesn&rsquo;t have</h3>
+        <p>No built-in code editor. No browser. No Git dashboard. <b>No AI model of its own.</b></p>
+      </div>
+      <div class="q glass w3 rise d1">
+        <h3>What runs inside it</h3>
+        <p>Claude Code, Codex CLI, Gemini CLI, OpenCode &mdash; and every ordinary command you already type.</p>
+      </div>
+    </div>
+    <p class="takeaway rise">Ocarina doesn&rsquo;t replace these tools. <b>It is the terminal they run inside.</b></p>
+  </div>
+</section>
+
 <section id="faq">
   <div class="wrap">
     <h2 class="rise">Questions</h2>
     <div class="bento">
       <div class="q glass w4 rise">
-        <h3>Do I need to know how to code?</h3>
-        <p>No. Ocarina doesn&rsquo;t replace your coding agent, it is the window around it.</p>
+        <h3>Why not just use Claude Code Desktop?</h3>
+        <p>If you want an integrated Claude development environment, Claude Code Desktop is a great fit. Ocarina is for people who prefer working through the command line, run more than one agent, or want a lightweight terminal rather than an IDE.</p>
       </div>
       <div class="q glass w2 rise d1">
         <h3>Is it a real terminal?</h3>
@@ -1773,9 +1798,9 @@
   <div class="closing glass rise">
     <svg class="close-icon" viewBox="0 0 120 120" aria-hidden="true"><use href="#ocicon"/></svg>
     <h2>Open it and <span class="soft">start typing.</span></h2>
-    <p class="sub">Free, open source, small enough to read in an afternoon.</p>
+    <p class="sub">A small macOS terminal built around coding agents.</p>
     <div class="cta">
-      <span class="btn btn-soon"><i></i>Coming soon</span>
+      <a class="btn btn-primary" href="https://github.com/VaibhavVishal07/Ocarina-Terminal/releases/latest">Download Ocarina</a>
       <a class="btn btn-ghost" href="https://github.com/VaibhavVishal07/Ocarina-Terminal">Read the source</a>
     </div>
   </div>
@@ -1791,7 +1816,7 @@
   <dl class="specs">
     <div><dt>PLATFORM</dt><dd>macOS 14 and later</dd></div>
     <div><dt>WRITTEN IN</dt><dd>Swift, SwiftUI, SwiftTerm</dd></div>
-    <div><dt>WORKS WITH</dt><dd>Claude Code, Gemini CLI, Codex</dd></div>
+    <div><dt>WORKS WITH</dt><dd>Claude Code, Codex, Gemini CLI, OpenCode</dd></div>
     <div><dt>PRICE</dt><dd>Free, open source</dd></div>
   </dl>
 
@@ -1965,15 +1990,12 @@
 
   /* One line at a time, rolling up. No width changes, so nothing jitters. */
   var FLIP = [
-    "opened Terminal once and closed it",
-    "were told to \u201cjust run this command\u201d",
-    "paste commands they cannot read",
-    "build with agents, not with shells",
-    "have never written a line of bash",
-    "design and ship without writing code",
-    "gave up the first time they tried",
-    "learned all of it from a tutorial",
-    "do not know where to start"
+    "claude",
+    "codex",
+    "gemini",
+    "opencode",
+    "npm run dev",
+    "git push"
   ];
   var roll = document.getElementById("roll");
   if (roll) {
