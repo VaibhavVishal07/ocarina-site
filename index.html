@@ -3259,5 +3259,22 @@
   }
 })();
 </script>
+<script data-goatcounter="https://getocarina.goatcounter.com/count"
+        async src="https://gc.zgo.at/count.js"></script>
+<script>
+  // The Download buttons leave for GitHub, which counts the asset fetch but
+  // cannot say how many people saw the page and did not press. Counting the
+  // press here is the other half of that: visits, presses, fetches.
+  (function () {
+    var seen = false;
+    document.querySelectorAll('a[href*="releases/latest"]').forEach(function (a) {
+      a.addEventListener("click", function () {
+        if (seen || !window.goatcounter || !goatcounter.count) return;
+        seen = true;
+        goatcounter.count({ path: "download-pressed", title: "Download pressed", event: true });
+      });
+    });
+  })();
+</script>
 </body>
 </html>
