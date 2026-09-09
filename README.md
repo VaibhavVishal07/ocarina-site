@@ -1,84 +1,91 @@
 # ocarina-site
 
 The landing page for [Ocarina](https://github.com/VaibhavVishal07/Ocarina-Terminal),
-a macOS terminal built for people whose first terminal is this one.
+a macOS terminal you do not have to learn.
 
-One static file. No build step, no dependencies, no images — open
-`index.html` in a browser and that is the site.
+One static file. No build step, no dependencies, and no images on the page.
+Open `index.html` in a browser and that is the site.
 
-## No screenshots
+<img src="docs/fold.jpg" alt="The fold: the wordmark, the headline, the download button, and the Ocarina window opening below it">
 
-The interface on the page is not a screenshot of the app; it is rebuilt in
-markup. The window is HTML and CSS, and every dot-matrix thing on the page is
-generated — painted to a canvas cell by cell. The wordmark comes off the app's
-own 5x7 alphabet and the menu bar's card off `ActivityCard`, both copied from
-the app rather than drawn again here. They stay sharp at any size, weigh a
-fraction of a PNG, and do not go stale the day the interface changes.
+## The interface is drawn, not photographed
 
-The isometric card illustrations are inline SVG for the same reason.
+Every window and card on the page is HTML and CSS. The page loads no
+screenshots. A screenshot goes stale the day the app changes and carries a
+tenth of the app's resolution; markup stays sharp at any size and costs a
+fraction of a PNG.
 
-The one figure that is not a piece of the window is the message-to-rows pair
-under the task panel: a prompt on the left, the rows it becomes on the right.
-The claim there is about a shape — one message going in and three jobs coming
-out — and a sentence about a shape is longer than the shape.
+The dot-matrix lettering is painted to a canvas cell by cell, out of the same
+5x7 alphabet the app draws its wordmark, its menu bar item and its empty board
+in. `cells()` builds the model and `paint()` draws it, so the page and
+`DotMatrix.swift` set the same words in the same hand.
 
-## What is drawn
+## What the tiles hold
 
-One window, built once and framed on a different part of itself per section —
-the tab list, the settings card, the terminal, the task panel and the token
-meter, the ⌘K drawer, the error banner and its sheet, and the skills shelf.
-The last of those hangs off the window rather than off the terminal pane: it
-is 600 points wide in the app, which is wider than the pane, and it is a sheet
-over the whole window there too.
+<img src="docs/bento.jpg" alt="The bento: six tiles, each holding a real card lifted out of the drawn window">
 
-The shelf is drawn on its "Start here" tab, which is what it opens on for
-somebody who has installed nothing: eight picks led by a line written for the
-reader rather than the skill's own description, which is addressed to the agent
-that will follow it. Three tabs, and one skeleton under all of them — everything
-above them is constant and everything below them is cards.
+Six tiles, and each one holds a real card out of the window in the fold. The
+page clones `.card.up.tabs`, `.card.up.panel` and `.card.down.tokencard` along
+with the column each one lives in, because the rules that dress these cards are
+written for where they sit inside that window. `.side .tabs` carries the tab
+card's padding and row gap. A card cloned on its own loses nine such rules.
 
-The menu bar is its own scene, and the only one that is not Ocarina's own
-surface. The card is drawn in the app's lamps; everything around it is the
-system's, and the window under it is deliberately nobody's — the whole claim of
-that section is that the reading you want is the one you want while you are
-looking at something else.
+Their measurements come off the Swift, not off a guess:
 
-**One cell of a departure board.** The seam is the whole idea: a split-flap card
-is cut across its middle, and that line has to be visible in every state or it
-is a box that fills up. So it is a lit line when the cell is empty and a dark
-gap when the cell is full, and row 3 of every grid is the seam.
+| | Source |
+|---|---|
+| Row height 40, corner 10, spacing 7 | `TabSidebarView` |
+| Tab name at 12pt medium | `TabSidebarView` |
+| Status dot at 9 by 9 | `StatusDot` |
+| Panel width 230, text inset 12, rows 2 apart | `TaskPanelView` |
+| 20 quarter-hour cells, 7 tall, 2.2 apart | `UsageCardView.WindowBar` |
+| Board words READY, WORKING, DONE | `ActivityStatusItem` |
 
-It is sixteen and a half points square there — square because every other item
-in a menu bar is, and a tall narrow one reads as something squeezed rather than
-as something drawn to fit — which is too small to study, so the four states are
-drawn again beside the copy at four times the pitch. The turning one runs the
-same five frames at both sizes: stand, fold through the seam, edge-on, come down
-the other side, land. Frames rather than a chase, because a chase is a lamp
-brightening and dimming, and a card does not glow, it moves.
+Two cards have no counterpart in the app and the page draws them itself. Keep
+Awake has no panel because the app leaves it on, and the skills tile shows
+the shelf's head and its field with the rows cut off the right edge.
 
-It lands on a ring and never on a tick. A tick was the most readable answer in
-that slot and the only one that grades the work — an agent stopping means it
-stopped talking, not that it managed what you asked, which is why the words say
-*back to you* and never *done*.
+## Nineteen themes
 
-It is a template image in the app, which the menu bar tints, so it is the one
-mark on this page a theme does not reach: white on a dark bar whatever Ocarina
-is wearing. The enlarged four take the page's ink for the same reason — a
-template has no colour of its own. The line under it in the dropped menu *is*
-the theme's, so all nineteen voices are here too.
+The picker under the fold repaints the whole page. Every colour resolves
+through custom properties on `:root`, so one press turns the ground, the type,
+the glow, the grid and every drawn window at once. The colours come out of the
+app's own theme JSON, including the board's four lamps: `lit`, `litDim`,
+`unlit` and `highlight`. The meter ramps across three of them, cold at the top
+of the window and warm at the end of it, which for Ocarina means `#31789B`
+through `#64B2D8` to `#FFB838`.
 
-## Why it looks like this
+The app icon holds its own two blues and ignores the theme. Everything else on
+the page is a surface the app paints, so it follows; the icon is artwork on
+disk that no theme touches.
 
-Colours are the Ocarina theme's own values, and the page is set in
-[Geist](https://vercel.com/font), which is what the app itself is bundled
-with. It is dark only on purpose: every theme Ocarina ships is dark, so a
-light page would misrepresent the product.
+## Changing the layout
 
-The nineteen themes carry their voice as well as their colours — the four
-lines a theme writes for working, done, stopped and clear — so the menu the
-board drops says what the app would say under the theme you picked.
+The bento is twelve columns. One block near the top of the stylesheet sets
+every tile's width, position and height:
 
-## Serving it
+```css
+.tile[data-tile="tasks"]  { --span:6; --order:1; --h:430px; --zoom:0.95; --oy:32px; }
+```
 
-Anything that serves static files. For GitHub Pages, enable Pages on this
-repository with the source set to `main`, root folder.
+`--span` is columns out of twelve, `--order` is position, `--h` is the minimum
+height. `--zoom`, `--ox` and `--oy` move and resize the card inside the tile.
+The script works out a fit so each card fills its tile, and `--zoom` multiplies
+that fit, so both survive a window resize.
+
+Add `?layout` to the URL for a panel that changes all six live and hands back
+the CSS block. The panel loads only with that flag.
+
+## Running it
+
+```
+python3 -m http.server 8000
+```
+
+Then open `localhost:8000`. GitHub Pages serves `main`, so a push publishes.
+
+## Writing
+
+The copy goes through [stop-slop](https://github.com/hardikpandya/stop-slop):
+no binary contrasts, no passive sentences missing their actor, no em dashes,
+no adverbs. Ocarina does the verbs.
