@@ -192,7 +192,9 @@
      wider than the space between the wordmark and the buttons whatever is
      done to either. */
   @media (max-width:1200px) { nav a.link { font-size:13.2px; padding:8px 6px; } }
-  @media (max-width:1040px) { nav .navlinks { display:none; } }
+  /* Three links fit where eight did not: the bar keeps them down to a
+     narrow tablet rather than dropping them at 1040. */
+  @media (max-width:720px) { nav .navlinks { display:none; } }
   /* With the links gone the pill still did not fit a phone: brand 118 plus
      controls 169 plus the bar's own padding and gaps is 367px, in 280 on a
      320. The wordmark is the part that is saying something the icon beside
@@ -357,8 +359,11 @@
   .side .fill { flex:1; min-height:8px; }
   .side .foot { flex:none; padding:8px 9px; }
   .side .foot .row { padding:6px 9px; gap:7px; }
-  /* the same 9pt symbol column the app lines Skills, Theme, Feedback, Tasks
-     and Keep Awake up in */
+  /* One card holds the switch and the doors now, and this is what separates
+     them — a fifth of the height a second card and a panel gap cost. */
+  .side .foot .hairline { height:1px; margin:5px 9px;
+                          background:color-mix(in srgb,var(--wfg) 12%,transparent); }
+  /* the same 9pt symbol column the app lines Tasks, Skills and Theme up in */
   .fi { width:11px; height:11px; flex:none; display:block; opacity:.9; }
   /* A row's trailing value, which on Skills is the agent it would install
      for. Same place a shortcut sits, and quieter than the label it answers. */
@@ -369,16 +374,38 @@
   .side .foot .row .ch { margin-left:auto; padding-left:8px; font-size:11px;
                          color:var(--wdim2); opacity:.75; }
   .side .foot .row .v + .ch { margin-left:0; padding-left:7px; }
-  .sw { margin-left:auto; width:28px; height:16px; border-radius:9px; flex:none;
+  /* The system switch at `.mini`, scaled to four fifths — about 21x12. It was
+     34x19 with the track filled in the accent, which put the loudest colour in
+     the theme on the least urgent thing in the column, six times the area of
+     the dot that means a tab needs you. */
+  .sw { margin-left:auto; width:21px; height:12px; border-radius:7px; flex:none;
         background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
-  .sw::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
+  .sw::after { content:""; position:absolute; top:1.5px; left:1.5px; width:9px; height:9px;
                border-radius:50%; background:var(--wfg); transition:translate .3s ease; }
   .sw.on { background:var(--wacc); }
-  .sw.on::after { translate:12px 0; background:#0B1015; }
+  .sw.on::after { translate:9px 0; background:#0B1015; }
 
   .main { flex:1; position:relative; min-width:0; overflow:hidden;
           background:var(--wbg); border:1px solid var(--wline); border-radius:12px;
           font-family:var(--mono); font-size:14px; line-height:2.0; }
+  /* The light on the terminal, and the one thing on this surface that is about
+     the room rather than about a line of text. It is the board's lamp colour —
+     what a theme means by lit, the same light the panels beside it catch — and
+     in the app it rises while a tab is working and settles when it stops, over
+     a second and a half. This window is drawn mid-run, so it is up. */
+  .main::before { content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+                  background:linear-gradient(to bottom right,
+                    color-mix(in srgb,var(--wlit) 20%,transparent), transparent 52%); }
+  /* And the rail across the top, in the colour of what the tab is doing — the
+     same four the status dots use, so amber means the same thing three feet
+     from the screen as it does in the column. Faded at both ends rather than
+     run edge to edge: a full-width line in a saturated colour is a border, and
+     the card already has one. */
+  .main::after { content:""; position:absolute; inset:0 0 auto; height:1.5px;
+                 pointer-events:none; z-index:1;
+                 background:linear-gradient(to right, transparent,
+                   color-mix(in srgb,var(--wsr) 85%,transparent), transparent); }
+  .main > * { position:relative; z-index:2; }
   .board { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
            justify-content:center; gap:10px; transition:opacity .4s ease; }
   .board canvas { height:30px; width:auto; }
@@ -1088,6 +1115,8 @@
   .astat .run i { width:7px; height:7px; border-radius:50%; background:var(--oc-yel); display:block;
                   animation:pulse 1.5s ease-in-out infinite; }
   .astat .run b { color:var(--sfg); font-weight:400; }
+  /* No switch in it any more: Keep Awake left the sidebar and is simply on,
+     so this is a caption saying what is happening rather than a control. */
   .akrow { margin-left:auto; display:flex; align-items:center; gap:10px;
            font-family:inherit; font-size:13px; color:var(--sfg);
            background:rgba(201,212,224,.08); border:1px solid rgba(56,194,255,.5);
@@ -1226,13 +1255,14 @@
       <canvas class="mark" id="navMark" role="img" aria-label="Ocarina"></canvas>
     </a>
     <span class="spacer"></span>
+    <!-- Three, not eight. A nav bar is not a table of contents: this is one
+         page you scroll, every section arrives on its own, and a row of eight
+         links was a menu asking to be read before the page it sits on. What is
+         left is the shape of the argument — what it is, the one thing nobody
+         else has, and the answers — and the button people actually came for is
+         no longer competing with seven of its own siblings. -->
     <span class="navlinks">
       <a class="link" href="#one">One window</a>
-      <a class="link" href="#awake">Keep awake</a>
-      <a class="link" href="#status">Menu bar</a>
-      <a class="link" href="#kit">&#8984;K menu</a>
-      <a class="link" href="#errors">Explain this</a>
-      <a class="link" href="#tasks">Your tasks</a>
       <a class="link" href="#skills">Skills</a>
       <a class="link" href="#faq">Questions</a>
     </span>
@@ -1290,54 +1320,33 @@
                       <div class="card up tabs">
                         <canvas class="mark sidemark" aria-hidden="true"></canvas>
                         <div id="tablist">
-                          <div class="row on"><span class="dot run"></span><span class="t">Fix the checkout page</span></div>
-                          <div class="row"><span class="dot run"></span><span class="t">Write the sign-up tests</span></div>
-                          <div class="row"><span class="dot bad"></span><span class="t">Rename the theme files</span></div>
-                          <div class="row"><span class="dot ok"></span><span class="t">Add a dark mode toggle</span></div>
-                          <div class="row"><span class="dot"></span><span class="t">portfolio-site</span></div>
+                          <div class="row on"><span class="dot run"></span><span class="t">Checkout API</span></div>
+                          <div class="row"><span class="dot run"></span><span class="t">Checkout API 2</span></div>
+                          <div class="row"><span class="dot bad"></span><span class="t">Ocarina</span></div>
+                          <div class="row"><span class="dot ok"></span><span class="t">Portfolio</span></div>
+                          <div class="row"><span class="dot"></span><span class="t">Xstream Suite</span></div>
                           <div class="row"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
                         </div>
                         <div class="fill"></div>
                       </div>
-                      <!-- Two cards, because a switch is not a door. These were
-                           one card of five rows, and the five were two kinds of
-                           thing wearing one shape: three that opened something,
-                           two that were simply on or off, and nothing about a row
-                           said which. The window had already answered exactly this
-                           one level up, when the settings stopped being a box
-                           nested inside the tab card. -->
-                      <!-- What is true right now, next to the list it is true
-                           about: one says whether the panel listing that tab's
-                           asks is up, the other whether the Mac those asks run on
-                           may sleep. -->
-                      <div class="card middle foot">
-                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4.4" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="17.6" r="1.15" fill="currentColor" stroke="none"/><path d="M9 6.4h11.4M9 12h11.4M9 17.6h11.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
-                        <div class="row" id="awakeRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M13.7 2.6 5.4 13.5h5.4l-.5 7.9 8.3-10.9h-5.4l.5-7.9Z"/></svg>Keep Awake<span class="sw on"></span></div>
-                      </div>
-                      <!-- What opens, at the foot, where a row you press to leave
-                           the column belongs. Both open a sheet over the window,
-                           and the chevron is what says so.
+                      <!-- One card, and a hairline through it. It was three:
+                           the list, then two switches, then two doors — on the
+                           argument that a switch is not a door and the eye should
+                           be able to tell before it reads a word. True, and then
+                           both of the other switches left. Notify went to the
+                           system, which owns it; Keep Awake is simply on, with its
+                           override in the View menu. A card built to separate two
+                           kinds of row is not worth a panel gap and sixteen points
+                           of padding to hold one row of each, and the rule makes
+                           the same distinction for a fifth of the height.
 
-                           Skills is first: it is the one row in the sidebar about
-                           the work rather than about the app. It used to appear
-                           only with an agent running, on the reasoning that a
-                           skill installs into an agent's directory and a plain
-                           shell has none — which made it missing on the day
-                           somebody most needed it. You find out what a skill is by
-                           opening this, and you could not open it until you had
-                           already started the agent the skills are for. Its
-                           trailing value is how many you have, counting the ones
-                           waiting for an agent.
-
-                           Share Feedback is not here any more. It went to the app's
-                           own menu, which is what pays for the split: four rows
-                           divide cleanly into two and two, five did not. The marks
-                           that are left are deliberately plain — a stack, a
-                           half-filled circle, three lines, a bolt. They were a
-                           paint palette, a cup on a saucer and a checklist, which
-                           is detail that reads as noise at ten points and detail
-                           nobody needs when every row is captioned. -->
+                           Skills is first among the doors: it is the one row about
+                           the work rather than about the app. Its trailing value is
+                           how many you have, counting the ones waiting for an
+                           agent. Share Feedback is in the app's own menu. -->
                       <div class="card base foot">
+                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4.4" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="17.6" r="1.15" fill="currentColor" stroke="none"/><path d="M9 6.4h11.4M9 12h11.4M9 17.6h11.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
+                        <div class="hairline" aria-hidden="true"></div>
                         <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">4</span><span class="ch" aria-hidden="true">&#8250;</span></div>
                         <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor" stroke="none"/></svg>Theme<span class="ch" aria-hidden="true">&#8250;</span></div>
                       </div>
@@ -1510,9 +1519,9 @@
           <div class="ob">
             <div class="os">
               <canvas class="mark osmark" aria-hidden="true"></canvas>
-              <div class="row on"><span class="dot run"></span><span class="t">Fix the checkout page</span></div>
-              <div class="row"><span class="dot run"></span><span class="t">Write the sign-up tests</span></div>
-              <div class="row"><span class="dot bad"></span><span class="t">Rename the theme files</span></div>
+              <div class="row on"><span class="dot run"></span><span class="t">Checkout API</span></div>
+              <div class="row"><span class="dot run"></span><span class="t">Ocarina</span></div>
+              <div class="row"><span class="dot bad"></span><span class="t">Portfolio</span></div>
               <div class="row newtab"><span class="g pl">+</span><span class="t">New Tab</span><span class="k">&#8984;T</span></div>
             </div>
             <div class="om">
@@ -1534,7 +1543,7 @@
 <section id="awake">
   <div class="wrap">
     <h2 class="rise">Your Mac stays awake <span class="soft">while the agent works.</span></h2>
-    <p class="sub rise">The display stays on while a run is going, so a long task finishes.</p>
+    <p class="sub rise">The display stays on while a run is going, so a long task finishes. <b>Nothing to switch on</b> &mdash; it is simply how the app behaves, with an override in the View menu.</p>
   </div>
 
   <div class="wrap awake-pair">
@@ -1566,7 +1575,7 @@
             <span class="tl" style="background:#FF5F57"></span>
             <span class="tl" style="background:#FEBC2E"></span>
             <span class="tl" style="background:#28C840"></span>
-            <span class="name">Fix the checkout page</span>
+            <span class="name">Checkout API</span>
           </div>
           <div class="ab">
             <span class="l"><span class="pr">~ &rsaquo;</span> claude</span>
@@ -1577,7 +1586,7 @@
           </div>
           <div class="astat">
             <span class="run"><i id="beadB"></i>running <b id="clockB">6:04</b></span>
-            <span class="akrow static">Keep awake<span class="sw on"></span></span>
+            <span class="akrow static">Keeping the display awake</span>
           </div>
         </div>
       </div>
