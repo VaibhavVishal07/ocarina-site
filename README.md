@@ -17,6 +17,11 @@ fraction of a PNG, and do not go stale the day the interface changes.
 
 The isometric card illustrations are inline SVG for the same reason.
 
+The one figure that is not a piece of the window is the message-to-rows pair
+under the task panel: a prompt on the left, the rows it becomes on the right.
+The claim there is about a shape — one message going in and three jobs coming
+out — and a sentence about a shape is longer than the shape.
+
 ## What is drawn
 
 One window, built once and framed on a different part of itself per section —
@@ -60,7 +65,7 @@ It is a template image in the app, which the menu bar tints, so it is the one
 mark on this page a theme does not reach: white on a dark bar whatever Ocarina
 is wearing. The enlarged four take the page's ink for the same reason — a
 template has no colour of its own. The line under it in the dropped menu *is*
-the theme's, so all fourteen voices are here too.
+the theme's, so all nineteen voices are here too.
 
 ## Why it looks like this
 
@@ -69,7 +74,7 @@ Colours are the Ocarina theme's own values, and the page is set in
 with. It is dark only on purpose: every theme Ocarina ships is dark, so a
 light page would misrepresent the product.
 
-The fourteen themes carry their voice as well as their colours — the four
+The nineteen themes carry their voice as well as their colours — the four
 lines a theme writes for working, done, stopped and clear — so the menu the
 board drops says what the app would say under the theme you picked.
 

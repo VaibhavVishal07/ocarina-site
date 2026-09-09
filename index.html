@@ -359,11 +359,7 @@
   .side .fill { flex:1; min-height:8px; }
   .side .foot { flex:none; padding:8px 9px; }
   .side .foot .row { padding:6px 9px; gap:7px; }
-  /* One card holds the switch and the doors now, and this is what separates
-     them — a fifth of the height a second card and a panel gap cost. */
-  .side .foot .hairline { height:1px; margin:5px 9px;
-                          background:color-mix(in srgb,var(--wfg) 12%,transparent); }
-  /* the same 9pt symbol column the app lines Tasks, Skills and Theme up in */
+  /* the same 9pt symbol column the app lines Skills and Theme up in */
   .fi { width:11px; height:11px; flex:none; display:block; opacity:.9; }
   /* A row's trailing value, which on Skills is the agent it would install
      for. Same place a shortcut sits, and quieter than the label it answers. */
@@ -374,17 +370,6 @@
   .side .foot .row .ch { margin-left:auto; padding-left:8px; font-size:11px;
                          color:var(--wdim2); opacity:.75; }
   .side .foot .row .v + .ch { margin-left:0; padding-left:7px; }
-  /* The system switch at `.mini`, scaled to four fifths — about 21x12. It was
-     34x19 with the track filled in the accent, which put the loudest colour in
-     the theme on the least urgent thing in the column, six times the area of
-     the dot that means a tab needs you. */
-  .sw { margin-left:auto; width:21px; height:12px; border-radius:7px; flex:none;
-        background:color-mix(in srgb,var(--wfg) 18%,transparent); position:relative; }
-  .sw::after { content:""; position:absolute; top:1.5px; left:1.5px; width:9px; height:9px;
-               border-radius:50%; background:var(--wfg); transition:translate .3s ease; }
-  .sw.on { background:var(--wacc); }
-  .sw.on::after { translate:9px 0; background:#0B1015; }
-
   .main { flex:1; position:relative; min-width:0; overflow:hidden;
           background:var(--wbg); border:1px solid var(--wline); border-radius:12px;
           font-family:var(--mono); font-size:14px; line-height:2.0; }
@@ -675,7 +660,7 @@
   .swatch.on::after { content:""; position:absolute; inset:-5px; border-radius:11px;
                       border:1.5px solid color-mix(in srgb,var(--sw-c) 62%,transparent); }
   .swatch:focus-visible { outline:2px solid var(--sw-c); outline-offset:5px; }
-  /* Fourteen chips and no names on them. One line under the strip carries
+  /* Nineteen chips and no names on them. One line under the strip carries
      the name instead: the chosen theme's, or whichever chip is under the
      pointer while there is one, so the strip can be read without pressing
      every colour to find out what it is called. Its height is held, or
@@ -901,6 +886,33 @@
   .mini:nth-child(1) { left:0;   top:0;   z-index:1; }
   .mini:nth-child(2) { left:11%; top:64px; z-index:2; }
   .mini:nth-child(3) { left:22%; top:128px; z-index:3; }
+  /* The message-to-rows figure under the task panel. Its own var block for
+     the same reason `.one` has one: `.task` and `.tk` are written against the
+     window's palette, and this figure is on the page rather than in a window. */
+  .split { margin-top:26px; }
+  .split .vs { --wdim:color-mix(in srgb,var(--oc-fg) 55%,transparent);
+               --wfg:var(--oc-fg); }
+  /* Centred in what is left after the cap, because the two cards are stretched
+     to the taller of them and the short one otherwise hangs from the top with
+     all of the empty space under it. */
+  .split .typed, .split .became { flex:1; justify-content:center; }
+  .split .typed { display:flex; flex-direction:column;
+                  font-family:var(--mono); font-size:13.5px; line-height:2.0;
+                  color:var(--ink); }
+  .split .typed .pr { color:var(--accent); }
+  .split .became { display:flex; flex-direction:column; gap:2px; }
+  /* 13.5 rather than the 12 the drawn panel uses: in the window the rows are
+     scaled up with everything around them, and at page size they would be the
+     smallest type in the section. */
+  .split .became .task { font-size:13.5px; padding:7px 0; color:var(--ink); }
+  .split .became .task .tk { color:var(--accent); }
+  .split .became .task .tk.sq { border-color:var(--accent); }
+  @media (max-width:900px) { .split .typed { font-size:12.5px; } }
+
+  .subhead { margin:52px 0 0; font-size:23px; font-weight:500; letter-spacing:-.01em;
+             color:var(--ink); }
+  @media (max-width:640px) { .subhead { font-size:20px; } }
+
   .one { --wsi:var(--oc-si); --wsr:var(--oc-sr); --wsg:var(--oc-sg); --wsf:var(--oc-sf);
          --wdim:color-mix(in srgb,var(--oc-fg) 55%,transparent);
          border-radius:9px; overflow:hidden; border:1px solid rgba(255,255,255,.16); background:var(--oc-bg); }
@@ -1068,6 +1080,10 @@
 
   .takeaway { margin:26px 0 0; font-size:17px; color:var(--muted); max-width:62ch; }
   .takeaway b { color:var(--ink); font-weight:500; }
+  /* A path or a command inside a sentence. Set in the app's own mono at the
+     size the sentence is, not smaller — a shrunken code span in a 17px line
+     reads as a footnote about the sentence rather than as part of it. */
+  .mn { font-family:var(--mono); font-size:.92em; color:var(--ink); }
 
   /* ── keep awake ───────────────────────────────────────── */
   .awake { display:grid; grid-template-columns:1fr 1fr; gap:54px; align-items:center; }
@@ -1326,7 +1342,7 @@
   </div>
 
   <div class="wrap wide">
-    <!-- Fourteen dots under the window they repaint. A section further down
+    <!-- Nineteen dots under the window they repaint. A section further down
          had to say "and the whole page follows"; here you press one and the
          page has already followed, which is a shorter way of saying it. -->
     <!-- The window leans back and comes upright as you scroll it into view,
@@ -1361,24 +1377,21 @@
                         </div>
                         <div class="fill"></div>
                       </div>
-                      <!-- One card, and a hairline through it. It was three:
-                           the list, then two switches, then two doors — on the
+                      <!-- Two doors, and nothing else. It was three cards: the
+                           list, then two switches, then two doors — on the
                            argument that a switch is not a door and the eye should
                            be able to tell before it reads a word. True, and then
-                           both of the other switches left. Notify went to the
-                           system, which owns it; Keep Awake is simply on, with its
-                           override in the View menu. A card built to separate two
-                           kinds of row is not worth a panel gap and sixteen points
-                           of padding to hold one row of each, and the rule makes
-                           the same distinction for a fifth of the height.
+                           every switch left. Notify went to the system, which owns
+                           it; Keep Awake is simply on, with its override in the
+                           View menu; and Tasks went because a list of outstanding
+                           work you can turn off is a list you turn off and then do
+                           not have on the day it matters.
 
-                           Skills is first among the doors: it is the one row about
-                           the work rather than about the app. Its trailing value is
-                           how many you have, counting the ones waiting for an
-                           agent. Share Feedback is in the app's own menu. -->
+                           Skills is first: it is the one row about the work rather
+                           than about the app. Its trailing value is how many you
+                           have, counting the ones waiting for an agent. Share
+                           Feedback is in the app's own menu. -->
                       <div class="card base foot">
-                        <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4.4" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.4" cy="17.6" r="1.15" fill="currentColor" stroke="none"/><path d="M9 6.4h11.4M9 12h11.4M9 17.6h11.4"/></svg>Tasks<span class="k">&#8984;J</span><span class="sw on"></span></div>
-                        <div class="hairline" aria-hidden="true"></div>
                         <div class="row" id="skillsRow"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="8.2" width="14.9" height="12.9" rx="3.2"/><path d="M6.9 4.9h10.9a3.2 3.2 0 0 1 3.2 3.2v9"/></svg>Skills<span class="v">4</span><span class="ch" aria-hidden="true">&#8250;</span></div>
                         <div class="row"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor" stroke="none"/></svg>Theme<span class="ch" aria-hidden="true">&#8250;</span></div>
                       </div>
@@ -1540,7 +1553,7 @@
         </div>
       </div>
     </div>
-    <!-- Fourteen dots under the window they repaint. This was a section of
+    <!-- Nineteen dots under the window they repaint. This was a section of
          its own further down, which had to say "and the whole page follows";
          under the window you press one and the page has already followed,
          which is a shorter way of saying it. -->
@@ -1601,6 +1614,8 @@
       </div>
     </div>
 
+    <p class="takeaway rise">The name is the codebase, not the folder you are standing in. A terminal in <span class="mn">Ocarina/Sources/OcarinaUI</span> is a tab called <b>Ocarina</b> &mdash; the walk goes up to the repository, or to the package manifest where there is no repository.</p>
+    <p class="takeaway rise">Where a tab is comes from the kernel rather than from the shell, <b>so it is right in bash and fish, in the tabs you are not looking at, and after a <span class="mn">cd</span> that happened inside the agent</b>.</p>
     <p class="takeaway rise">The dot says working, done or stopped, <b>read from the agent&rsquo;s own transcript</b>.</p>
   </div>
 </section>
@@ -1740,7 +1755,7 @@
     </div>
     <p class="takeaway rise">A tick on what it stopped on, an empty box on what is open. <b>The panel needs the window in front of you; this does not.</b></p>
     <p class="takeaway rise">Five, and the rest counted rather than dropped. <b>A menu holding twenty would cover the window it saves you opening.</b></p>
-    <p class="takeaway rise"><b>&#8984;J shuts the column, and the token figure is one click down.</b></p>
+    <p class="takeaway rise"><b>The column has no switch, so this is what you read when the window is behind something else.</b></p>
   </div>
 </section>
 
@@ -1788,6 +1803,34 @@
       <p class="takeaway rise">It is read from <b>your agent's own transcript</b>, so it survives clearing the screen and closing the app.</p>
       <p class="takeaway rise">Five sessions running means five lists. This is the one you are looking at.</p>
     </div>
+
+    <!-- The split. Shown rather than described, because the claim is about a
+         shape — a message going in and rows coming out — and a sentence about
+         a shape is longer than the shape. Same two-card figure the tab
+         section uses, so the page has one way of saying "this, not that". -->
+    <h3 class="subhead rise">One message is one row per thing you asked for.</h3>
+    <div class="versus split">
+      <div class="vs glass rise d1">
+        <div class="cap">WHAT YOU TYPED</div>
+        <div class="typed">
+          <span class="pr">&#10095;</span> Fix the tab naming so it walks up to the repository, then add tests for the locator, and update the design doc.
+        </div>
+      </div>
+
+      <div class="vs glass good rise d2">
+        <div class="cap">WHAT THE PANEL SHOWS</div>
+        <div class="became">
+          <div class="task"><span class="tk sq"></span>Fix tab naming walks up</div>
+          <div class="task"><span class="tk sq"></span>Add tests for locator</div>
+          <div class="task"><span class="tk sq"></span>Update design doc</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap-say">
+      <p class="takeaway rise">The cut is only made where you made it yourself: <b>a list you wrote as a list</b>, and a sentence that opens by announcing another one &mdash; &ldquo;Also&hellip;&rdquo;, &ldquo;One more thing&hellip;&rdquo;.</p>
+      <p class="takeaway rise">Prose is left whole. <b>Splitting a paragraph on &ldquo;and&rdquo; makes two half-requests and neither of them is true</b>, so a bullet needs the space after it and a pasted diff is left alone.</p>
+    </div>
   </div>
 </section>
 
@@ -1798,7 +1841,7 @@
     <div class="feat">
       <div class="feat-say">
         <p class="takeaway rise">The meter counts the window, not your allowance. <b>Nothing on your Mac says what your limit is</b>, so the card does not guess.</p>
-        <p class="takeaway rise">It sits under the task list and goes with it when you press &#8984;J.</p>
+        <p class="takeaway rise">It sits under the task list and arrives with it, whenever an agent is in front of the tab.</p>
       </div>
       <div class="stage rise d1" id="tokenStage"></div>
     </div>
@@ -2725,7 +2768,7 @@
   }
 
   /* ── the picker ────────────────────────────────────────────
-     Fourteen dots under the hero window. Pressing one draws that theme
+     Nineteen dots under the hero window. Pressing one draws that theme
      across the page from the near side; the palette is swapped while the
      edge is travelling, so the colour that arrives is the one already
      crossing rather than a cut you catch mid-blink. */
