@@ -527,73 +527,72 @@
      is a sheet over the whole window, and at 780 wide it does not fit inside
      a pane that is 690 — the two ends of the head were being cut off by the
      pane's own clip. */
-  .shelf { position:absolute; left:50%; top:50%; z-index:6; width:600px; height:600px;
+  .shelf { position:absolute; left:50%; top:50%; z-index:6; width:620px; height:560px;
            translate:-50% -46%; opacity:0; pointer-events:none; font-family:"Geist",sans-serif;
            display:flex; flex-direction:column; overflow:hidden;
            background:var(--wtop); border:1px solid color-mix(in srgb,var(--wfg) 22%,transparent);
            border-radius:12px; box-shadow:0 34px 68px -20px rgba(0,0,0,.9);
            transition:translate .4s cubic-bezier(.16,1,.3,1),opacity .3s ease; }
   .win.skilled .shelf { translate:-50% -50%; opacity:1; }
+  /* The question, at the size of the thing being asked. It is the only object
+     on the panel until you have typed. */
   .shelf .sf-head { flex:none; display:flex; align-items:baseline; gap:8px;
-                    padding:20px 22px 5px; }
-  .shelf .sf-head b { font-size:15.5px; font-weight:600; color:var(--wfg); }
+                    padding:22px 24px 16px; }
+  .shelf .sf-head b { font-size:19px; font-weight:500; color:var(--wfg); }
   .shelf .sf-x { margin-left:auto; font-size:11px; line-height:1; color:var(--wdim2); }
-  /* What the thing is, in one line, always. Nobody arriving from a sidebar row
-     called "Skills" has been told, and a catalogue answers "which one" to
-     somebody who has not been told "of what". */
-  .shelf .sf-what { flex:none; padding:0 22px 18px; font-size:11.5px; color:var(--wdim2); }
-  .shelf .sf-find { flex:none; display:flex; align-items:center; gap:8px; height:34px;
-                    margin:0 22px; padding:0 12px; border-radius:9px;
-                    background:color-mix(in srgb,var(--wfg) 7%,transparent);
-                    border:1px solid color-mix(in srgb,var(--wfg) 14%,transparent);
-                    font-size:12.5px; color:var(--wdim2); }
-  .shelf .sf-find svg { width:11.5px; height:11.5px; flex:none; }
-  /* Three words on a rule, and the active one's mark is a heavier length of
-     that same rule. It used to float a few points above a separate divider, so
-     the panel carried two nearly-parallel lines. */
-  .shelf .sf-tabs { flex:none; display:flex; gap:20px; align-items:flex-end; margin:18px 22px 0;
-                    box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--wfg) 13%,transparent); }
-  .shelf .sf-tabs i { flex:none; padding:2px 0 11px; font-size:12px; font-weight:500;
-                      font-style:normal; color:var(--wdim2); }
-  .shelf .sf-tabs i.on { color:var(--wfg); font-weight:600;
-                         box-shadow:inset 0 -1.5px 0 color-mix(in srgb,var(--wfg) 60%,transparent); }
-  .shelf .sf-grid { flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr;
-                    gap:14px; padding:20px 22px 22px; align-content:start; overflow:hidden; }
-  /* Two lines and a button, and the same two everywhere. It carried four
-     things — a headline, a supporting line, the author and the button — which
-     is one more than a card this size lays out without the eye having to
-     decide what to read next. */
-  .sk { display:flex; align-items:center; gap:12px; height:86px; padding:0 14px;
-        border-radius:10px; background:color-mix(in srgb,var(--wfg) 3.5%,transparent);
-        box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 9%,transparent); }
-  .sk .sk-b { min-width:0; flex:1; }
-  .sk .sk-t { display:flex; align-items:center; gap:6px; }
-  .sk .sk-n { font-size:12.5px; font-weight:600; line-height:1.32; color:var(--wfg);
+  /* 50pt tall and set at 17, against the 34 and 12.5 of the search box it
+     replaced. The field is not a filter on a page any more, it is the page. */
+  .shelf .sf-find { flex:none; display:flex; align-items:center; gap:10px; height:44px;
+                    margin:0 24px; padding:0 15px; border-radius:10px;
+                    background:color-mix(in srgb,var(--wfg) 6%,transparent);
+                    border:1px solid color-mix(in srgb,var(--wacc) 50%,transparent); }
+  .shelf .sf-q { font-size:15px; color:var(--wfg); }
+  /* The tally, not a spinner: it moves on every keystroke, so it is the thing
+     that says the field is live. */
+  .shelf .sf-n { margin-left:auto; font-family:var(--mono); font-size:10px;
+                 letter-spacing:.08em; color:var(--wdim2); }
+  .shelf .sf-rows { flex:1; min-height:0; display:flex; flex-direction:column;
+                    margin-top:18px; overflow:hidden; }
+  .sr { display:flex; align-items:flex-start; gap:14px; padding:14px 24px;
+        border-top:1px solid color-mix(in srgb,var(--wfg) 8%,transparent); }
+  .sr.hov { background:color-mix(in srgb,var(--wfg) 3%,transparent); }
+  .sr .sr-b { min-width:0; flex:1; }
+  .sr .sr-t { display:flex; align-items:baseline; gap:8px; margin-bottom:4px; }
+  /* The folder name in the terminal's own face: it is what the agent will
+     call it, and what you would type to find it again. */
+  .sr .sr-n { font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--wfg); }
+  .sr .sr-by { font-size:10.5px; color:var(--wdim); }
+  .sr .sr-c { font-family:var(--mono); font-size:8px; letter-spacing:.11em; color:var(--wdim2);
+              border:1px solid color-mix(in srgb,var(--wfg) 16%,transparent);
+              border-radius:3px; padding:1.5px 5px; }
+  .sr .sr-i { margin-left:auto; font-family:var(--mono); font-size:9.5px; color:var(--wdim2); }
+  .sr .sr-d { font-size:11px; line-height:1.5; color:var(--wdim);
               display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
               overflow:hidden; }
-  /* Who wrote it, always, and on the same line as what the folder is called.
-     A skill is instructions the agent will follow, so the publisher is most of
-     the decision — and a decision you have to hunt for on each card is one you
-     stop making. */
-  .sk .sk-a { margin-top:5px; font-size:10.5px; color:var(--wdim2);
-              overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  /* Two treatments and not four: an outlined Add, which is the one thing on
-     the card asking to be pressed, and a plain word for anything that has
-     already happened. */
-  .sk .sk-go { flex:none; display:flex; align-items:center; height:22px; padding:0 11px;
-               border-radius:11px; font-size:10.5px; font-weight:600; color:var(--wdim);
-               box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 35%,transparent); }
-  .sk .sk-in { flex:none; font-size:10.5px; font-weight:500; color:var(--wdim2); }
+  /* The words that earned the match, so the near-word table is visible on the
+     page rather than hidden in a scoring function. */
+  .sr .sr-d u { text-decoration:none; color:var(--wfg);
+                box-shadow:inset 0 -5px 0 color-mix(in srgb,var(--wlit) 22%,transparent); }
+  .sr .sr-go, .sr .sr-in { flex:none; display:flex; align-items:center; height:22px;
+                           padding:0 11px; border-radius:6px; font-size:10.5px;
+                           font-weight:500; margin-top:1px; }
+  .sr .sr-go { color:var(--wdim);
+               box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 30%,transparent); }
+  .sr .sr-in { color:var(--wacc);
+               box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wacc) 45%,transparent); }
+  .shelf .sf-more { flex:none; padding:13px 24px; font-family:var(--mono); font-size:9.5px;
+                    letter-spacing:.08em; color:var(--wdim2);
+                    border-top:1px solid color-mix(in srgb,var(--wfg) 8%,transparent); }
   /* Where an install is going, said once, at the foot, with a fill of its own
      so it reads as the panel's floor. */
-  .shelf .sf-foot { flex:none; padding:13px 22px; font-size:10.5px; color:var(--wdim2);
+  /* Installed is a question with no query: you go there to see what you have,
+     and no typed phrase can match that. So it is a line on the floor. */
+  .shelf .sf-inst { color:var(--wdim); margin-right:8px;
+                    padding-right:8px;
+                    border-right:1px solid color-mix(in srgb,var(--wfg) 16%,transparent); }
+  .shelf .sf-foot { flex:none; padding:13px 24px; font-size:10.5px; color:var(--wdim2);
                     border-top:1px solid color-mix(in srgb,var(--wfg) 11%,transparent);
                     background:color-mix(in srgb,var(--wfg) 4.5%,transparent); }
-  .sk.hov { background:color-mix(in srgb,var(--wfg) 8.5%,transparent);
-            box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wfg) 22%,transparent); }
-  /* Installed is a state the card wears, not a second control beside the
-     first: the word becomes the way back out when you point at it. */
-  .sk.here .sk-go { display:none; }
 
   .right { width:0; flex:none; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:hidden;
            transition:width .5s cubic-bezier(.16,1,.3,1); }
@@ -928,14 +927,19 @@
      thing it is about are on screen together — and so the window is framed
      against a column rather than the whole rail, which is what keeps a
      close-up on one panel at a size you read rather than one you squint at. */
-  /* A section whose subject is the picture puts the picture full width and
+  /* A section whose subject is the picture puts the picture in the middle and
      the lines under it, rather than shrinking the thing being described into
-     the smaller half of its own section. */
-  .stage.wide { margin-top:36px; aspect-ratio:16/7.4; }
+     the smaller half of its own section.
+
+     Portrait, and that is not a style choice: the task panel is 230 wide and
+     most of the window tall. In a 16:9 frame it would sit letterboxed between
+     two fields of empty stage, which is the same mistake as the side column
+     with more space wasted. A tall frame lets it fill what it is given. */
+  .stage.wide { margin:36px auto 0; max-width:560px; aspect-ratio:5/6.2; }
   .wrap-say { display:grid; grid-template-columns:1fr 1fr; gap:14px 34px; margin-top:22px; }
   .wrap-say .takeaway { margin:0; max-width:52ch; }
   @media (max-width:920px) {
-    .stage.wide { margin-top:26px; aspect-ratio:16/10; }
+    .stage.wide { margin-top:26px; max-width:100%; aspect-ratio:4/4.4; }
     .wrap-say { grid-template-columns:1fr; gap:12px; }
   }
   .feat { display:grid; grid-template-columns:minmax(250px,31%) 1fr;
@@ -1476,30 +1480,57 @@
                          different directory for Claude Code than for Codex, so
                          on a plain shell the way in is simply not there. -->
                     <div class="shelf">
-                      <div class="sf-head">
-                        <b>Skills</b><span class="sf-x">&#10005;</span>
-                      </div>
-                      <div class="sf-what">Written instructions your agent reads when a task calls for it.</div>
                       <!-- One field, and nothing above it but the question.
                            Three tabs, nine category pills, a search box and a
-                           grid were four ways of narrowing 216 things, offered
-                           to somebody who has one: they know roughly what they
-                           want and cannot name the folder. So it asks. -->
-                      <div class="sf-find sf-ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.2"/><path d="m15.3 15.3 4.7 4.7"/></svg>make my UI look less generic</div>
-                      <div class="sf-grid">
-                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Make a web page that looks designed</span></div><div class="sk-a">frontend-design &middot; Anthropic</div></div><span class="sk-go">Add</span></div>
-                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Check my code before I commit it</span></div><div class="sk-a">code-review &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
-                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Work out why something is broken</span></div><div class="sk-a">systematic-debugging &middot; obra</div></div><span class="sk-go">Add</span></div>
-                      <div class="sk hov"><div class="sk-b"><div class="sk-t"><span class="sk-n">Look something up and write down what it found</span></div><div class="sk-a">research &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
-                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Read and write PDFs</span></div><div class="sk-a">pdf &middot; Anthropic</div></div><span class="sk-go">Add</span></div>
-                      <div class="sk here"><div class="sk-b"><div class="sk-t"><span class="sk-n">Read and write Word documents</span></div><div class="sk-a">docx &middot; Anthropic</div></div><span class="sk-in">Installed</span></div>
-                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Stop me running a git command I cannot undo</span></div><div class="sk-a">git-guardrails-claude-code &middot; Matt Pocock</div></div><span class="sk-go">Add</span></div>
-                      <div class="sk"><div class="sk-b"><div class="sk-t"><span class="sk-n">Write the test before the code</span></div><div class="sk-a">test-driven-development &middot; obra</div></div><span class="sk-go">Add</span></div>
+                           grid of cards were four ways of narrowing 216 things,
+                           offered to somebody who has one: they know roughly
+                           what they want and cannot name the folder. -->
+                      <div class="sf-head">
+                        <b>What are you looking for?</b><span class="sf-x">&#10005;</span>
                       </div>
+                      <div class="sf-find"><span class="sf-q">UI design</span><span class="sf-n">45 OF 216</span></div>
+                      <!-- Rows, not cards. "With details" is the whole request,
+                           and a card 86 points tall in a two-up grid cannot
+                           carry an author, a category, an install count and a
+                           description. The underlined words are the ones that
+                           earned the match, so a result whose text says
+                           "frontend" reads as understanding rather than a
+                           mistake. -->
+                      <div class="sf-rows">
+                        <div class="sr">
+                          <div class="sr-b">
+                            <div class="sr-t"><span class="sr-n">frontend-design</span><span class="sr-by">Anthropic</span><span class="sr-c">WEB</span><span class="sr-i">864K</span></div>
+                            <div class="sr-d">Guidance for distinctive, intentional visual <u>design</u> when building new <u>UI</u> or reshaping an existing one. Helps with aesthetic direction and typography.</div>
+                          </div>
+                          <span class="sr-go">Add</span>
+                        </div>
+                        <div class="sr">
+                          <div class="sr-b">
+                            <div class="sr-t"><span class="sr-n">web-design-guidelines</span><span class="sr-by">Vercel</span><span class="sr-c">WEB</span><span class="sr-i">615K</span></div>
+                            <div class="sr-d">Review <u>UI</u> code for Web Interface Guidelines compliance. Use when asked to &ldquo;review my <u>UI</u>&rdquo;, &ldquo;check accessibility&rdquo; or &ldquo;audit <u>design</u>&rdquo;.</div>
+                          </div>
+                          <span class="sr-in">Added</span>
+                        </div>
+                        <div class="sr hov">
+                          <div class="sr-b">
+                            <div class="sr-t"><span class="sr-n">figma-implement-design</span><span class="sr-by">OpenAI</span><span class="sr-c">WEB</span><span class="sr-i">5K</span></div>
+                            <div class="sr-d">Translates Figma <u>designs</u> into production-ready application code. Use when implementing <u>UI</u> code from Figma files.</div>
+                          </div>
+                          <span class="sr-go">Add</span>
+                        </div>
+                        <div class="sr">
+                          <div class="sr-b">
+                            <div class="sr-t"><span class="sr-n">brand-guidelines</span><span class="sr-by">Anthropic</span><span class="sr-c">DESIGN</span><span class="sr-i">88K</span></div>
+                            <div class="sr-d">Applies official brand colours and typography to any artifact that benefits from a consistent look and feel.</div>
+                          </div>
+                          <span class="sr-go">Add</span>
+                        </div>
+                      </div>
+                      <div class="sf-more">41 MORE &middot; KEEP TYPING TO NARROW</div>
                       <!-- Where an install is going, said once, at the foot.
                            It was in the title — "Skills for Claude Code" —
                            which put the answer above the question. -->
-                      <div class="sf-foot">Installing for Claude Code.</div>
+                      <div class="sf-foot"><span class="sf-inst">12 installed &middot; show them</span>Installing for Claude Code.</div>
                       </div>
                     </div>
                 </div>
