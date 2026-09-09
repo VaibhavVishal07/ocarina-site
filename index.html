@@ -880,7 +880,17 @@
 
   @media (max-width:900px) {
     .tiles { grid-template-columns:1fr; }
-    .tile.tall, .tile.awake, .tile.wide, .tile.shelfy { grid-column:1 / -1; }
+    /* Every tile takes the one column, whatever its --span says. Written
+       against [data-tile] so it carries the same weight as the layout block
+       and, coming later, wins. Naming the tiles one by one missed the menu
+       bar, which kept span 4 in a single-column grid and made three implicit
+       columns to hold it: the page scrolled sideways on a phone.
+
+       The nudges go with it. --ox and --oy are pixel offsets measured against
+       a 1180 rail, so -320px on a 390 wide screen puts the card outside the
+       tile it belongs to, and --zoom is a multiplier on a fit that has
+       already shrunk to the phone. */
+    .tile[data-tile] { grid-column:1 / -1; --ox:0px; --oy:0px; --zoom:1; }
     .tile.tall { min-height:400px; }
     .tile.wide { grid-template-columns:1fr; min-height:0; }
     .tile.wide .tile-art { min-height:220px; }
