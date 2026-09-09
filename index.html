@@ -890,10 +890,19 @@
        a 1180 rail, so -320px on a 390 wide screen puts the card outside the
        tile it belongs to, and --zoom is a multiplier on a fit that has
        already shrunk to the phone. */
-    .tile[data-tile] { grid-column:1 / -1; --ox:0px; --oy:0px; --zoom:1; }
-    .tile.tall { min-height:400px; }
-    .tile.wide { grid-template-columns:1fr; min-height:0; }
-    .tile.wide .tile-art { min-height:220px; }
+    .tile[data-tile] { grid-column:1 / -1; --ox:0px; --oy:0px; --zoom:1;
+                       /* and the heights follow the copy. --h is a number
+                          measured against a rail three times this wide, and
+                          the shelf's copy alone runs past its 220 once it
+                          wraps to five lines. */
+                       min-height:0; }
+    /* what the card gets instead: room of its own under whatever the copy
+       took, the same for every tile so the column keeps a beat */
+    .tile-art { min-height:230px; margin-top:20px; }
+    /* The shelf stops hanging off the right. Losing a third of the field to a
+       crop is a composition at 1180 and a broken tile at 390. */
+    #artShelf .artwin { left:50%; right:auto; translate:-50% -50%;
+                        transform-origin:50% 50%; }
   }
 
   /* ── the theme picker ─────────────────────────────────
